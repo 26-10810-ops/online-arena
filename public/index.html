@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Online Arena</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body>
+
+
+<!-- ==============================
+     시작 화면
+============================== -->
+
+<div id="startScreen">
+
+    <h1>⚔️ ONLINE ARENA</h1>
+
+
+    <!-- 방 만들기 / 참가하기 -->
+
+    <div id="roomPanel">
+
+        <input
+            id="roomCodeInput"
+            type="text"
+            maxlength="6"
+            placeholder="방 코드"
+        >
+
+        <button id="createRoomButton">
+            방 만들기
+        </button>
+
+        <button id="joinRoomButton">
+            참가하기
+        </button>
+
+    </div>
+
+
+    <!-- 방 정보 -->
+
+    <div
+        id="roomInfo"
+        style="display:none;"
+    >
+
+        <p id="roomCodeText"></p>
+
+        <p id="roomStatus">
+            상대방을 기다리는 중...
+        </p>
+
+        <button
+            id="deleteRoomButton"
+            style="display:none;"
+        >
+            방 삭제
+        </button>
+
+    </div>
+
+
+    <!-- 캐릭터 선택 -->
+
+    <div
+        id="characterSelect"
+        style="display:none;"
+    >
+
+        <h2>
+            캐릭터 선택
+        </h2>
+
+
+        <div class="character-list">
+
+
+            <!-- 나이트 -->
+
+            <div
+                class="character-card selected"
+                data-character="knight"
+            >
+
+                <div class="character-icon">
+                    ⚔️
+                </div>
+
+                <h3>
+                    나이트
+                </h3>
+
+                <p>
+                    근접 공격 / 방패
+                </p>
+
+            </div>
+
+
+            <!-- 닌자 -->
+
+            <div
+                class="character-card"
+                data-character="ninja"
+            >
+
+                <div class="character-icon">
+                    🥷
+                </div>
+
+                <h3>
+                    닌자
+                </h3>
+
+                <p>
+                    수리검 / 대시
+                </p>
+
+            </div>
+
+
+            <!-- 마법사 -->
+
+            <div
+                class="character-card"
+                data-character="wizard"
+            >
+
+                <div class="character-icon">
+                    🧙
+                </div>
+
+                <h3>
+                    마법사
+                </h3>
+
+                <p>
+                    파이어볼 / 방어막
+                </p>
+
+            </div>
+
+
+            <!-- 로봇 -->
+
+            <div
+                class="character-card"
+                data-character="robot"
+            >
+
+                <div class="character-icon">
+                    🤖
+                </div>
+
+                <h3>
+                    로봇
+                </h3>
+
+                <p>
+                    EMP / 미사일
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="selected-character">
+
+            선택한 캐릭터:
+
+            <strong id="selectedCharacter">
+                나이트
+            </strong>
+
+        </div>
+
+
+        <button id="readyButton">
+            준비
+        </button>
+
+
+        <p id="readyStatus"></p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==============================
+     게임 화면
+============================== -->
+
+<div
+    id="gameScreen"
+    style="display:none;"
+>
+
+
+    <!-- 상단 -->
+
+    <div class="top-bar">
+
+
+        <!-- 플레이어 정보 -->
+
+        <div class="player-info">
+
+            <div id="playerName">
+                🔵 나이트
+            </div>
+
+
+            <div class="hp-container">
+
+                <div id="hpBar"></div>
+
+            </div>
+
+
+            <div id="hpText">
+                HP: 100 / 100
+            </div>
+
+        </div>
+
+
+        <!-- 조작법 -->
+
+        <div class="controls">
+
+            <span>
+                WASD 이동
+            </span>
+
+            <span>
+                마우스 핑
+            </span>
+
+            <span>
+                F 기본 공격
+            </span>
+
+            <span>
+                E 스킬 1
+            </span>
+
+            <span>
+                Q 스킬 2
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==============================
+         게임 영역
+    ============================== -->
+
+    <div id="gameArea">
+
+
+        <!-- 공격 범위 -->
+
+        <div id="rangeIndicator"></div>
+
+
+        <!-- 조준선 -->
+
+        <div id="aimLine"></div>
+
+
+        <!-- 핑 -->
+
+        <div id="ping"></div>
+
+
+        <!-- 내 플레이어 -->
+
+        <div id="player">
+            ⚔️
+        </div>
+
+
+        <!-- 상대 플레이어 -->
+
+        <div
+            id="enemy"
+            class="enemy-player"
+            style="display:none;"
+        >
+            ⚔️
+        </div>
+
+
+        <!-- 공격 효과 -->
+
+        <div id="attackEffect"></div>
+
+
+        <!-- 스킬 효과 -->
+
+        <div id="skillEffect"></div>
+
+
+    </div>
+
+
+
+    <!-- ==============================
+         탄창
+    ============================== -->
+
+    <div id="ammoPanel">
+
+        <span>
+            탄창
+        </span>
+
+
+        <div id="ammoBarContainer">
+
+            <div id="ammoBar"></div>
+
+        </div>
+
+
+        <span id="ammoText">
+            8 / 8
+        </span>
+
+    </div>
+
+
+
+    <!-- ==============================
+         스킬 패널
+    ============================== -->
+
+    <div class="bottom-panel">
+
+
+        <!-- 기본 공격 -->
+
+        <div class="skill">
+
+            <span>
+                F
+            </span>
+
+            <div>
+
+                <strong id="normalAttackText">
+                    근접 검격
+                </strong>
+
+                <small>
+                    기본 공격
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- 스킬 1 -->
+
+        <div class="skill">
+
+            <span>
+                E
+            </span>
+
+            <div>
+
+                <strong id="skill1Name">
+                    방패 강타
+                </strong>
+
+                <small id="skill1Cooldown">
+                    준비
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- 스킬 2 -->
+
+        <div class="skill">
+
+            <span>
+                Q
+            </span>
+
+            <div>
+
+                <strong id="skill2Name">
+                    검의 충격파
+                </strong>
+
+                <small id="skill2Cooldown">
+                    준비
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- 메시지 -->
+
+    <div id="message"></div>
+
+
+    <!-- 방으로 돌아가기 -->
+
+    <button id="menuButton">
+        방으로 돌아가기
+    </button>
+
+
+</div>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="game.js"></script>
+
+
+</body>
+
+</html>

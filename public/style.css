@@ -1,0 +1,1464 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #273b6b 0%,
+            #11182e 38%,
+            #070b17 100%
+        );
+
+    color: white;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   공통 버튼
+========================================================= */
+
+button {
+    font-family: inherit;
+    transition:
+        transform 0.15s ease,
+        filter 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+
+/* =========================================================
+   시작 화면
+========================================================= */
+
+#startScreen {
+    width: 100%;
+    min-height: 700px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    position: relative;
+}
+
+
+/* 제목 */
+
+#startScreen h1 {
+    font-size: 48px;
+
+    margin:
+        0 0 35px;
+
+    letter-spacing: 4px;
+
+    text-shadow:
+        0 0 10px rgba(80, 160, 255, 0.8),
+        0 0 30px rgba(80, 130, 255, 0.45);
+
+    animation:
+        titleGlow 2.5s ease-in-out infinite alternate;
+}
+
+
+@keyframes titleGlow {
+    from {
+        text-shadow:
+            0 0 10px rgba(80, 160, 255, 0.6),
+            0 0 25px rgba(80, 130, 255, 0.25);
+    }
+
+    to {
+        text-shadow:
+            0 0 18px rgba(100, 190, 255, 0.95),
+            0 0 45px rgba(80, 130, 255, 0.55);
+    }
+}
+
+
+/* =========================================================
+   방 패널
+========================================================= */
+
+#roomPanel {
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 12px;
+
+    background:
+        rgba(10, 15, 30, 0.7);
+
+    border:
+        1px solid rgba(120, 170, 255, 0.2);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.35),
+        inset 0 0 20px rgba(70, 120, 255, 0.04);
+
+    backdrop-filter: blur(10px);
+}
+
+
+#roomCodeInput {
+    width: 160px;
+
+    padding: 13px 15px;
+
+    border:
+        1px solid rgba(120, 160, 255, 0.3);
+
+    border-radius: 9px;
+
+    background:
+        rgba(15, 22, 45, 0.9);
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+
+#roomCodeInput:focus {
+    border-color: #4da6ff;
+
+    box-shadow:
+        0 0 15px rgba(70, 160, 255, 0.3);
+}
+
+
+#roomCodeInput::placeholder {
+    color: #777f9c;
+    letter-spacing: 0;
+}
+
+
+#roomPanel button,
+#readyButton {
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3978ff,
+            #6357ff
+        );
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 20px rgba(70, 110, 255, 0.25);
+}
+
+
+#roomPanel button:hover,
+#readyButton:hover {
+    box-shadow:
+        0 7px 25px rgba(80, 130, 255, 0.5);
+}
+
+
+/* =========================================================
+   방 정보
+========================================================= */
+
+#roomInfo {
+    margin-bottom: 25px;
+
+    min-width: 300px;
+
+    padding: 18px 25px;
+
+    background:
+        rgba(10, 15, 30, 0.7);
+
+    border:
+        1px solid rgba(120, 170, 255, 0.2);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.3);
+}
+
+
+#roomCodeText {
+    font-size: 25px;
+
+    font-weight: bold;
+
+    letter-spacing: 5px;
+
+    color: #7ec8ff;
+
+    text-shadow:
+        0 0 15px rgba(80, 180, 255, 0.6);
+
+    margin: 5px 0 10px;
+}
+
+
+#roomStatus {
+    color: #aeb7d0;
+
+    font-size: 14px;
+}
+
+
+#deleteRoomButton {
+    padding: 9px 17px;
+
+    border: 1px solid rgba(255, 90, 90, 0.3);
+
+    border-radius: 8px;
+
+    background:
+        rgba(120, 30, 40, 0.35);
+
+    color: #ff9b9b;
+
+    cursor: pointer;
+}
+
+
+#deleteRoomButton:hover {
+    background:
+        rgba(180, 40, 50, 0.5);
+
+    box-shadow:
+        0 0 15px rgba(255, 60, 70, 0.2);
+}
+
+
+/* =========================================================
+   캐릭터 선택
+========================================================= */
+
+#characterSelect {
+    width: 100%;
+    max-width: 850px;
+}
+
+
+#characterSelect h2 {
+    margin:
+        0 0 22px;
+
+    font-size: 24px;
+
+    letter-spacing: 2px;
+
+    color: #eaf3ff;
+
+    text-shadow:
+        0 0 15px rgba(100, 170, 255, 0.35);
+}
+
+
+.character-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 180px);
+
+    gap: 16px;
+
+    justify-content: center;
+}
+
+
+.character-card {
+    width: 180px;
+    height: 225px;
+
+    padding: 20px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(35, 48, 85, 0.85),
+            rgba(13, 19, 38, 0.9)
+        );
+
+    border:
+        2px solid rgba(130, 160, 220, 0.15);
+
+    border-radius: 16px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+.character-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: 50%;
+    top: 25px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(80, 160, 255, 0.16),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.character-card:hover {
+    transform:
+        translateY(-8px) scale(1.02);
+
+    border-color:
+        rgba(110, 180, 255, 0.55);
+
+    box-shadow:
+        0 12px 35px rgba(30, 100, 255, 0.22);
+}
+
+
+.character-card.selected {
+    border-color:
+        #4da6ff;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(45, 100, 180, 0.35),
+            rgba(20, 30, 65, 0.95)
+        );
+
+    box-shadow:
+        0 0 25px rgba(60, 160, 255, 0.35),
+        inset 0 0 25px rgba(70, 140, 255, 0.08);
+
+    transform:
+        translateY(-5px);
+}
+
+
+.character-card.selected::after {
+    content: "SELECTED";
+
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    font-size: 8px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    color: #9edaff;
+}
+
+
+.character-icon {
+    font-size: 62px;
+
+    margin-bottom: 12px;
+
+    position: relative;
+
+    z-index: 1;
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(130, 190, 255, 0.3)
+        );
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.character-card:hover .character-icon {
+    transform:
+        scale(1.12);
+}
+
+
+.character-card h3 {
+    margin: 4px 0;
+
+    font-size: 18px;
+
+    position: relative;
+
+    z-index: 1;
+}
+
+
+.character-card p {
+    color: #929bb5;
+
+    font-size: 12px;
+
+    margin:
+        5px 0 0;
+
+    position: relative;
+
+    z-index: 1;
+}
+
+
+.selected-character {
+    margin: 22px 0 15px;
+
+    color: #aeb8d0;
+
+    font-size: 14px;
+}
+
+
+#selectedCharacter {
+    color: #7ec8ff;
+
+    text-shadow:
+        0 0 10px rgba(80, 170, 255, 0.45);
+}
+
+
+#readyButton {
+    min-width: 150px;
+
+    padding: 13px 25px;
+
+    font-size: 15px;
+}
+
+
+#readyStatus {
+    min-height: 20px;
+
+    color: #9da7c2;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   게임 화면
+========================================================= */
+
+#gameScreen {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    position: relative;
+}
+
+
+/* =========================================================
+   상단 바
+========================================================= */
+
+.top-bar {
+    width:
+        min(900px, 100%);
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    padding:
+        12px 16px;
+
+    background:
+        rgba(8, 13, 28, 0.75);
+
+    border:
+        1px solid rgba(110, 150, 220, 0.2);
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.3);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* =========================================================
+   플레이어 정보
+========================================================= */
+
+.player-info {
+    width: 280px;
+}
+
+
+#playerName {
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+    font-size: 15px;
+
+    color: #dbe9ff;
+
+    text-shadow:
+        0 0 10px rgba(80, 160, 255, 0.3);
+}
+
+
+/* =========================================================
+   HP
+========================================================= */
+
+.hp-container {
+    width: 100%;
+
+    height: 18px;
+
+    background:
+        #161b2b;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+
+#hpBar {
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #28e978,
+            #18c95d,
+            #5cff9b
+        );
+
+    box-shadow:
+        0 0 12px rgba(40, 240, 120, 0.5);
+
+    transition:
+        width 0.2s;
+}
+
+
+#hpText {
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    color: #9ea9c4;
+}
+
+
+/* =========================================================
+   조작법
+========================================================= */
+
+.controls {
+    display: flex;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+}
+
+
+.controls span {
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    padding:
+        6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    color: #aeb7cd;
+}
+
+
+/* =========================================================
+   게임 영역
+========================================================= */
+
+#gameArea {
+    position: relative;
+
+    width:
+        min(900px, 100%);
+
+    height: 500px;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(50, 75, 125, 0.7) 0%,
+            rgba(19, 28, 55, 0.9) 45%,
+            rgba(8, 12, 25, 1) 100%
+        );
+
+    border:
+        3px solid #3d5688;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    cursor: crosshair;
+
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(50, 100, 200, 0.12);
+
+    isolation: isolate;
+}
+
+
+/* 아레나 격자 */
+
+#gameArea::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(120, 160, 220, 0.07) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(120, 160, 220, 0.07) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        45px 45px;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* 중앙 원 */
+
+#gameArea::after {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+
+    height: 220px;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        2px dashed
+        rgba(140, 190, 255, 0.14);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 40px rgba(80, 140, 255, 0.06);
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* =========================================================
+   플레이어
+========================================================= */
+
+#player,
+.enemy-player {
+    position: absolute;
+
+    width: 55px;
+
+    height: 55px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 32px;
+
+    user-select: none;
+
+    transition:
+        box-shadow 0.15s ease;
+}
+
+
+/* 내 캐릭터 */
+
+#player {
+    left: 100px;
+
+    top: 220px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(70, 170, 255, 0.5),
+            rgba(20, 80, 170, 0.3)
+        );
+
+    border:
+        3px solid #5bb6ff;
+
+    box-shadow:
+        0 0 15px rgba(60, 160, 255, 0.65),
+        0 0 35px rgba(60, 140, 255, 0.3);
+
+    z-index: 5;
+}
+
+
+/* 상대 */
+
+.enemy-player {
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 80, 80, 0.5),
+            rgba(160, 25, 40, 0.3)
+        );
+
+    border:
+        3px solid #ff6969;
+
+    box-shadow:
+        0 0 15px rgba(255, 70, 70, 0.65),
+        0 0 35px rgba(255, 50, 50, 0.3);
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   공격 범위
+========================================================= */
+
+#rangeIndicator {
+    position: absolute;
+
+    width: 0;
+
+    height: 0;
+
+    border-top:
+        8px solid transparent;
+
+    border-bottom:
+        8px solid transparent;
+
+    border-left:
+        180px solid
+        rgba(100, 180, 255, 0.13);
+
+    transform-origin:
+        0 50%;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    display: none;
+
+    filter:
+        drop-shadow(
+            0 0 8px rgba(80, 170, 255, 0.25)
+        );
+}
+
+
+/* =========================================================
+   조준선
+========================================================= */
+
+#aimLine {
+    position: absolute;
+
+    width: 0;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(160, 220, 255, 0.7),
+            rgba(160, 220, 255, 0.05)
+        );
+
+    transform-origin:
+        0 50%;
+
+    pointer-events: none;
+
+    z-index: 2;
+
+    display: none;
+}
+
+
+/* =========================================================
+   핑
+========================================================= */
+
+#ping {
+    position: absolute;
+
+    width: 15px;
+
+    height: 15px;
+
+    border:
+        3px solid #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 10px #ffffff,
+        0 0 25px rgba(130, 210, 255, 0.9);
+
+    pointer-events: none;
+
+    z-index: 8;
+
+    display: none;
+
+    animation:
+        pingPulse 0.8s ease-out infinite;
+}
+
+
+@keyframes pingPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+
+    70% {
+        transform: scale(1.7);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   공격 효과
+========================================================= */
+
+#attackEffect {
+    position: absolute;
+
+    width: 70px;
+
+    height: 70px;
+
+    border:
+        4px solid #ffffff;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.2),
+            rgba(255, 255, 255, 0.02)
+        );
+
+    display: none;
+
+    pointer-events: none;
+
+    z-index: 7;
+
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+
+#skillEffect {
+    position: absolute;
+
+    display: none;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 6;
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(100, 180, 255, 0.7)
+        );
+}
+
+
+/* =========================================================
+   투사체
+========================================================= */
+
+.projectile {
+    position: absolute;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    z-index: 7;
+}
+
+
+.projectile-shuriken {
+    filter:
+        drop-shadow(
+            0 0 8px white
+        );
+}
+
+
+.projectile-poisonShuriken {
+    filter:
+        drop-shadow(
+            0 0 10px #39ff14
+        );
+}
+
+
+.projectile-fireball {
+    filter:
+        drop-shadow(
+            0 0 12px #ff7b22
+        );
+}
+
+
+.projectile-bigFireball {
+    filter:
+        drop-shadow(
+            0 0 20px #ff4d00
+        );
+}
+
+
+.projectile-swordWave {
+    filter:
+        drop-shadow(
+            0 0 10px #9bd3ff
+        );
+}
+
+
+/* =========================================================
+   탄창
+========================================================= */
+
+#ammoPanel {
+    width:
+        min(400px, 100%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+    padding:
+        8px 12px;
+
+    background:
+        rgba(8, 13, 28, 0.7);
+
+    border:
+        1px solid rgba(130, 160, 220, 0.15);
+
+    border-radius: 9px;
+
+    font-size: 13px;
+}
+
+
+#ammoBarContainer {
+    flex: 1;
+
+    height: 12px;
+
+    background:
+        #171c2d;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+#ammoBar {
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #8f62ff,
+            #bd86ff
+        );
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 12px rgba(150, 100, 255, 0.5);
+
+    transition:
+        width 0.15s;
+}
+
+
+#ammoText {
+    min-width: 45px;
+
+    text-align: right;
+
+    font-weight: bold;
+
+    color: #d8d0ff;
+}
+
+
+/* =========================================================
+   스킬 패널
+========================================================= */
+
+.bottom-panel {
+    width:
+        min(900px, 100%);
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 14px;
+}
+
+
+.skill {
+    min-width: 190px;
+
+    padding: 11px 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30, 40, 70, 0.85),
+            rgba(10, 15, 30, 0.9)
+        );
+
+    border:
+        1px solid rgba(130, 160, 220, 0.18);
+
+    border-radius: 12px;
+
+    display: flex;
+
+    gap: 11px;
+
+    align-items: center;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+.skill:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(100, 180, 255, 0.45);
+
+    box-shadow:
+        0 8px 25px rgba(40, 100, 200, 0.18);
+}
+
+
+.skill > span {
+    width: 40px;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #26365d,
+            #151d37
+        );
+
+    border:
+        1px solid rgba(130, 180, 255, 0.35);
+
+    border-radius: 9px;
+
+    font-weight: bold;
+
+    font-size: 16px;
+
+    color: #bfe2ff;
+
+    box-shadow:
+        0 0 12px rgba(80, 150, 255, 0.12);
+}
+
+
+.skill strong {
+    display: block;
+
+    font-size: 13px;
+
+    color: #edf4ff;
+}
+
+
+.skill small {
+    color: #858faa;
+
+    font-size: 11px;
+
+    margin-top: 3px;
+
+    display: block;
+}
+
+
+/* =========================================================
+   메시지
+========================================================= */
+
+#message {
+    margin-top: 12px;
+
+    color: #c5cde0;
+
+    text-align: center;
+
+    min-height: 20px;
+
+    font-size: 13px;
+
+    text-shadow:
+        0 0 10px rgba(120, 180, 255, 0.2);
+}
+
+
+/* =========================================================
+   방으로 돌아가기
+========================================================= */
+
+#menuButton {
+    margin-top: 10px;
+
+    padding: 9px 20px;
+
+    border:
+        1px solid rgba(150, 170, 210, 0.18);
+
+    border-radius: 8px;
+
+    background:
+        rgba(25, 30, 50, 0.8);
+
+    color: #b7c0d6;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+
+#menuButton:hover {
+    color: white;
+
+    border-color:
+        rgba(130, 180, 255, 0.4);
+
+    box-shadow:
+        0 0 15px rgba(80, 150, 255, 0.15);
+}
+
+
+/* =========================================================
+   반응형
+========================================================= */
+
+@media (max-width: 800px) {
+
+    body {
+        padding: 12px;
+    }
+
+
+    #startScreen {
+        min-height: 650px;
+    }
+
+
+    #startScreen h1 {
+        font-size: 34px;
+
+        letter-spacing: 2px;
+    }
+
+
+    #roomPanel {
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+
+    .character-list {
+        grid-template-columns:
+            repeat(2, 160px);
+    }
+
+
+    .character-card {
+        width: 160px;
+        height: 210px;
+    }
+
+
+    .character-icon {
+        font-size: 54px;
+    }
+
+
+    .top-bar {
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+
+    .player-info {
+        width: 100%;
+    }
+
+
+    .controls {
+        justify-content: center;
+    }
+
+
+    #gameArea {
+        height: 450px;
+    }
+
+
+    .bottom-panel {
+        flex-wrap: wrap;
+    }
+
+
+    .skill {
+        min-width: 170px;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .character-list {
+        grid-template-columns:
+            repeat(2, minmax(130px, 1fr));
+
+        width: 100%;
+    }
+
+
+    .character-card {
+        width: 100%;
+    }
+
+
+    #gameArea {
+        height: 400px;
+    }
+
+
+    .bottom-panel {
+        gap: 7px;
+    }
+
+
+    .skill {
+        min-width: 145px;
+
+        padding: 8px;
+    }
+
+
+    .skill > span {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    .skill strong {
+        font-size: 11px;
+    }
+}
