@@ -8,6 +8,390 @@
 
 const socket = io();
 
+// ==============================
+// SOUND SYSTEM
+// ==============================
+
+let audioContext = null;
+
+function initAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+// ==============================
+// 기본 효과음 생성
+// ==============================
+
+function playSound(
+    frequency,
+    duration,
+    type = "sine",
+    volume = 0.08
+) {
+
+    initAudio();
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type =
+        type;
+
+    oscillator.frequency.value =
+        frequency;
+
+    gain.gain.setValueAtTime(
+        volume,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime +
+        duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime +
+        duration
+    );
+}
+
+
+// ==============================
+// 공격음
+// ==============================
+
+function playAttackSound(
+    character
+) {
+
+    if (
+        character === "knight"
+    ) {
+
+        playSound(
+            180,
+            0.12,
+            "sawtooth",
+            0.09
+        );
+
+    }
+
+    else if (
+        character === "ninja"
+    ) {
+
+        playSound(
+            700,
+            0.07,
+            "triangle",
+            0.06
+        );
+
+    }
+
+    else if (
+        character === "wizard"
+    ) {
+
+        playSound(
+            420,
+            0.15,
+            "sine",
+            0.07
+        );
+
+    }
+
+    else if (
+        character === "robot"
+    ) {
+
+        playSound(
+            120,
+            0.13,
+            "square",
+            0.07
+        );
+
+    }
+
+}
+
+
+// ==============================
+// 스킬음
+// ==============================
+
+function playSkillSound(
+    character,
+    skill
+) {
+
+    if (
+        character === "knight"
+    ) {
+
+        if (skill === 1) {
+
+            playSound(
+                100,
+                0.2,
+                "square",
+                0.1
+            );
+
+        }
+
+        else {
+
+            playSound(
+                250,
+                0.3,
+                "sawtooth",
+                0.1
+            );
+
+        }
+
+    }
+
+    else if (
+        character === "ninja"
+    ) {
+
+        if (skill === 1) {
+
+            playSound(
+                900,
+                0.12,
+                "triangle",
+                0.08
+            );
+
+        }
+
+        else {
+
+            playSound(
+                350,
+                0.2,
+                "sawtooth",
+                0.08
+            );
+
+        }
+
+    }
+
+    else if (
+        character === "wizard"
+    ) {
+
+        if (skill === 1) {
+
+            playSound(
+                180,
+                0.4,
+                "sine",
+                0.1
+            );
+
+        }
+
+        else {
+
+            playSound(
+                600,
+                0.25,
+                "sine",
+                0.08
+            );
+
+        }
+
+    }
+
+    else if (
+        character === "robot"
+    ) {
+
+        if (skill === 1) {
+
+            playSound(
+                80,
+                0.35,
+                "square",
+                0.1
+            );
+
+        }
+
+        else {
+
+            playSound(
+                140,
+                0.3,
+                "sawtooth",
+                0.1
+            );
+
+        }
+
+    }
+
+}
+
+
+// ==============================
+// 피격음
+// ==============================
+
+function playHitSound() {
+
+    playSound(
+        90,
+        0.08,
+        "square",
+        0.08
+    );
+
+}
+
+
+// ==============================
+// 재장전음
+// ==============================
+
+function playReloadSound() {
+
+    playSound(
+        300,
+        0.08,
+        "square",
+        0.05
+    );
+
+    setTimeout(
+        () => {
+
+            playSound(
+                500,
+                0.08,
+                "square",
+                0.05
+            );
+
+        },
+        100
+    );
+
+}
+
+
+// ==============================
+// 승리음
+// ==============================
+
+function playVictorySound() {
+
+    playSound(
+        523,
+        0.15,
+        "sine",
+        0.08
+    );
+
+    setTimeout(
+        () => {
+
+            playSound(
+                659,
+                0.15,
+                "sine",
+                0.08
+            );
+
+        },
+        150
+    );
+
+    setTimeout(
+        () => {
+
+            playSound(
+                784,
+                0.3,
+                "sine",
+                0.08
+            );
+
+        },
+        300
+    );
+
+}
+
+
+// ==============================
+// 패배음
+// ==============================
+
+function playDefeatSound() {
+
+    playSound(
+        300,
+        0.2,
+        "sawtooth",
+        0.07
+    );
+
+    setTimeout(
+        () => {
+
+            playSound(
+                180,
+                0.35,
+                "sawtooth",
+                0.07
+            );
+
+        },
+        180
+    );
+
+}
+
 
 
 
@@ -2734,12 +3118,16 @@ function normalAttack() {
     if (me.ammo <= 0) {
 
         if (!me.reloading) {
+            playReloadSound();
             socket.emit("reload");
         }
 
         return;
 
     }
+    playAttackSound(
+        me.character
+    );
 
 
     // 재장전 중이어도 현재 남아 있는 탄약으로 공격 가능
@@ -2806,7 +3194,11 @@ function useSkill(
     element.dataset.busy =
 
         "1";
-
+        
+    playSkillSound(
+        selectedCharacter,
+        number
+    );
 
 
 
