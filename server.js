@@ -3419,47 +3419,8 @@ function gameTick() {
                         projectile.damage
 
                     );
-                // ==========================
-                // 자연 HP 회복
-                // ==========================
-
-                if (
-                    player.hp > 0 &&
-                    player.hp < player.maxHp
-                ) {
-
-                    if (
-                        !player.nextHpRegen
-                    ) {
-
-                        player.nextHpRegen =
-                            now + 3000;
-
-                    }
-
-                    if (
-                        now >=
-                        player.nextHpRegen
-                    ) {
-
-                        player.hp =
-                            Math.min(
-                                player.maxHp,
-                                player.hp + 2
-                            );
-
-                        player.nextHpRegen =
-                            now + 1000;
-
-                    }
-
-                }
-                else {
-
-                    player.nextHpRegen = null;
-
-                }
-// 독 수리검*
+                
+                // 독 수리검*
 
 
 
