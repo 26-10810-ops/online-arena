@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 
 
 
+
+
 const app = express();
 
 
@@ -193,6 +195,12 @@ const characters = {
 
 
 };
+// ==========================
+// 자연 회복
+// ==========================
+
+const HP_REGEN_AMOUNT = 2;      // 한 번에 회복되는 HP
+const HP_REGEN_INTERVAL = 1000; // 1초마다 회복
 
 
 
@@ -2961,6 +2969,37 @@ function movementTick() {
         }
     }
 }
+function hpRegenTick() {
+
+    for (const room of Object.values(rooms)) {
+
+        if (!room.started) {
+            continue;
+        }
+
+        for (
+            const player of Object.values(room.players)
+        ) {
+
+            if (player.hp <= 0) {
+                continue;
+            }
+
+            if (player.hp >= player.maxHp) {
+                continue;
+            }
+
+            if (player.shield) {
+                continue;
+            }
+
+            player.hp = Math.min(
+                player.maxHp,
+                player.hp + HP_REGEN_AMOUNT
+            );
+        }
+    }
+}
 
 function gameTick() {
 
@@ -3380,6 +3419,46 @@ function gameTick() {
                         projectile.damage
 
                     );
+                // ==========================
+                // 자연 HP 회복
+                // ==========================
+
+                if (
+                    player.hp > 0 &&
+                    player.hp < player.maxHp
+                ) {
+
+                    if (
+                        !player.nextHpRegen
+                    ) {
+
+                        player.nextHpRegen =
+                            now + 3000;
+
+                    }
+
+                    if (
+                        now >=
+                        player.nextHpRegen
+                    ) {
+
+                        player.hp =
+                            Math.min(
+                                player.maxHp,
+                                player.hp + 2
+                            );
+
+                        player.nextHpRegen =
+                            now + 1000;
+
+                    }
+
+                }
+                else {
+
+                    player.nextHpRegen = null;
+
+                }
 // 독 수리검*
 
 
@@ -5296,6 +5375,10 @@ io.on(
 
 setInterval(gameTick, 50);
 setInterval(movementTick, 1000 / 60);
+setInterval(
+    hpRegenTick,
+    HP_REGEN_INTERVAL
+);
 
 
 
