@@ -9,88 +9,111 @@
 const socket = io();
 
 // ==============================
-// SOUND SYSTEM
+// GAME SOUND SYSTEM
 // ==============================
 
-let audioContext = null;
+const gameSounds = {
 
-function initAudio() {
+    // ==========================
+    // 나이트
+    // ==========================
 
-    if (!audioContext) {
+    knightAttack:
+        "sounds/Knight_sword_attack.wav",
 
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
+    knightSkill1:
+        "sounds/Knight_shield_attack.wav",
 
-    }
+    knightSkill2:
+        "sounds/Knight_sword_energy.mp3",
 
-    if (
-        audioContext.state ===
-        "suspended"
-    ) {
 
-        audioContext.resume();
+    // ==========================
+    // 닌자
+    // ==========================
 
-    }
+    ninjaAttack:
+        "sounds/Ninja_shuriken.wav",
 
-}
+    ninjaSkill1:
+        "sounds/Ninja_dash.wav",
+
+    ninjaSkill2:
+        "sounds/Ninja_shuriken.wav",
+
+
+    // ==========================
+    // 마법사
+    // ==========================
+
+    wizardAttack:
+        "sounds/Wizard_fireball.wav",
+
+    wizardSkill1:
+        "sounds/Wizard_explosion.wav",
+
+    wizardSkill2:
+        "sounds/wizard_barrier.wav",
+
+
+    // ==========================
+    // 로봇
+    // ==========================
+
+    robotAttack:
+        "sounds/Robot_hit.wav",
+
+    robotSkill1:
+        "sounds/Robot_Emp.mp3",
+
+    robotSkill2:
+        "sounds/Robot_explosion.wav"
+
+};
 
 
 // ==============================
-// 기본 효과음 생성
+// 사운드 재생
 // ==============================
 
-function playSound(
-    frequency,
-    duration,
-    type = "sine",
-    volume = 0.08
+function playGameSound(
+    soundName,
+    volume = 0.6
 ) {
 
-    initAudio();
+    const src =
+        gameSounds[soundName];
 
-    const oscillator =
-        audioContext.createOscillator();
+    if (!src) {
+        return;
+    }
 
-    const gain =
-        audioContext.createGain();
 
-    oscillator.type =
-        type;
+    const audio =
+        new Audio(src);
 
-    oscillator.frequency.value =
-        frequency;
+    audio.volume =
+        volume;
 
-    gain.gain.setValueAtTime(
-        volume,
-        audioContext.currentTime
-    );
 
-    gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioContext.currentTime +
-        duration
-    );
+    audio.currentTime =
+        0;
 
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
 
-    oscillator.start();
+    audio.play()
+        .catch(() => {
+            // 브라우저가 오디오 재생을
+            // 차단한 경우 무시
+        });
 
-    oscillator.stop(
-        audioContext.currentTime +
-        duration
-    );
 }
 
 
 // ==============================
-// 공격음
+// 캐릭터별 공격음
 // ==============================
 
-function playAttackSound(
+function playCharacterAttackSound(
     character
 ) {
 
@@ -98,11 +121,8 @@ function playAttackSound(
         character === "knight"
     ) {
 
-        playSound(
-            180,
-            0.12,
-            "sawtooth",
-            0.09
+        playGameSound(
+            "knightAttack"
         );
 
     }
@@ -111,11 +131,8 @@ function playAttackSound(
         character === "ninja"
     ) {
 
-        playSound(
-            700,
-            0.07,
-            "triangle",
-            0.06
+        playGameSound(
+            "ninjaAttack"
         );
 
     }
@@ -124,11 +141,8 @@ function playAttackSound(
         character === "wizard"
     ) {
 
-        playSound(
-            420,
-            0.15,
-            "sine",
-            0.07
+        playGameSound(
+            "wizardAttack"
         );
 
     }
@@ -137,11 +151,8 @@ function playAttackSound(
         character === "robot"
     ) {
 
-        playSound(
-            120,
-            0.13,
-            "square",
-            0.07
+        playGameSound(
+            "robotAttack"
         );
 
     }
@@ -150,10 +161,10 @@ function playAttackSound(
 
 
 // ==============================
-// 스킬음
+// 캐릭터별 스킬음
 // ==============================
 
-function playSkillSound(
+function playCharacterSkillSound(
     character,
     skill
 ) {
@@ -164,22 +175,16 @@ function playSkillSound(
 
         if (skill === 1) {
 
-            playSound(
-                100,
-                0.2,
-                "square",
-                0.1
+            playGameSound(
+                "knightSkill1"
             );
 
         }
 
-        else {
+        else if (skill === 2) {
 
-            playSound(
-                250,
-                0.3,
-                "sawtooth",
-                0.1
+            playGameSound(
+                "knightSkill2"
             );
 
         }
@@ -192,22 +197,16 @@ function playSkillSound(
 
         if (skill === 1) {
 
-            playSound(
-                900,
-                0.12,
-                "triangle",
-                0.08
+            playGameSound(
+                "ninjaSkill1"
             );
 
         }
 
-        else {
+        else if (skill === 2) {
 
-            playSound(
-                350,
-                0.2,
-                "sawtooth",
-                0.08
+            playGameSound(
+                "ninjaSkill2"
             );
 
         }
@@ -220,22 +219,16 @@ function playSkillSound(
 
         if (skill === 1) {
 
-            playSound(
-                180,
-                0.4,
-                "sine",
-                0.1
+            playGameSound(
+                "wizardSkill1"
             );
 
         }
 
-        else {
+        else if (skill === 2) {
 
-            playSound(
-                600,
-                0.25,
-                "sine",
-                0.08
+            playGameSound(
+                "wizardSkill2"
             );
 
         }
@@ -248,22 +241,16 @@ function playSkillSound(
 
         if (skill === 1) {
 
-            playSound(
-                80,
-                0.35,
-                "square",
-                0.1
+            playGameSound(
+                "robotSkill1"
             );
 
         }
 
-        else {
+        else if (skill === 2) {
 
-            playSound(
-                140,
-                0.3,
-                "sawtooth",
-                0.1
+            playGameSound(
+                "robotSkill2"
             );
 
         }
@@ -271,128 +258,6 @@ function playSkillSound(
     }
 
 }
-
-
-// ==============================
-// 피격음
-// ==============================
-
-function playHitSound() {
-
-    playSound(
-        90,
-        0.08,
-        "square",
-        0.08
-    );
-
-}
-
-
-// ==============================
-// 재장전음
-// ==============================
-
-function playReloadSound() {
-
-    playSound(
-        300,
-        0.08,
-        "square",
-        0.05
-    );
-
-    setTimeout(
-        () => {
-
-            playSound(
-                500,
-                0.08,
-                "square",
-                0.05
-            );
-
-        },
-        100
-    );
-
-}
-
-
-// ==============================
-// 승리음
-// ==============================
-
-function playVictorySound() {
-
-    playSound(
-        523,
-        0.15,
-        "sine",
-        0.08
-    );
-
-    setTimeout(
-        () => {
-
-            playSound(
-                659,
-                0.15,
-                "sine",
-                0.08
-            );
-
-        },
-        150
-    );
-
-    setTimeout(
-        () => {
-
-            playSound(
-                784,
-                0.3,
-                "sine",
-                0.08
-            );
-
-        },
-        300
-    );
-
-}
-
-
-// ==============================
-// 패배음
-// ==============================
-
-function playDefeatSound() {
-
-    playSound(
-        300,
-        0.2,
-        "sawtooth",
-        0.07
-    );
-
-    setTimeout(
-        () => {
-
-            playSound(
-                180,
-                0.35,
-                "sawtooth",
-                0.07
-            );
-
-        },
-        180
-    );
-
-}
-
-
 
 
 
@@ -3118,14 +2983,13 @@ function normalAttack() {
     if (me.ammo <= 0) {
 
         if (!me.reloading) {
-            playReloadSound();
             socket.emit("reload");
         }
 
         return;
 
     }
-    playAttackSound(
+    playCharacterAttackSound(
         me.character
     );
 
@@ -3134,8 +2998,7 @@ function normalAttack() {
     socket.emit(
         "playerAttack",
         {
-            direction:
-                pingDirection
+            direction: pingDirection
         }
     );
 
@@ -3194,15 +3057,12 @@ function useSkill(
     element.dataset.busy =
 
         "1";
-        
-    playSkillSound(
+    
+    
+        playCharacterSkillSound(
         selectedCharacter,
         number
     );
-
-
-
-
     socket.emit(
 
         "playerSkill",
