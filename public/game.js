@@ -14,10 +14,7 @@ const socket = io();
 
 const gameSounds = {
 
-    // ==========================
     // 나이트
-    // ==========================
-
     knightAttack:
         "sounds/Knight_sword_attack.wav",
 
@@ -28,10 +25,7 @@ const gameSounds = {
         "sounds/Knight_sword_energy.mp3",
 
 
-    // ==========================
     // 닌자
-    // ==========================
-
     ninjaAttack:
         "sounds/Ninja_shuriken.wav",
 
@@ -42,10 +36,7 @@ const gameSounds = {
         "sounds/Ninja_shuriken.wav",
 
 
-    // ==========================
     // 마법사
-    // ==========================
-
     wizardAttack:
         "sounds/Wizard_fireball.wav",
 
@@ -56,10 +47,7 @@ const gameSounds = {
         "sounds/wizard_barrier.wav",
 
 
-    // ==========================
     // 로봇
-    // ==========================
-
     robotAttack:
         "sounds/Robot_hit.wav",
 
@@ -67,7 +55,17 @@ const gameSounds = {
         "sounds/Robot_Emp.mp3",
 
     robotSkill2:
-        "sounds/Robot_explosion.wav"
+        "sounds/Robot_explosion.wav",
+
+
+    // 플레이어 피격
+    playerHit:
+        "sounds/Player_hit.wav",
+    playerWin:
+        "sounds/Player_win.wav",
+    playerDefeat:
+        "sounds/Player_defeat.wav"
+
 
 };
 
@@ -105,6 +103,24 @@ function playGameSound(
             // 브라우저가 오디오 재생을
             // 차단한 경우 무시
         });
+
+}
+function playVictorySound() {
+
+    playGameSound(
+        "playerWin",
+        0.7
+    );
+
+}
+
+
+function playDefeatSound() {
+
+    playGameSound(
+        "playerDefeat",
+        0.7
+    );
 
 }
 
@@ -1694,6 +1710,15 @@ socket.on(
 
         const win =
             data.winnerId === myId;
+            if (win) {
+
+                playVictorySound();
+
+            } else {
+
+                playDefeatSound();
+
+            }
 
 
         // 승/패 메시지
@@ -5773,6 +5798,14 @@ socket.on(
 
         if (!target) {
             return;
+        }
+        if (
+            data.targetId === myId
+        ) {
+            playGameSound(
+                "playerHit",
+                0.6
+            );
         }
 
         // 캐릭터 흔들림
