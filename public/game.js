@@ -806,8 +806,11 @@ let cooldownTimers = {
     2: null
 
 };
+let myHpBar = null;
+let enemyHpBar = null;
 
-
+myHpBar = createHpBar(player);
+enemyHpBar = createHpBar(enemy);
 
 
 
@@ -1625,65 +1628,43 @@ socket.on(
 
 
 socket.on(
-
     "gameStart",
-
     () => {
 
-
-
         gameRunning = true;
+
         playerRenderState = {};
         projectileRenderState = {};
 
+        // HP바 생성
+        if (!myHpBar) {
+            myHpBar =
+                createHpBar(player);
+        }
 
-
-
+        if (!enemyHpBar) {
+            enemyHpBar =
+                createHpBar(enemy);
+        }
 
         startScreen.style.display =
-
             "none";
 
-
-
-
-
         gameScreen.style.display =
-
             "flex";
 
-
-
-
-
         message.textContent =
-
             "마우스로 핑을 찍고 F/E/Q로 공격하세요.";
 
-
-
-
-
         updateCharacterUI(
-
             selectedCharacter
-
         );
-
-
-
-
 
         requestAnimationFrame(
-
             gameLoop
-
         );
 
-
-
     }
-
 );
 
 
@@ -3432,6 +3413,19 @@ socket.on(
                 state.targetX = p.x;
                 state.targetY = p.y;
             }
+            if (id === myId) {
+                updateHpBar(
+                    myHpBar,
+                    p.hp,
+                    p.maxHp
+                );
+            } else {
+                updateHpBar(
+                    enemyHpBar,
+                    p.hp,
+                    p.maxHp
+                );
+            }
         }
 
 
@@ -4226,7 +4220,38 @@ function createVFX(
 
     return element;
 }
+function createHpBar(parent) {
+    const bar = document.createElement("div");
 
+    bar.className = "hp-bar";
+
+    bar.style.position = "absolute";
+    bar.style.width = "55px";
+    bar.style.height = "7px";
+    bar.style.left = "50%";
+    bar.style.top = "-12px";
+    bar.style.transform = "translateX(-50%)";
+
+    bar.style.background = "#333";
+    bar.style.border = "1px solid #111";
+    bar.style.borderRadius = "5px";
+    bar.style.overflow = "hidden";
+    bar.style.zIndex = "20";
+
+    const fill = document.createElement("div");
+
+    fill.className = "hp-fill";
+
+    fill.style.width = "100%";
+    fill.style.height = "100%";
+    fill.style.background = "#ff3b3b";
+    fill.style.borderRadius = "4px";
+
+    bar.appendChild(fill);
+    parent.appendChild(bar);
+
+    return bar;
+}
 
 // ==============================
 // 나이트 / 닌자 / 마법사 / 로봇
