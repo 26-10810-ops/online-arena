@@ -66,133 +66,101 @@ const rooms = {};
 
 const characters = {
 
-
-
     knight: {
 
-
+        maxHp: 120,
 
         maxAmmo: 8,
-
         reloadTime: 1200,
 
+        basicDamage: 15,
+        basicRange: 100,
 
-
-        skill1Damage: 30,
-
+        skill1Damage: 20,
         skill1Range: 120,
-
         skill1Cooldown: 3000,
 
-
-
         skill2Damage: 25,
-
         skill2Range: 260,
-
         skill2Cooldown: 4500
 
-
-
     },
-
-
-
 
 
     ninja: {
 
-
+        maxHp: 90,
 
         maxAmmo: 6,
-
         reloadTime: 1500,
 
-
+        basicDamage: 10,
+        basicRange: 300,
 
         skill1Damage: 8,
-
         skill1Range: 100,
-
         skill1Cooldown: 4000,
 
-
-
-        skill2Damage: 10,
-
+        skill2Damage: 8,
         skill2Range: 500,
-
         skill2Cooldown: 5000
 
-
-
     },
-
-
-
 
 
     wizard: {
 
-
+        maxHp: 80,
 
         maxAmmo: 5,
-
         reloadTime: 1800,
 
+        basicDamage: 12,
+        basicRange: 350,
 
-
-        skill1Damage: 40,
-
+        skill1Damage: 30,
         skill1Range: 500,
-
         skill1Cooldown: 4000,
 
-
-
         skill2Damage: 0,
-
         skill2Range: 0,
-
         skill2Cooldown: 6000
-
-
 
     },
 
 
-
-
-
     robot: {
 
-
+        maxHp: 140,
 
         maxAmmo: 7,
-
         reloadTime: 1400,
 
+        basicDamage: 18,
+        basicRange: 100,
 
-
-        skill1Damage: 20,
-
+        skill1Damage: 25,
         skill1Range: 160,
-
         skill1Cooldown: 4500,
 
-
-
-        skill2Damage: 24,
-
+        skill2Damage: 30,
         skill2Range: 500,
-
         skill2Cooldown: 5000
-
-
 
     }
 
+};
 
+// ==============================
+// 캐릭터 이동속도
+// ==============================
+
+const CHARACTER_SPEED = {
+
+    knight: 90,
+    ninja: 130,
+    wizard: 85,
+    robot: 100
 
 };
 // ==========================
@@ -346,11 +314,8 @@ function createPlayer(
 
 
 
-        hp: 100,
-
-
-
-        maxHp: 100,
+        hp: 120,
+        maxHp: 120,
 
 
 
@@ -1433,21 +1398,11 @@ function addProjectile(
 
 
         shuriken: {
-
-
-
             speed: 11,
-
-            damage: 8,
-
+            damage: 10,
             radius: 12,
-
             life: 1000,
-
-            maxDistance: 500
-
-
-
+            maxDistance: 300
         },
 
 
@@ -1460,7 +1415,7 @@ function addProjectile(
 
             speed: 10,
 
-            damage: 10,
+            damage: 8,
 
             radius: 13,
 
@@ -1477,21 +1432,11 @@ function addProjectile(
 
 
         fireball: {
-
-
-
             speed: 8,
-
             damage: 12,
-
             radius: 14,
-
             life: 1500,
-
-            maxDistance: 500
-
-
-
+            maxDistance: 350
         },
 
 
@@ -1506,7 +1451,7 @@ function addProjectile(
 
             damage: 40,
 
-            radius: 24,
+            radius: 30,
 
             life: 1700,
 
@@ -1868,95 +1813,35 @@ function useSkill1(
 
 
     else if (
+    player.character ===
+    "knight"
+) {
 
-        player.character ===
+    melee(
+        room,
+        player,
+        characters.knight.basicDamage,
+        characters.knight.basicRange
+    );
 
-        "knight"
-
-    ) {
-
-
-
-        melee(
-
-            room,
-
-            player,
-
-            data.skill1Damage,
-
-            data.skill1Range
-
-        );
-
-
-
-    }
+}
 // 로봇*
 
 
 
     else if (
+    player.character ===
+    "robot"
+) {
 
-        player.character ===
+    melee(
+        room,
+        player,
+        characters.robot.basicDamage,
+        characters.robot.basicRange
+    );
 
-        "robot"
-
-    ) {
-
-
-
-        const target =
-
-            opponent(
-
-                room,
-
-                player.id
-
-            );
-
-
-
-
-
-        if (
-
-            target &&
-
-            distance(
-
-                player,
-
-                target
-
-            ) <=
-
-                data.skill1Range
-
-        ) {
-
-
-
-            damage(
-
-                room,
-
-                player,
-
-                target,
-
-                data.skill1Damage
-
-            );
-
-
-
-        }
-
-
-
-    }
+}
 
 
 
@@ -2955,17 +2840,65 @@ function endGame(
 
 
 function movementTick() {
-    const STEP = 100 / 60;
+
     for (const room of Object.values(rooms)) {
-        if (!room.started) continue;
+
+        if (!room.started) {
+            continue;
+        }
+
         for (const player of Object.values(room.players)) {
-            if (player.dash) continue;
-            const input = player.input || { x: 0, y: 0 };
-            if (input.x === 0 && input.y === 0) continue;
-            player.x += input.x * STEP;
-            player.y += input.y * STEP;
-            player.x = Math.max(0, Math.min(WIDTH - PLAYER_SIZE, player.x));
-            player.y = Math.max(0, Math.min(HEIGHT - PLAYER_SIZE, player.y));
+
+            if (player.dash) {
+                continue;
+            }
+
+            const input =
+                player.input || {
+                    x: 0,
+                    y: 0
+                };
+
+            if (
+                input.x === 0 &&
+                input.y === 0
+            ) {
+                continue;
+            }
+
+            const speed =
+                CHARACTER_SPEED[
+                    player.character
+                ] || 100;
+
+            const step =
+                speed / 60;
+
+            player.x +=
+                input.x * step;
+
+            player.y +=
+                input.y * step;
+
+            player.x =
+                Math.max(
+                    0,
+                    Math.min(
+                        WIDTH -
+                            PLAYER_SIZE,
+                        player.x
+                    )
+                );
+
+            player.y =
+                Math.max(
+                    0,
+                    Math.min(
+                        HEIGHT -
+                            PLAYER_SIZE,
+                        player.y
+                    )
+                );
         }
     }
 }
@@ -4096,25 +4029,21 @@ io.on(
 
 
                 player.character =
-
                     character;
 
-
-
-
-
                 player.ready =
-
                     false;
 
+                player.maxHp =
+                    characters[
+                        character
+                    ].maxHp;
 
-
-
+                player.hp =
+                    player.maxHp;
 
                 updateAmmo(
-
                     player
-
                 );
 
 
@@ -4266,9 +4195,13 @@ io.on(
 
 
 
-                        p.hp =
+                        p.maxHp =
+                            characters[
+                                p.character
+                            ].maxHp;
 
-                            100;
+                        p.hp =
+                            p.maxHp;
 
 
 
