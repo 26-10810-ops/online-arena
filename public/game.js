@@ -2365,24 +2365,39 @@ function showAttackRange() {
         return;
     }
 
-    let range = 120;
+    let range = 100;
 
-    // 캐릭터별 기본 공격 사정거리
+    // ==============================
+    // 캐릭터별 일반 공격 사거리
+    // ==============================
+
     if (me.character === "knight") {
+
         range = 100;
+
     }
 
     else if (me.character === "ninja") {
+
         range = 300;
+
     }
 
     else if (me.character === "wizard") {
+
         range = 350;
+
     }
 
     else if (me.character === "robot") {
+
         range = 100;
+
     }
+
+    // ==============================
+    // 원형 크기
+    // ==============================
 
     const size =
         range * 2;
@@ -2393,11 +2408,27 @@ function showAttackRange() {
     attackRangeIndicator.style.height =
         `${size}px`;
 
+    // ==============================
+    // 플레이어 중심에 원 배치
+    // ==============================
+
+    const centerX =
+        player.offsetLeft +
+        player.offsetWidth / 2;
+
+    const centerY =
+        player.offsetTop +
+        player.offsetHeight / 2;
+
     attackRangeIndicator.style.left =
-        `${player.offsetLeft + player.offsetWidth / 2 - range}px`;
+        `${centerX - range}px`;
 
     attackRangeIndicator.style.top =
-        `${player.offsetTop + player.offsetHeight / 2 - range}px`;
+        `${centerY - range}px`;
+
+    // ==============================
+    // 표시
+    // ==============================
 
     attackRangeIndicator.style.display =
         "block";
@@ -2409,7 +2440,9 @@ function showAttackRange() {
     attackRangeTimer =
         setTimeout(
             () => {
+
                 hideAttackRange();
+
             },
             300
         );
