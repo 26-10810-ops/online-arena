@@ -813,6 +813,35 @@ const resultCharacter =
 const resultButton =
     document.getElementById("resultButton");
 
+resultButton.addEventListener(
+    "click",
+    () => {
+
+        // 결과 화면 숨기기
+        resultOverlay.style.display = "none";
+
+        // 게임 화면 숨기기
+        gameScreen.style.display = "none";
+
+        // 시작 화면 표시
+        startScreen.style.display = "flex";
+
+        // 방 정보 / 캐릭터 선택 화면 표시
+        roomInfo.style.display = "block";
+        characterSelect.style.display = "block";
+
+        // 게임 상태 초기화
+        gameRunning = false;
+
+        // 결과 화면 상태 초기화
+        resultBox.classList.remove("defeat");
+
+        // 기존 메시지 초기화
+        message.textContent = "";
+
+    }
+);
+
 
 
 
