@@ -3209,6 +3209,9 @@ function normalAttack() {
         return;
 
     }
+
+    showAttackRange();
+    
     playCharacterAttackSound(
         me.character
     );
