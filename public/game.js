@@ -814,6 +814,9 @@ let aimPoint = null;
 myHpBar = createHpBar(player);
 enemyHpBar = createHpBar(enemy);
 
+let attackRangeIndicator = null;
+let attackRangeTimer = null;
+
 
 
 // ==============================
@@ -2310,6 +2313,147 @@ gameArea.addEventListener(
     }
 
 );
+
+function createAttackRangeIndicator() {
+
+    if (attackRangeIndicator) {
+        return;
+    }
+
+    attackRangeIndicator =
+        document.createElement("div");
+
+    attackRangeIndicator.style.position =
+        "absolute";
+
+    attackRangeIndicator.style.border =
+        "2px solid rgba(255, 255, 255, 0.5)";
+
+    attackRangeIndicator.style.borderRadius =
+        "50%";
+
+    attackRangeIndicator.style.background =
+        "rgba(255, 255, 255, 0.05)";
+
+    attackRangeIndicator.style.pointerEvents =
+        "none";
+
+    attackRangeIndicator.style.zIndex =
+        "5";
+
+    attackRangeIndicator.style.display =
+        "none";
+
+    gameArea.appendChild(
+        attackRangeIndicator
+    );
+}
+
+function showAttackRange() {
+
+    if (!player) {
+        return;
+    }
+
+    if (!attackRangeIndicator) {
+        createAttackRangeIndicator();
+    }
+
+    const me = players[myId];
+
+    if (!me) {
+        return;
+    }
+
+    let range = 120;
+
+    // 캐릭터별 기본 공격 사정거리
+    if (me.character === "knight") {
+        range = 100;
+    }
+
+    else if (me.character === "ninja") {
+        range = 300;
+    }
+
+    else if (me.character === "wizard") {
+        range = 350;
+    }
+
+    else if (me.character === "robot") {
+        range = 100;
+    }
+
+    const size =
+        range * 2;
+
+    attackRangeIndicator.style.width =
+        `${size}px`;
+
+    attackRangeIndicator.style.height =
+        `${size}px`;
+
+    attackRangeIndicator.style.left =
+        `${player.offsetLeft + player.offsetWidth / 2 - range}px`;
+
+    attackRangeIndicator.style.top =
+        `${player.offsetTop + player.offsetHeight / 2 - range}px`;
+
+    attackRangeIndicator.style.display =
+        "block";
+
+    clearTimeout(
+        attackRangeTimer
+    );
+
+    attackRangeTimer =
+        setTimeout(
+            () => {
+                hideAttackRange();
+            },
+            300
+        );
+}
+
+function hideAttackRange() {
+
+    if (!attackRangeIndicator) {
+        return;
+    }
+
+    attackRangeIndicator.style.display =
+        "none";
+}
+
+function normalAttack() {
+
+    const me = players[myId];
+
+    if (!me) return;
+
+    if (me.ammo <= 0) {
+
+        if (!me.reloading) {
+            socket.emit("reload");
+        }
+
+        return;
+    }
+
+    showAttackRange();
+
+    playCharacterAttackSound(
+        me.character
+    );
+
+    socket.emit(
+        "playerAttack",
+        {
+            direction:
+                pingDirection
+        }
+    );
+}
 
 
 
