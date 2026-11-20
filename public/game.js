@@ -602,7 +602,6 @@ const ping =
     );
 
 
-
 const attackEffect =
 
     document.getElementById(
@@ -808,6 +807,9 @@ let cooldownTimers = {
 };
 let myHpBar = null;
 let enemyHpBar = null;
+
+let aimpoint = null;
+let aimPoint = null;
 
 myHpBar = createHpBar(player);
 enemyHpBar = createHpBar(enemy);
@@ -1663,6 +1665,7 @@ socket.on(
         requestAnimationFrame(
             gameLoop
         );
+        createAimUI();
 
     }
 );
@@ -2602,6 +2605,40 @@ function showPing(
 
 
 
+}
+function createAimUI() {
+
+    if (aimPoint) {
+        return;
+    }
+
+    aimPoint =
+        document.createElement("div");
+
+    aimPoint.className =
+        "aim-line";
+
+    aimPoint.style.position =
+        "absolute";
+
+    aimPoint.style.height =
+        "2px";
+
+    aimPoint.style.background =
+        "rgba(255,255,255,0.7)";
+
+    aimPoint.style.transformOrigin =
+        "left center";
+
+    aimPoint.style.pointerEvents =
+        "none";
+
+    aimPoint.style.zIndex =
+        "6";
+
+    gameArea.appendChild(
+        aimPoint
+    );
 }
 
 
