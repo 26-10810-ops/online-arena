@@ -792,7 +792,26 @@ const ammoText =
         "ammoText"
 
     );
+const resultOverlay =
+    document.getElementById("resultOverlay");
 
+const resultBox =
+    document.getElementById("resultBox");
+
+const resultIcon =
+    document.getElementById("resultIcon");
+
+const resultTitle =
+    document.getElementById("resultTitle");
+
+const resultSubtitle =
+    document.getElementById("resultSubtitle");
+
+const resultCharacter =
+    document.getElementById("resultCharacter");
+
+const resultButton =
+    document.getElementById("resultButton");
 
 
 
@@ -1774,74 +1793,41 @@ socket.on(
 
         gameRunning = false;
 
-        clearCooldowns();
-
-        const win =
+        const won =
             data.winnerId === myId;
-            if (win) {
 
-                playVictorySound();
+        resultBox.classList.remove("defeat");
 
-            } else {
+        if (won) {
 
-                playDefeatSound();
+            resultIcon.textContent = "🏆";
 
-            }
+            resultTitle.textContent =
+                "VICTORY";
 
+            resultSubtitle.textContent =
+                "전투에서 승리했습니다!";
 
-        // 승/패 메시지
-        message.textContent =
-            win
-                ? "🏆 승리!"
-                : "💥 패배!";
+        } else {
 
+            resultIcon.textContent = "💀";
 
-        // 잠시 승/패 메시지를 보여준 후
-        // 같은 방의 캐릭터 선택 화면으로 이동
-        setTimeout(
-            () => {
+            resultTitle.textContent =
+                "DEFEAT";
 
-                gameScreen.style.display =
-                    "none";
+            resultSubtitle.textContent =
+                "전투에서 패배했습니다.";
 
-                startScreen.style.display =
-                    "flex";
+            resultBox.classList.add("defeat");
+        }
 
+        const myCharacter =
+            characters[selectedCharacter];
 
-                // 현재 방 유지
-                roomPanel.style.display =
-                    "none";
+        resultCharacter.textContent =
+            `${myCharacter.icon} ${myCharacter.name}`;
 
-                roomInfo.style.display =
-                    "block";
-
-                characterSelect.style.display =
-                    "block";
-
-
-                // 방 화면에 결과 표시
-                roomStatus.textContent =
-                    win
-                        ? "🏆 승리했습니다! 다시 캐릭터를 선택하세요."
-                        : "💥 패배했습니다! 다시 캐릭터를 선택하세요.";
-
-
-                readyButton.textContent =
-                    "준비";
-
-
-                readyStatus.textContent =
-                    "다시 캐릭터를 선택하고 준비하세요.";
-
-
-                // 게임 화면의 메시지도 초기화
-                message.textContent =
-                    "마우스로 핑을 찍고 F/E/Q로 공격하세요.";
-
-            },
-            1500
-        );
-
+        resultOverlay.style.display = "flex";
     }
 );
 
