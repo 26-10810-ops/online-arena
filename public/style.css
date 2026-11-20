@@ -494,6 +494,301 @@ button:active {
 
     z-index: 1;
 }
+/* =========================================================
+   캐릭터 상세 설명
+========================================================= */
+
+.character-detail {
+    width: 100%;
+    max-width: 760px;
+
+    margin: 20px auto 5px;
+
+    padding: 22px 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 40, 75, 0.92),
+            rgba(10, 16, 32, 0.95)
+        );
+
+    border:
+        1px solid rgba(100, 180, 255, 0.3);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.35),
+        inset 0 0 25px rgba(70, 140, 255, 0.04);
+
+    backdrop-filter: blur(10px);
+
+    animation:
+        characterDetailOpen 0.25s ease;
+}
+
+
+@keyframes characterDetailOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* 아이콘 + 이름 */
+
+#detailIcon {
+    font-size: 48px;
+
+    display: inline-block;
+
+    margin-right: 10px;
+
+    vertical-align: middle;
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(120, 190, 255, 0.4)
+        );
+}
+
+
+#detailName {
+    display: inline-block;
+
+    margin: 0;
+
+    vertical-align: middle;
+
+    font-size: 22px;
+
+    color: #eaf4ff;
+
+    text-shadow:
+        0 0 12px rgba(100, 180, 255, 0.35);
+}
+
+
+/* 설명 */
+
+#detailDescription {
+    margin:
+        10px 0 18px;
+
+    color: #9faac5;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* 스탯 */
+
+.detail-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+}
+
+
+.detail-stats > div {
+    padding: 10px 8px;
+
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    border:
+        1px solid rgba(130, 170, 220, 0.12);
+
+    border-radius: 9px;
+
+    text-align: center;
+}
+
+
+.detail-stats span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #858fa9;
+
+    font-size: 10px;
+
+    letter-spacing: 0.5px;
+}
+
+
+.detail-stats strong {
+    display: block;
+
+    color: #dcecff;
+
+    font-size: 17px;
+
+    text-shadow:
+        0 0 8px rgba(100, 180, 255, 0.25);
+}
+
+
+/* 스킬 */
+
+.detail-skills {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 17px;
+}
+
+
+.detail-skills p {
+    margin: 0;
+
+    padding: 10px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    background:
+        rgba(10, 18, 35, 0.7);
+
+    border:
+        1px solid rgba(120, 160, 220, 0.12);
+
+    border-radius: 9px;
+}
+
+
+.detail-skills strong {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #263d69,
+            #151f3a
+        );
+
+    border:
+        1px solid rgba(120, 180, 255, 0.3);
+
+    color: #bfe3ff;
+
+    font-size: 12px;
+}
+
+
+.detail-skills span {
+    color: #d7e3f5;
+
+    font-size: 12px;
+}
+
+
+/* 캐릭터 선택 버튼 */
+
+#selectCharacterButton {
+    width: 100%;
+
+    padding: 12px 18px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3978ff,
+            #6357ff
+        );
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 20px rgba(70, 110, 255, 0.25);
+}
+
+
+#selectCharacterButton:hover {
+    box-shadow:
+        0 7px 28px rgba(80, 130, 255, 0.5);
+}
+
+
+/* =========================================================
+   상세 설명 반응형
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .character-detail {
+        padding: 18px;
+
+        margin-top: 15px;
+    }
+
+
+    .detail-stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .detail-skills {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #detailIcon {
+        font-size: 40px;
+    }
+
+
+    #detailName {
+        font-size: 19px;
+    }
+
+}
 
 
 .selected-character {

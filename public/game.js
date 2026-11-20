@@ -287,31 +287,32 @@ function playCharacterSkillSound(
 
 const characters = {
 
-
-
     knight: {
 
         name: "나이트",
 
         icon: "⚔️",
 
+        description:
+            "근접전에서 강력한 전투형 캐릭터",
 
+        hp: 120,
+
+        damage: 15,
+
+        speed: 90,
+
+        range: 100,
 
         basicAttack: "근접 검격",
-
-
 
         maxAmmo: 8,
 
         reloadTime: 1200,
 
-
-
         skill1Name: "방패 강타",
 
         skill1Cooldown: 3000,
-
-
 
         skill2Name: "검의 충격파",
 
@@ -320,32 +321,32 @@ const characters = {
     },
 
 
-
-
-
     ninja: {
 
         name: "닌자",
 
         icon: "🥷",
 
+        description:
+            "빠른 이동과 지속 피해에 특화된 기동형 캐릭터",
 
+        hp: 90,
+
+        damage: 10,
+
+        speed: 130,
+
+        range: 300,
 
         basicAttack: "수리검",
-
-
 
         maxAmmo: 6,
 
         reloadTime: 1500,
 
-
-
         skill1Name: "연속 대시 베기",
 
         skill1Cooldown: 4000,
-
-
 
         skill2Name: "독 수리검",
 
@@ -354,32 +355,32 @@ const characters = {
     },
 
 
-
-
-
     wizard: {
 
         name: "마법사",
 
         icon: "🧙",
 
+        description:
+            "긴 사거리와 강력한 마법 공격을 사용하는 원거리 캐릭터",
 
+        hp: 80,
+
+        damage: 12,
+
+        speed: 85,
+
+        range: 350,
 
         basicAttack: "파이어볼",
-
-
 
         maxAmmo: 5,
 
         reloadTime: 1800,
 
-
-
         skill1Name: "대형 파이어볼",
 
         skill1Cooldown: 4000,
-
-
 
         skill2Name: "마법 방어막",
 
@@ -388,40 +389,38 @@ const characters = {
     },
 
 
-
-
-
     robot: {
 
         name: "로봇",
 
         icon: "🤖",
 
+        description:
+            "높은 체력과 강력한 순간 화력을 가진 중전투형 캐릭터",
 
+        hp: 140,
+
+        damage: 18,
+
+        speed: 100,
+
+        range: 100,
 
         basicAttack: "근접 공격",
-
-
 
         maxAmmo: 7,
 
         reloadTime: 1400,
 
-
-
         skill1Name: "EMP 폭발",
 
         skill1Cooldown: 4500,
-
-
 
         skill2Name: "미사일 발사",
 
         skill2Cooldown: 5000
 
     }
-
-
 
 };
 
@@ -509,6 +508,60 @@ const characterCards =
 
         ".character-card"
 
+    );
+const characterDetail =
+    document.getElementById(
+        "characterDetail"
+    );
+
+const detailIcon =
+    document.getElementById(
+        "detailIcon"
+    );
+
+const detailName =
+    document.getElementById(
+        "detailName"
+    );
+
+const detailDescription =
+    document.getElementById(
+        "detailDescription"
+    );
+
+const detailHp =
+    document.getElementById(
+        "detailHp"
+    );
+
+const detailDamage =
+    document.getElementById(
+        "detailDamage"
+    );
+
+const detailSpeed =
+    document.getElementById(
+        "detailSpeed"
+    );
+
+const detailRange =
+    document.getElementById(
+        "detailRange"
+    );
+
+const detailSkill1 =
+    document.getElementById(
+        "detailSkill1"
+    );
+
+const detailSkill2 =
+    document.getElementById(
+        "detailSkill2"
+    );
+
+const selectCharacterButton =
+    document.getElementById(
+        "selectCharacterButton"
     );
 
 
@@ -1252,107 +1305,135 @@ socket.on(
 
 
 // ==============================
-
-// 캐릭터 선택
-
+// 캐릭터 상세 정보
 // ==============================
 
+let detailCharacter = "knight";
 
+
+function showCharacterDetail(
+    character
+) {
+
+    const data =
+        characters[character];
+
+    if (!data) {
+        return;
+    }
+
+    detailCharacter =
+        character;
+
+    detailIcon.textContent =
+        data.icon;
+
+    detailName.textContent =
+        data.name;
+
+    detailDescription.textContent =
+        data.description;
+
+    detailHp.textContent =
+        data.hp;
+
+    detailDamage.textContent =
+        data.damage;
+
+    detailSpeed.textContent =
+        data.speed;
+
+    detailRange.textContent =
+        data.range;
+
+    detailSkill1.textContent =
+        data.skill1Name;
+
+    detailSkill2.textContent =
+        data.skill2Name;
+
+    characterDetail.style.display =
+        "block";
+}
+
+
+// ==============================
+// 캐릭터 카드 클릭
+// ==============================
 
 characterCards.forEach(
-
     card => {
 
-
-
         card.addEventListener(
-
             "click",
-
             () => {
 
-
-
                 if (gameRunning) {
-
                     return;
-
                 }
 
-
-
-
-
-                characterCards.forEach(
-
-                    c => {
-
-
-
-                        c.classList.remove(
-
-                            "selected"
-
-                        );
-
-
-
-                    }
-
-                );
-
-
-
-
-
-                card.classList.add(
-
-                    "selected"
-
-                );
-
-
-
-
-
-                selectedCharacter =
-
+                const character =
                     card.dataset.character;
 
-
-
-
-
-                selectedCharacterText.textContent =
-
-                    characters[
-
-                        selectedCharacter
-
-                    ].name;
-
-
-
-
-
-                socket.emit(
-
-                    "selectCharacter",
-
-                    selectedCharacter
-
+                showCharacterDetail(
+                    character
                 );
 
+            }
+        );
 
+    }
+);
+
+
+// ==============================
+// 캐릭터 선택 버튼
+// ==============================
+
+selectCharacterButton.addEventListener(
+    "click",
+    () => {
+
+        if (gameRunning) {
+            return;
+        }
+
+        selectedCharacter =
+            detailCharacter;
+
+
+        // 카드 선택 표시
+        characterCards.forEach(
+            card => {
+
+                card.classList.toggle(
+                    "selected",
+                    card.dataset.character ===
+                        selectedCharacter
+                );
 
             }
-
         );
 
 
+        // 선택한 캐릭터 표시
+        selectedCharacterText.textContent =
+            characters[
+                selectedCharacter
+            ].name;
+
+
+        // 서버에 실제 캐릭터 선택 전달
+        socket.emit(
+            "selectCharacter",
+            selectedCharacter
+        );
+
+
+        readyStatus.textContent =
+            `${characters[selectedCharacter].name}을(를) 선택했습니다.`;
 
     }
-
 );
 
 
@@ -3211,7 +3292,7 @@ function normalAttack() {
     }
 
     showAttackRange();
-    
+
     playCharacterAttackSound(
         me.character
     );
