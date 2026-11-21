@@ -9,6 +9,103 @@
 const socket = io();
 
 // ==============================
+// UI SOUND SYSTEM
+// ==============================
+
+let uiAudioContext = null;
+
+function getUIAudioContext() {
+    if (!uiAudioContext) {
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if (!AudioContext) {
+            return null;
+        }
+
+        uiAudioContext = new AudioContext();
+    }
+
+    if (uiAudioContext.state === "suspended") {
+        uiAudioContext.resume();
+    }
+
+    return uiAudioContext;
+}
+
+function playUISound(type = "click") {
+    const context = getUIAudioContext();
+
+    if (!context) {
+        return;
+    }
+
+    const settings = {
+        click: {
+            frequency: 520,
+            endFrequency: 620,
+            duration: 0.07,
+            volume: 0.045
+        },
+        confirm: {
+            frequency: 620,
+            endFrequency: 820,
+            duration: 0.11,
+            volume: 0.055
+        },
+        cancel: {
+            frequency: 430,
+            endFrequency: 300,
+            duration: 0.10,
+            volume: 0.05
+        },
+        open: {
+            frequency: 560,
+            endFrequency: 760,
+            duration: 0.13,
+            volume: 0.045
+        },
+        error: {
+            frequency: 260,
+            endFrequency: 190,
+            duration: 0.14,
+            volume: 0.05
+        }
+    };
+
+    const sound = settings[type] || settings.click;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(
+        sound.frequency,
+        context.currentTime
+    );
+    oscillator.frequency.exponentialRampToValueAtTime(
+        sound.endFrequency,
+        context.currentTime + sound.duration
+    );
+
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        sound.volume,
+        context.currentTime + 0.01
+    );
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        context.currentTime + sound.duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start();
+    oscillator.stop(context.currentTime + sound.duration + 0.02);
+}
+
+// ==============================
 // GAME SOUND SYSTEM
 // ==============================
 
@@ -7015,3 +7112,38 @@ startScreen.style.display =
 gameScreen.style.display =
 
     "none";
+
+// ==============================
+// UI 효과음 연결
+// ==============================
+
+function addUISound(button, type = "click") {
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener("click", () => {
+        playUISound(type);
+    });
+}
+
+addUISound(loginButton, "confirm");
+addUISound(registerButton, "open");
+addUISound(logoutButton, "cancel");
+addUISound(createRoomButton, "confirm");
+addUISound(joinRoomButton, "confirm");
+addUISound(deleteRoomButton, "cancel");
+addUISound(selectCharacterButton, "confirm");
+addUISound(readyButton, "confirm");
+addUISound(resultButton, "open");
+addUISound(menuButton, "cancel");
+addUISound(profileButton, "open");
+addUISound(profileCloseButton, "cancel");
+
+characterCards.forEach(card => {
+    card.addEventListener("click", () => {
+        if (!gameRunning) {
+            playUISound("click");
+        }
+    });
+});
