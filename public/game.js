@@ -2237,7 +2237,7 @@ socket.on(
 
         if (won) {
             
-
+            playVictorySound();
             resultIcon.textContent = "🏆";
 
             resultTitle.textContent =
