@@ -30,6 +30,49 @@
     <h1>⚔️ ONLINE ARENA</h1>
 
 
+    <!-- ==============================
+         로그인 / 회원가입
+    ============================== -->
+
+    <div id="authPanel">
+
+        <div id="loginPanel">
+
+            <h2>로그인</h2>
+
+            <input
+                id="usernameInput"
+                type="text"
+                maxlength="16"
+                placeholder="아이디"
+                autocomplete="username"
+            >
+
+            <input
+                id="passwordInput"
+                type="password"
+                maxlength="64"
+                placeholder="비밀번호"
+                autocomplete="current-password"
+            >
+
+            <div class="auth-buttons">
+                <button id="loginButton">로그인</button>
+                <button id="registerButton">회원가입</button>
+            </div>
+
+            <p id="authMessage"></p>
+
+        </div>
+
+        <div id="accountPanel" style="display:none;">
+            <span id="accountText"></span>
+            <button id="logoutButton">로그아웃</button>
+        </div>
+
+    </div>
+
+
     <!-- 방 만들기 / 참가하기 -->
 
     <div id="roomPanel">

@@ -112,6 +112,88 @@ button:active {
 
 
 /* =========================================================
+   로그인 / 회원가입
+========================================================= */
+
+#authPanel {
+    width: min(360px, 90%);
+    margin-bottom: 20px;
+}
+
+#loginPanel,
+#accountPanel {
+    padding: 18px;
+    background: rgba(10, 15, 30, 0.72);
+    border: 1px solid rgba(120, 170, 255, 0.2);
+    border-radius: 14px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+#loginPanel h2 {
+    margin: 0 0 14px;
+    font-size: 20px;
+}
+
+#usernameInput,
+#passwordInput {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 13px;
+    margin-bottom: 9px;
+    border: 1px solid rgba(120, 160, 255, 0.3);
+    border-radius: 9px;
+    background: rgba(15, 22, 45, 0.9);
+    color: white;
+    outline: none;
+}
+
+#usernameInput:focus,
+#passwordInput:focus {
+    border-color: rgba(100, 180, 255, 0.65);
+    box-shadow: 0 0 12px rgba(80, 150, 255, 0.12);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.auth-buttons button,
+#logoutButton {
+    border: 1px solid rgba(130, 180, 255, 0.28);
+    border-radius: 9px;
+    background: rgba(30, 45, 80, 0.9);
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#authMessage {
+    min-height: 18px;
+    margin: 10px 0 0;
+    color: #aebbd6;
+    font-size: 12px;
+}
+
+#accountPanel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+#accountText {
+    color: #dce8ff;
+    font-size: 13px;
+}
+
+#logoutButton {
+    padding: 7px 12px;
+    font-size: 12px;
+}
+
+/* =========================================================
    방 패널
 ========================================================= */
 

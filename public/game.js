@@ -453,6 +453,56 @@ const roomPanel =
     document.getElementById("roomPanel");
 
 
+const authPanel =
+
+    document.getElementById("authPanel");
+
+
+const loginPanel =
+
+    document.getElementById("loginPanel");
+
+
+const accountPanel =
+
+    document.getElementById("accountPanel");
+
+
+const usernameInput =
+
+    document.getElementById("usernameInput");
+
+
+const passwordInput =
+
+    document.getElementById("passwordInput");
+
+
+const loginButton =
+
+    document.getElementById("loginButton");
+
+
+const registerButton =
+
+    document.getElementById("registerButton");
+
+
+const logoutButton =
+
+    document.getElementById("logoutButton");
+
+
+const authMessage =
+
+    document.getElementById("authMessage");
+
+
+const accountText =
+
+    document.getElementById("accountText");
+
+
 
 const roomInfo =
 
@@ -823,10 +873,9 @@ resultButton.addEventListener(
         // 게임 화면 숨기기
         gameScreen.style.display = "none";
 
-        // 시작 화면 표시
+        // 같은 방의 캐릭터 선택 화면으로 복귀
         startScreen.style.display = "flex";
-
-        // 방 정보 / 캐릭터 선택 화면 표시
+        roomPanel.style.display = "none";
         roomInfo.style.display = "block";
         characterSelect.style.display = "block";
 
@@ -921,6 +970,161 @@ let attackRangeTimer = null;
 
 
 // ==============================
+// 로그인 / 회원가입
+// ==============================
+
+let currentUser = null;
+
+function getAuthToken() {
+    return localStorage.getItem("onlineArenaToken");
+}
+
+function setAuthMessage(text) {
+    authMessage.textContent = text;
+}
+
+function showLoggedOutUI() {
+    loginPanel.style.display = "block";
+    accountPanel.style.display = "none";
+    roomPanel.style.display = "none";
+    roomInfo.style.display = "none";
+    characterSelect.style.display = "none";
+    gameScreen.style.display = "none";
+}
+
+function showLoggedInUI(user) {
+    currentUser = user;
+    loginPanel.style.display = "none";
+    accountPanel.style.display = "flex";
+    accountText.textContent = `👤 ${user.username}`;
+    roomPanel.style.display = "flex";
+    roomInfo.style.display = "none";
+    characterSelect.style.display = "none";
+    gameScreen.style.display = "none";
+    authMessage.textContent = "";
+}
+
+async function authRequest(url, body) {
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "요청에 실패했습니다.");
+    }
+
+    return data;
+}
+
+async function login() {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!username || !password) {
+        setAuthMessage("아이디와 비밀번호를 입력하세요.");
+        return;
+    }
+
+    try {
+        setAuthMessage("로그인 중...");
+
+        const data = await authRequest("/api/login", {
+            username,
+            password
+        });
+
+        localStorage.setItem("onlineArenaToken", data.token);
+        showLoggedInUI(data.user);
+
+        socket.emit("authenticate", data.token);
+    } catch (error) {
+        setAuthMessage(error.message);
+    }
+}
+
+async function register() {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!username || !password) {
+        setAuthMessage("아이디와 비밀번호를 입력하세요.");
+        return;
+    }
+
+    try {
+        setAuthMessage("회원가입 중...");
+
+        await authRequest("/api/register", {
+            username,
+            password
+        });
+
+        setAuthMessage("회원가입 완료! 이제 로그인하세요.");
+        passwordInput.value = "";
+    } catch (error) {
+        setAuthMessage(error.message);
+    }
+}
+
+async function checkLogin() {
+    const token = getAuthToken();
+
+    if (!token) {
+        showLoggedOutUI();
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/me", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("로그인 세션이 만료되었습니다.");
+        }
+
+        const data = await response.json();
+        showLoggedInUI(data.user);
+        socket.emit("authenticate", token);
+    } catch (error) {
+        localStorage.removeItem("onlineArenaToken");
+        currentUser = null;
+        showLoggedOutUI();
+        setAuthMessage(error.message);
+    }
+}
+
+loginButton.addEventListener("click", login);
+registerButton.addEventListener("click", register);
+
+passwordInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        login();
+    }
+});
+
+logoutButton.addEventListener("click", () => {
+    localStorage.removeItem("onlineArenaToken");
+    currentUser = null;
+    socket.emit("logout");
+    showLoggedOutUI();
+    usernameInput.value = "";
+    passwordInput.value = "";
+    setAuthMessage("로그아웃되었습니다.");
+});
+
+checkLogin();
+
+
+// ==============================
 
 // Socket 연결
 
@@ -964,7 +1168,10 @@ createRoomButton.addEventListener(
 
     () => {
 
-
+        if (!currentUser) {
+            setAuthMessage("먼저 로그인하세요.");
+            return;
+        }
 
         socket.emit(
 
@@ -996,7 +1203,10 @@ joinRoomButton.addEventListener(
 
     () => {
 
-
+        if (!currentUser) {
+            setAuthMessage("먼저 로그인하세요.");
+            return;
+        }
 
         const code =
 
