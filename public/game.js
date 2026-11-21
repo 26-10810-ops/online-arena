@@ -2236,7 +2236,7 @@ socket.on(
         resultBox.classList.remove("defeat");
 
         if (won) {
-            playervictorySound();
+            
 
             resultIcon.textContent = "🏆";
 
