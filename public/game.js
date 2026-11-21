@@ -2236,6 +2236,7 @@ socket.on(
         resultBox.classList.remove("defeat");
 
         if (won) {
+            playervictorySound();
 
             resultIcon.textContent = "🏆";
 
@@ -2246,6 +2247,7 @@ socket.on(
                 "전투에서 승리했습니다!";
 
         } else {
+            playDefeatSound();
 
             resultIcon.textContent = "💀";
 
