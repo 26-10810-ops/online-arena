@@ -66,8 +66,51 @@
         </div>
 
         <div id="accountPanel" style="display:none;">
-            <span id="accountText"></span>
-            <button id="logoutButton">로그아웃</button>
+            <div class="account-main">
+                <div class="account-avatar">👤</div>
+                <div class="account-user">
+                    <span class="account-label">PLAYER</span>
+                    <strong id="accountText">사용자</strong>
+                </div>
+            </div>
+
+            <div class="account-actions">
+                <button id="profileButton" type="button">프로필</button>
+                <button id="logoutButton" type="button">로그아웃</button>
+            </div>
+        </div>
+
+        <div id="profilePanel" style="display:none;">
+            <div class="profile-header">
+                <div>
+                    <span class="profile-eyebrow">PLAYER PROFILE</span>
+                    <h2 id="profileUsername">사용자</h2>
+                </div>
+                <button id="profileCloseButton" type="button">×</button>
+            </div>
+
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <span>🏆 승리</span>
+                    <strong id="profileWins">0</strong>
+                </div>
+                <div class="profile-stat">
+                    <span>💀 패배</span>
+                    <strong id="profileLosses">0</strong>
+                </div>
+                <div class="profile-stat">
+                    <span>🎮 경기</span>
+                    <strong id="profileGames">0</strong>
+                </div>
+                <div class="profile-stat">
+                    <span>📊 승률</span>
+                    <strong id="profileWinRate">0%</strong>
+                </div>
+            </div>
+
+            <div class="profile-summary" id="profileSummary">
+                아직 전적이 없습니다. 첫 경기를 시작해보세요!
+            </div>
         </div>
 
     </div>

@@ -503,6 +503,51 @@ const accountText =
     document.getElementById("accountText");
 
 
+const profileButton =
+
+    document.getElementById("profileButton");
+
+
+const profilePanel =
+
+    document.getElementById("profilePanel");
+
+
+const profileCloseButton =
+
+    document.getElementById("profileCloseButton");
+
+
+const profileUsername =
+
+    document.getElementById("profileUsername");
+
+
+const profileWins =
+
+    document.getElementById("profileWins");
+
+
+const profileLosses =
+
+    document.getElementById("profileLosses");
+
+
+const profileGames =
+
+    document.getElementById("profileGames");
+
+
+const profileWinRate =
+
+    document.getElementById("profileWinRate");
+
+
+const profileSummary =
+
+    document.getElementById("profileSummary");
+
+
 
 const roomInfo =
 
@@ -986,6 +1031,7 @@ function setAuthMessage(text) {
 function showLoggedOutUI() {
     loginPanel.style.display = "block";
     accountPanel.style.display = "none";
+    profilePanel.style.display = "none";
     roomPanel.style.display = "none";
     roomInfo.style.display = "none";
     characterSelect.style.display = "none";
@@ -996,13 +1042,68 @@ function showLoggedInUI(user) {
     currentUser = user;
     loginPanel.style.display = "none";
     accountPanel.style.display = "flex";
-    accountText.textContent = `👤 ${user.username}`;
+    profilePanel.style.display = "none";
+    accountText.textContent = user.username;
+    updateProfileUI(user);
     roomPanel.style.display = "flex";
     roomInfo.style.display = "none";
     characterSelect.style.display = "none";
     gameScreen.style.display = "none";
     authMessage.textContent = "";
 }
+
+function updateProfileUI(user) {
+    if (!user) return;
+
+    const wins = Number(user.wins || 0);
+    const losses = Number(user.losses || 0);
+    const games = wins + losses;
+    const winRate = games === 0 ? 0 : Math.round((wins / games) * 1000) / 10;
+
+    profileUsername.textContent = user.username;
+    profileWins.textContent = wins;
+    profileLosses.textContent = losses;
+    profileGames.textContent = games;
+    profileWinRate.textContent = `${winRate}%`;
+
+    if (games === 0) {
+        profileSummary.textContent = "아직 전적이 없습니다. 첫 경기를 시작해보세요!";
+    } else if (wins > losses) {
+        profileSummary.textContent = `현재 ${games}경기에서 ${wins}승을 기록하고 있습니다. 좋은 흐름이에요!`;
+    } else if (wins < losses) {
+        profileSummary.textContent = `현재 ${games}경기를 플레이했습니다. 다음 경기에서 반전을 노려보세요!`;
+    } else {
+        profileSummary.textContent = `${games}경기 ${wins}승 ${losses}패로 승패가 팽팽합니다.`;
+    }
+}
+
+async function refreshProfile() {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+        const response = await fetch("/api/me", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        currentUser = data.user;
+        updateProfileUI(currentUser);
+    } catch (error) {
+        // 프로필 갱신 실패는 게임 진행을 막지 않습니다.
+    }
+}
+
+profileButton.addEventListener("click", async () => {
+    if (!currentUser) return;
+    await refreshProfile();
+    updateProfileUI(currentUser);
+    profilePanel.style.display = "block";
+});
+
+profileCloseButton.addEventListener("click", () => {
+    profilePanel.style.display = "none";
+});
 
 async function authRequest(url, body) {
     const response = await fetch(url, {
@@ -2065,6 +2166,8 @@ socket.on(
 
         resultCharacter.textContent =
             `${myCharacter.icon} ${myCharacter.name}`;
+
+        refreshProfile();
 
         resultOverlay.style.display = "flex";
     }
