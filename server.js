@@ -1,8 +1,22 @@
 const express = require("express");
 
+
+
 const http = require("http");
 
+
+
 const { Server } = require("socket.io");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Database = require("better-sqlite3");
+const path = require("path");
+
+
+
+
+
+
 
 
 
@@ -10,15 +24,159 @@ const { Server } = require("socket.io");
 
 const app = express();
 
+app.use(express.json());
+
+const db = new Database(path.join(__dirname, "online_arena.sqlite"));
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        wins INTEGER NOT NULL DEFAULT 0,
+        losses INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+`).run();
+
+const JWT_SECRET =
+    process.env.JWT_SECRET || "online-arena-local-secret-change-this";
+
+function createToken(user) {
+    return jwt.sign(
+        {
+            userId: user.id,
+            username: user.username
+        },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+    );
+}
+
+function getTokenFromRequest(req) {
+    const header = req.headers.authorization || "";
+    if (!header.startsWith("Bearer ")) {
+        return null;
+    }
+    return header.slice(7);
+}
+
+function getUserFromToken(token) {
+    if (!token) {
+        return null;
+    }
+
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        const user = db.prepare(
+            "SELECT id, username, wins, losses FROM users WHERE id = ?"
+        ).get(payload.userId);
+        return user || null;
+    } catch {
+        return null;
+    }
+}
+
+app.post("/api/register", (req, res) => {
+    const username = String(req.body.username || "").trim();
+    const password = String(req.body.password || "");
+
+    if (!/^[A-Za-z0-9_]{3,16}$/.test(username)) {
+        return res.status(400).json({
+            message: "아이디는 3~16자의 영문, 숫자, 밑줄(_)만 사용할 수 있습니다."
+        });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            message: "비밀번호는 6자 이상이어야 합니다."
+        });
+    }
+
+    const exists = db.prepare(
+        "SELECT id FROM users WHERE username = ?"
+    ).get(username);
+
+    if (exists) {
+        return res.status(409).json({
+            message: "이미 사용 중인 아이디입니다."
+        });
+    }
+
+    const passwordHash = bcrypt.hashSync(password, 12);
+
+    const result = db.prepare(`
+        INSERT INTO users (username, password_hash)
+        VALUES (?, ?)
+    `).run(username, passwordHash);
+
+    return res.status(201).json({
+        message: "회원가입이 완료되었습니다.",
+        userId: result.lastInsertRowid
+    });
+});
+
+app.post("/api/login", (req, res) => {
+    const username = String(req.body.username || "").trim();
+    const password = String(req.body.password || "");
+
+    const user = db.prepare(
+        "SELECT * FROM users WHERE username = ?"
+    ).get(username);
+
+    if (!user || !bcrypt.compareSync(password, user.password_hash)) {
+        return res.status(401).json({
+            message: "아이디 또는 비밀번호가 올바르지 않습니다."
+        });
+    }
+
+    const token = createToken(user);
+
+    return res.json({
+        token,
+        user: {
+            id: user.id,
+            username: user.username,
+            wins: user.wins,
+            losses: user.losses
+        }
+    });
+});
+
+app.get("/api/me", (req, res) => {
+    const user = getUserFromToken(getTokenFromRequest(req));
+
+    if (!user) {
+        return res.status(401).json({
+            message: "로그인이 필요합니다."
+        });
+    }
+
+    return res.json({ user });
+});
+
+
+
+
+
+
 
 
 const server =
+
+
 
     http.createServer(app);
 
 
 
+
+
+
+
 const io =
+
+
 
     new Server(server);
 
@@ -26,11 +184,31 @@ const io =
 
 
 
+
+
+
+
+
+
 app.use(
+
+
 
     express.static("public")
 
+
+
 );
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42,9 +220,19 @@ app.use(
 
 const WIDTH = 900;
 
+
+
 const HEIGHT = 500;
 
+
+
 const PLAYER_SIZE = 55;
+
+
+
+
+
+
 
 
 
@@ -56,129 +244,261 @@ const rooms = {};
 
 
 
-// ==============================
 
-// 캐릭터 설정
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 캐릭터 설정*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 const characters = {
 
+
+
     knight: {
+
+
 
         maxHp: 120,
 
+
+
         maxAmmo: 8,
+
         reloadTime: 1200,
 
+
+
         basicDamage: 15,
+
         basicRange: 100,
 
+
+
         skill1Damage: 20,
+
         skill1Range: 120,
+
         skill1Cooldown: 3000,
 
+
+
         skill2Damage: 25,
+
         skill2Range: 260,
+
         skill2Cooldown: 4500
 
+
+
     },
+
+
+
 
 
     ninja: {
 
+
+
         maxHp: 90,
 
+
+
         maxAmmo: 6,
+
         reloadTime: 1500,
 
+
+
         basicDamage: 10,
+
         basicRange: 300,
 
+
+
         skill1Damage: 8,
+
         skill1Range: 100,
+
         skill1Cooldown: 4000,
 
+
+
         skill2Damage: 8,
+
         skill2Range: 500,
+
         skill2Cooldown: 5000
 
+
+
     },
+
+
+
 
 
     wizard: {
 
+
+
         maxHp: 80,
 
+
+
         maxAmmo: 5,
+
         reloadTime: 1800,
 
+
+
         basicDamage: 12,
+
         basicRange: 350,
 
+
+
         skill1Damage: 30,
+
         skill1Range: 500,
+
         skill1Cooldown: 4000,
 
+
+
         skill2Damage: 0,
+
         skill2Range: 0,
+
         skill2Cooldown: 6000
+
+
 
     },
 
 
+
+
+
     robot: {
+
+
 
         maxHp: 140,
 
+
+
         maxAmmo: 7,
+
         reloadTime: 1400,
 
+
+
         basicDamage: 18,
+
         basicRange: 100,
 
+
+
         skill1Damage: 25,
+
         skill1Range: 160,
+
         skill1Cooldown: 4500,
 
+
+
         skill2Damage: 30,
+
         skill2Range: 500,
+
         skill2Cooldown: 5000
+
+
 
     }
 
+
+
 };
 
-// ==============================
-// 캐릭터 이동속도
-// ==============================
+
+
+// ==============================*
+
+// 캐릭터 이동속도*
+
+// ==============================*
+
+
 
 const CHARACTER_SPEED = {
 
+
+
     knight: 90,
+
     ninja: 130,
+
     wizard: 85,
+
     robot: 100
 
+
+
 };
-// ==========================
-// 자연 회복
-// ==========================
 
-const HP_REGEN_AMOUNT = 2;      // 한 번에 회복되는 HP
-const HP_REGEN_INTERVAL = 1000; // 1초마다 회복
+// ==========================*
 
+// 자연 회복*
 
+// ==========================*
 
 
 
-// ==============================
+const HP_REGEN_AMOUNT = 2;      // 한 번에 회복되는 HP*
 
-// 방 코드
+const HP_REGEN_INTERVAL = 1000; // 1초마다 회복*
 
-// ==============================
+
+
+
+
+
+
+
+
+
+
+// ==============================*
+
+
+
+// 방 코드*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
@@ -186,9 +506,21 @@ function generateRoomCode() {
 
 
 
+
+
+
+
     const chars =
 
+
+
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+
+
+
+
+
 
 
 
@@ -200,7 +532,17 @@ function generateRoomCode() {
 
 
 
+
+
+
+
+
+
     do {
+
+
+
+
 
 
 
@@ -210,31 +552,65 @@ function generateRoomCode() {
 
 
 
+
+
+
+
+
+
         for (
+
+
 
             let i = 0;
 
+
+
             i < 6;
 
+
+
             i++
+
+
 
         ) {
 
 
 
+
+
+
+
             code +=
+
+
 
                 chars[
 
+
+
                     Math.floor(
+
+
 
                         Math.random() *
 
+
+
                         chars.length
+
+
 
                     )
 
+
+
                 ];
+
+
+
+
 
 
 
@@ -242,13 +618,29 @@ function generateRoomCode() {
 
 
 
+
+
+
+
     }
+
+
 
     while (
 
+
+
         rooms[code]
 
+
+
     );
+
+
+
+
+
+
 
 
 
@@ -258,27 +650,55 @@ function generateRoomCode() {
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 플레이어 생성
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 플레이어 생성*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function createPlayer(
 
+
+
     id,
+
+
 
     slot
 
+
+
 ) {
+
+
+
+
 
 
 
@@ -286,7 +706,18 @@ function createPlayer(
 
 
 
+
+
+
+
         id,
+
+        userId: null,
+
+        
+
+
+
 
 
 
@@ -296,13 +727,31 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         x:
+
+
 
             slot === "p1"
 
+
+
                 ? 100
 
+
+
                 : 745,
+
+
+
+
+
+
 
 
 
@@ -314,8 +763,21 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         hp: 120,
+
         maxHp: 120,
+
+
+
+
+
+
 
 
 
@@ -323,7 +785,15 @@ function createPlayer(
 
         character:
 
+
+
             "knight",
+
+
+
+
+
+
 
 
 
@@ -335,7 +805,17 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         ammo: 8,
+
+
+
+
 
 
 
@@ -343,7 +823,17 @@ function createPlayer(
 
 
 
+
+
+
+
         reloading: false,
+
+
+
+
+
+
 
 
 
@@ -355,7 +845,17 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         skill1Ready: true,
+
+
+
+
 
 
 
@@ -365,17 +865,37 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         direction: {
+
+
+
+
 
 
 
             x:
 
+
+
                 slot === "p1"
+
+
 
                     ? 1
 
+
+
                     : -1,
+
+
+
+
 
 
 
@@ -383,7 +903,17 @@ function createPlayer(
 
 
 
+
+
+
+
         },
+
+
+
+
+
+
 
 
 
@@ -393,13 +923,27 @@ function createPlayer(
 
 
 
+
+
+
+
             x:
+
+
 
                 slot === "p1"
 
+
+
                     ? 1
 
+
+
                     : -1,
+
+
+
+
 
 
 
@@ -407,7 +951,17 @@ function createPlayer(
 
 
 
+
+
+
+
         },
+
+
+
+
+
+
 
 
 
@@ -419,10 +973,23 @@ function createPlayer(
 
 
 
+
+
+
+
+
+
         poison: null,
+
         input: { x: 0, y: 0 }
 
+
+
     };
+
+
+
+
 
 
 
@@ -432,23 +999,47 @@ function createPlayer(
 
 
 
-// ==============================
 
-// 방 가져오기
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 방 가져오기*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function getRoom(
 
+
+
     socket
+
+
 
 ) {
 
 
 
+
+
+
+
     const code =
+
+
 
         socket.data.roomCode;
 
@@ -456,11 +1047,27 @@ function getRoom(
 
 
 
+
+
+
+
+
+
     if (!code) {
+
+
 
         return null;
 
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -468,51 +1075,101 @@ function getRoom(
 
     return (
 
+
+
         rooms[code] ||
 
+
+
         null
+
+
 
     );
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 상대 플레이어
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 상대 플레이어*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function opponent(
 
+
+
     room,
 
+
+
     playerId
+
+
 
 ) {
 
 
 
+
+
+
+
     return Object.values(
+
+
 
         room.players
 
+
+
     ).find(
+
+
 
         player =>
 
+
+
             player.id !==
+
+
 
             playerId
 
+
+
     ) || null;
+
+
+
+
 
 
 
@@ -522,31 +1179,63 @@ function opponent(
 
 
 
-// ==============================
 
-// 방향 정규화
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 방향 정규화*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function normalize(
 
+
+
     x,
 
+
+
     y
+
+
 
 ) {
 
 
 
+
+
+
+
     const length =
+
+
 
         Math.hypot(
 
+
+
             x,
 
+
+
             y
+
+
 
         );
 
@@ -554,21 +1243,45 @@ function normalize(
 
 
 
+
+
+
+
+
+
     if (
 
+
+
         length === 0
+
+
 
     ) {
 
 
 
+
+
+
+
         return {
+
+
 
             x: 1,
 
+
+
             y: 0
 
+
+
         };
+
+
+
+
 
 
 
@@ -578,23 +1291,49 @@ function normalize(
 
 
 
+
+
+
+
+
+
     return {
+
+
+
+
 
 
 
         x:
 
+
+
             x / length,
+
+
+
+
 
 
 
         y:
 
+
+
             y / length
 
 
 
+
+
+
+
     };
+
+
+
+
 
 
 
@@ -604,27 +1343,55 @@ function normalize(
 
 
 
-// ==============================
 
-// 탄창 갱신
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 탄창 갱신*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function updateAmmo(
 
+
+
     player
+
+
 
 ) {
 
 
 
+
+
+
+
     const data =
+
+
 
         characters[
 
+
+
             player.character
+
+
 
         ];
 
@@ -632,9 +1399,23 @@ function updateAmmo(
 
 
 
+
+
+
+
+
+
     player.maxAmmo =
 
+
+
         data.maxAmmo;
+
+
+
+
+
+
 
 
 
@@ -642,7 +1423,15 @@ function updateAmmo(
 
     player.ammo =
 
+
+
         data.maxAmmo;
+
+
+
+
+
+
 
 
 
@@ -650,7 +1439,13 @@ function updateAmmo(
 
     player.reloading =
 
+
+
         false;
+
+
+
+
 
 
 
@@ -660,27 +1455,55 @@ function updateAmmo(
 
 
 
-// ==============================
 
-// 플레이어 초기화
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 플레이어 초기화*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function resetPlayer(
 
+
+
     player
+
+
 
 ) {
 
 
 
+
+
+
+
     player.x =
+
+
 
         player.slot === "p1"
 
+
+
             ? 100
+
+
 
             : 745;
 
@@ -688,7 +1511,15 @@ function resetPlayer(
 
 
 
+
+
+
+
+
+
     player.y =
+
+
 
         220;
 
@@ -696,7 +1527,15 @@ function resetPlayer(
 
 
 
+
+
+
+
+
+
     player.hp =
+
+
 
         100;
 
@@ -704,9 +1543,23 @@ function resetPlayer(
 
 
 
+
+
+
+
+
+
     player.ready =
 
+
+
         false;
+
+
+
+
+
+
 
 
 
@@ -714,7 +1567,15 @@ function resetPlayer(
 
     player.shield =
 
+
+
         false;
+
+
+
+
+
+
 
 
 
@@ -722,7 +1583,15 @@ function resetPlayer(
 
     player.skill1Ready =
 
+
+
         true;
+
+
+
+
+
+
 
 
 
@@ -730,7 +1599,15 @@ function resetPlayer(
 
     player.skill2Ready =
 
+
+
         true;
+
+
+
+
+
+
 
 
 
@@ -738,18 +1615,37 @@ function resetPlayer(
 
     player.dash =
 
+
+
         null;
+
     player.input = {
+
         x: 0,
+
         y: 0
+
     };
+
+
+
+
+
 
 
 
 
     player.poison =
 
+
+
         null;
+
+
+
+
+
+
 
 
 
@@ -757,21 +1653,39 @@ function resetPlayer(
 
     player.pingDirection =
 
+
+
         player.slot === "p1"
+
+
 
             ? {
 
+
+
                 x: 1,
 
+
+
                 y: 0
+
+
 
             }
 
+
+
             : {
+
+
 
                 x: -1,
 
+
+
                 y: 0
+
+
 
             };
 
@@ -779,11 +1693,25 @@ function resetPlayer(
 
 
 
+
+
+
+
+
+
     updateAmmo(
+
+
 
         player
 
+
+
     );
+
+
+
+
 
 
 
@@ -793,19 +1721,41 @@ function resetPlayer(
 
 
 
-// ==============================
 
-// 공개 플레이어 데이터
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 공개 플레이어 데이터*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function publicPlayer(
 
+
+
     player
 
+
+
 ) {
+
+
+
+
 
 
 
@@ -813,87 +1763,175 @@ function publicPlayer(
 
 
 
+
+
+
+
         id:
+
+
 
             player.id,
 
 
 
+
+
+
+
         slot:
+
+
 
             player.slot,
 
 
 
+
+
+
+
         x:
+
+
 
             player.x,
 
 
 
+
+
+
+
         y:
+
+
 
             player.y,
 
 
 
+
+
+
+
         hp:
+
+
 
             player.hp,
 
 
 
+
+
+
+
         maxHp:
+
+
 
             player.maxHp,
 
 
 
+
+
+
+
         character:
+
+
 
             player.character,
 
 
 
+
+
+
+
         ready:
+
+
 
             player.ready,
 
 
 
+
+
+
+
         ammo:
+
+
 
             player.ammo,
 
 
 
+
+
+
+
         maxAmmo:
+
+
 
             player.maxAmmo,
 
 
 
+
+
+
+
         reloading:
+
+
 
             player.reloading,
 
 
 
+
+
+
+
         shield:
+
+
 
             player.shield,
 
 
 
+
+
+
+
         poison:
+
+
 
             !!player.poison,
 
 
 
+
+
+
+
         direction:
 
+
+
             player.direction
+
+
+
+
 
 
 
@@ -901,71 +1939,143 @@ function publicPlayer(
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 방 상태 전송
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 방 상태 전송*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function broadcastRoom(
 
+
+
     room
+
+
 
 ) {
 
 
 
+
+
+
+
     io.to(
+
+
 
         room.code
 
+
+
     ).emit(
 
+
+
         "roomState",
+
+
 
         {
 
 
 
+
+
+
+
             roomCode:
+
+
 
                 room.code,
 
 
 
+
+
+
+
             hostId:
+
+
 
                 room.hostId,
 
 
 
+
+
+
+
             started:
+
+
 
                 room.started,
 
 
 
+
+
+
+
             players:
+
+
 
                 Object.fromEntries(
 
 
 
+
+
+
+
                     Object.entries(
+
+
 
                         room.players
 
+
+
                     ).map(
 
+
+
                         ([id, player]) => [
+
+
+
+
 
 
 
@@ -973,17 +2083,35 @@ function broadcastRoom(
 
 
 
+
+
+
+
                             publicPlayer(
 
+
+
                                 player
+
+
 
                             )
 
 
 
+
+
+
+
                         ]
 
+
+
                     )
+
+
+
+
 
 
 
@@ -991,9 +2119,19 @@ function broadcastRoom(
 
 
 
+
+
+
+
         }
 
+
+
     );
+
+
+
+
 
 
 
@@ -1003,57 +2141,117 @@ function broadcastRoom(
 
 
 
-// ==============================
 
-// 게임 상태 전송
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 게임 상태 전송*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function broadcastGame(
 
+
+
     room
+
+
 
 ) {
 
 
 
+
+
+
+
     io.to(
+
+
 
         room.code
 
+
+
     ).emit(
 
+
+
         "gameState",
+
+
 
         {
 
 
 
+
+
+
+
             players:
+
+
 
                 Object.values(
 
+
+
                     room.players
+
+
 
                 ).map(
 
+
+
                     publicPlayer
+
+
 
                 ),
 
 
 
+
+
+
+
             projectiles:
+
+
 
                 room.projectiles
 
 
 
+
+
+
+
         }
 
+
+
     );
+
+
+
+
 
 
 
@@ -1063,21 +2261,45 @@ function broadcastGame(
 
 
 
-// ==============================
 
-// 거리
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 거리*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function distance(
 
+
+
     a,
+
+
 
     b
 
+
+
 ) {
+
+
+
+
 
 
 
@@ -1085,47 +2307,95 @@ function distance(
 
 
 
+
+
+
+
         (
+
+
 
             a.x +
 
+
+
             PLAYER_SIZE / 2
+
+
 
         )
 
+
+
         -
+
+
 
         (
 
+
+
             b.x +
 
+
+
             PLAYER_SIZE / 2
+
+
 
         ),
 
 
 
+
+
+
+
         (
+
+
 
             a.y +
 
+
+
             PLAYER_SIZE / 2
 
+
+
         )
+
+
 
         -
 
+
+
         (
+
+
 
             b.y +
 
+
+
             PLAYER_SIZE / 2
 
+
+
         )
+
+
+
+
 
 
 
     );
+
+
+
+
 
 
 
@@ -1135,37 +2405,77 @@ function distance(
 
 
 
-// ==============================
 
-// 피해
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 피해*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function damage(
 
+
+
     room,
+
+
 
     attacker,
 
+
+
     target,
 
+
+
     amount
+
+
 
 ) {
 
 
 
+
+
+
+
     if (
+
+
 
         !target ||
 
+
+
         target.hp <= 0 ||
+
+
 
         target.shield
 
+
+
     ) {
+
+
+
+
 
 
 
@@ -1173,7 +2483,17 @@ function damage(
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -1181,15 +2501,31 @@ function damage(
 
     target.hp =
 
+
+
         Math.max(
+
+
 
             0,
 
+
+
             target.hp -
+
+
 
             amount
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -1197,35 +2533,67 @@ function damage(
 
     io.to(
 
+
+
         room.code
+
+
 
     ).emit(
 
+
+
         "damageEffect",
+
+
 
         {
 
 
 
+
+
+
+
             attackerId:
+
+
 
                 attacker?.id,
 
 
 
+
+
+
+
             targetId:
+
+
 
                 target.id,
 
 
 
+
+
+
+
             damage:
+
+
 
                 amount
 
 
 
+
+
+
+
         }
+
+
 
     );
 
@@ -1233,27 +2601,59 @@ function damage(
 
 
 
+
+
+
+
+
+
     if (
+
+
 
         target.hp <= 0 &&
 
+
+
         attacker
+
+
 
     ) {
 
 
 
+
+
+
+
         endGame(
+
+
 
             room,
 
+
+
             attacker.id
+
+
 
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -1263,43 +2663,89 @@ function damage(
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 근접 공격
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 근접 공격*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function melee(
 
+
+
     room,
+
+
 
     player,
 
+
+
     damageAmount,
 
+
+
     range
+
+
 
 ) {
 
 
 
+
+
+
+
     const target =
+
+
 
         opponent(
 
+
+
             room,
+
+
 
             player.id
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -1307,7 +2753,11 @@ function melee(
 
     if (!target) {
 
+
+
         return;
+
+
 
     }
 
@@ -1315,15 +2765,33 @@ function melee(
 
 
 
+
+
+
+
+
+
     if (
+
+
 
         target.shield
 
+
+
     ) {
 
 
 
+
+
+
+
         return;
+
+
+
+
 
 
 
@@ -1333,35 +2801,73 @@ function melee(
 
 
 
+
+
+
+
+
+
     if (
+
+
 
         distance(
 
+
+
             player,
+
+
 
             target
 
+
+
         ) <= range
 
+
+
     ) {
+
+
+
+
 
 
 
         damage(
 
+
+
             room,
+
+
 
             player,
 
+
+
             target,
 
+
+
             damageAmount
+
+
 
         );
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -1371,25 +2877,53 @@ function melee(
 
 
 
-// ==============================
 
-// 투사체 생성
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 투사체 생성*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function addProjectile(
 
+
+
     room,
+
+
 
     player,
 
+
+
     type,
+
+
 
     direction
 
+
+
 ) {
+
+
+
+
 
 
 
@@ -1397,13 +2931,29 @@ function addProjectile(
 
 
 
+
+
+
+
         shuriken: {
+
             speed: 11,
+
             damage: 10,
+
             radius: 12,
+
             life: 1000,
+
             maxDistance: 300
+
         },
+
+
+
+
+
+
 
 
 
@@ -1413,31 +2963,65 @@ function addProjectile(
 
 
 
+
+
+
+
             speed: 10,
+
+
 
             damage: 8,
 
+
+
             radius: 13,
 
+
+
             life: 1200,
+
+
 
             maxDistance: 500
 
 
 
+
+
+
+
         },
+
+
+
+
+
+
 
 
 
 
 
         fireball: {
+
             speed: 8,
+
             damage: 12,
+
             radius: 14,
+
             life: 1500,
+
             maxDistance: 350
+
         },
+
+
+
+
+
+
 
 
 
@@ -1447,15 +3031,31 @@ function addProjectile(
 
 
 
+
+
+
+
             speed: 7,
+
+
 
             damage: 40,
 
+
+
             radius: 30,
+
+
 
             life: 1700,
 
+
+
             maxDistance: 500
+
+
+
+
 
 
 
@@ -1463,9 +3063,17 @@ function addProjectile(
 
 
 
+
+
+
+
     }[
 
+
+
         type
+
+
 
     ];
 
@@ -1473,9 +3081,19 @@ function addProjectile(
 
 
 
+
+
+
+
+
+
     if (!settings) {
 
+
+
         return;
+
+
 
     }
 
@@ -1483,15 +3101,35 @@ function addProjectile(
 
 
 
+
+
+
+
+
+
     const d =
+
+
 
         normalize(
 
+
+
             direction.x,
+
+
 
             direction.y
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -1501,23 +3139,47 @@ function addProjectile(
 
 
 
+
+
+
+
         id:
+
+
 
             `${Date.now()}\_${
 
+
+
                 Math.random()
+
+
 
                     .toString(36)
 
+
+
                     .slice(2)
+
+
 
             }`,
 
 
 
+
+
+
+
         ownerId:
 
+
+
             player.id,
+
+
+
+
 
 
 
@@ -1525,59 +3187,119 @@ function addProjectile(
 
 
 
+
+
+
+
         x:
+
+
 
             player.x +
 
+
+
             PLAYER_SIZE / 2,
+
+
+
+
 
 
 
         y:
 
+
+
             player.y +
+
+
 
             PLAYER_SIZE / 2,
 
 
 
+
+
+
+
         vx:
+
+
 
             d.x *
 
+
+
             settings.speed,
+
+
+
+
 
 
 
         vy:
 
+
+
             d.y *
+
+
 
             settings.speed,
 
 
 
+
+
+
+
         damage:
+
+
 
             settings.damage,
 
 
 
+
+
+
+
         radius:
+
+
 
             settings.radius,
 
 
 
+
+
+
+
         life:
 
+
+
             settings.life,
+
+
+
+
 
 
 
         maxLife:
 
+
+
             settings.life,
+
+
+
+
 
 
 
@@ -1585,13 +3307,27 @@ function addProjectile(
 
 
 
+
+
+
+
         maxDistance:
+
+
 
             settings.maxDistance
 
 
 
+
+
+
+
     });
+
+
+
+
 
 
 
@@ -1601,35 +3337,75 @@ function addProjectile(
 
 
 
-// ==============================
 
-// 닌자 대시
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 닌자 대시*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function startDash(
 
+
+
     room,
+
+
 
     player,
 
+
+
     direction
+
+
 
 ) {
 
 
 
+
+
+
+
     const d =
+
+
 
         normalize(
 
+
+
             direction.x,
+
+
 
             direction.y
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -1639,7 +3415,15 @@ function startDash(
 
 
 
+
+
+
+
         direction: d,
+
+
+
+
 
 
 
@@ -1647,7 +3431,15 @@ function startDash(
 
 
 
+
+
+
+
         stepDistance: 75,
+
+
+
+
 
 
 
@@ -1655,7 +3447,17 @@ function startDash(
 
 
 
+
+
+
+
     };
+
+
+
+
+
+
 
 
 
@@ -1663,31 +3465,61 @@ function startDash(
 
     io.to(
 
+
+
         room.code
+
+
 
     ).emit(
 
+
+
         "dashEffect",
+
+
 
         {
 
 
 
+
+
+
+
             playerId:
+
+
 
                 player.id,
 
 
 
+
+
+
+
             direction:
+
+
 
                 d
 
 
 
+
+
+
+
         }
 
+
+
     );
+
+
+
+
 
 
 
@@ -1697,33 +3529,69 @@ function startDash(
 
 
 
-// ==============================
 
-// 스킬 1
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 스킬 1*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function useSkill1(
 
+
+
     room,
+
+
 
     player,
 
+
+
     direction
+
+
 
 ) {
 
 
 
+
+
+
+
     if (
+
+
 
         !room.started ||
 
+
+
         !player.skill1Ready
 
+
+
     ) {
+
+
+
+
 
 
 
@@ -1731,7 +3599,17 @@ function useSkill1(
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -1739,7 +3617,15 @@ function useSkill1(
 
     player.skill1Ready =
 
+
+
         false;
+
+
+
+
+
+
 
 
 
@@ -1747,101 +3633,203 @@ function useSkill1(
 
     const data =
 
+
+
         characters[
+
+
 
             player.character
 
+
+
         ];
-// 닌자*
+
+// 닌자**
+
+
+
+
 
 
 
     if (
 
+
+
         player.character ===
+
+
 
         "ninja"
 
+
+
     ) {
+
+
+
+
 
 
 
         startDash(
 
+
+
             room,
+
+
 
             player,
 
+
+
             direction
+
+
 
         );
 
 
 
+
+
+
+
     }
-// 마법사*
+
+// 마법사**
+
+
+
+
 
 
 
     else if (
 
+
+
         player.character ===
 
+
+
         "wizard"
+
+
 
     ) {
 
 
 
+
+
+
+
         addProjectile(
+
+
 
             room,
 
+
+
             player,
+
+
 
             "bigFireball",
 
+
+
             direction
+
+
 
         );
 
 
 
+
+
+
+
     }
-// 나이트*
+
+// 나이트**
+
+
+
+
 
 
 
     else if (
+
     player.character ===
+
     "knight"
+
 ) {
 
+
+
     melee(
+
         room,
+
         player,
+
         characters.knight.basicDamage,
+
         characters.knight.basicRange
+
     );
 
+
+
 }
-// 로봇*
+
+// 로봇**
+
+
+
+
 
 
 
     else if (
+
     player.character ===
+
     "robot"
+
 ) {
 
+
+
     melee(
+
         room,
+
         player,
+
         characters.robot.basicDamage,
+
         characters.robot.basicRange
+
     );
 
+
+
 }
+
+
+
+
+
+
 
 
 
@@ -1849,19 +3837,37 @@ function useSkill1(
 
     io.to(
 
+
+
         room.code
+
+
 
     ).emit(
 
+
+
         "skillEffect",
+
+
 
         {
 
 
 
+
+
+
+
             playerId:
 
+
+
                 player.id,
+
+
+
+
 
 
 
@@ -1869,25 +3875,49 @@ function useSkill1(
 
 
 
+
+
+
+
             character:
+
+
 
                 player.character,
 
 
 
+
+
+
+
             direction:
+
+
 
                 normalize(
 
+
+
                     direction.x,
 
+
+
                     direction.y
+
+
 
                 )
 
 
 
+
+
+
+
         }
+
+
 
     );
 
@@ -1895,19 +3925,43 @@ function useSkill1(
 
 
 
+
+
+
+
+
+
     setTimeout(
+
+
 
         () => {
 
 
 
+
+
+
+
             const currentRoom =
+
+
 
                 rooms[
 
+
+
                     room.code
 
+
+
                 ];
+
+
+
+
+
+
 
 
 
@@ -1915,9 +3969,15 @@ function useSkill1(
 
             const currentPlayer =
 
+
+
                 currentRoom?.players[
 
+
+
                     player.id
+
+
 
                 ];
 
@@ -1925,11 +3985,27 @@ function useSkill1(
 
 
 
+
+
+
+
+
+
             if (!currentPlayer) {
+
+
 
                 return;
 
+
+
             }
+
+
+
+
+
+
 
 
 
@@ -1937,7 +4013,15 @@ function useSkill1(
 
             currentPlayer.skill1Ready =
 
+
+
                 true;
+
+
+
+
+
+
 
 
 
@@ -1945,19 +4029,37 @@ function useSkill1(
 
             io.to(
 
+
+
                 room.code
+
+
 
             ).emit(
 
+
+
                 "skillReady",
+
+
 
                 {
 
 
 
+
+
+
+
                     playerId:
 
+
+
                         currentPlayer.id,
+
+
+
+
 
 
 
@@ -1965,13 +4067,27 @@ function useSkill1(
 
 
 
+
+
+
+
                 }
+
+
 
             );
 
 
 
+
+
+
+
         },
+
+
+
+
 
 
 
@@ -1979,7 +4095,15 @@ function useSkill1(
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -1989,33 +4113,69 @@ function useSkill1(
 
 
 
-// ==============================
 
-// 스킬 2
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 스킬 2*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function useSkill2(
 
+
+
     room,
+
+
 
     player,
 
+
+
     direction
+
+
 
 ) {
 
 
 
+
+
+
+
     if (
+
+
 
         !room.started ||
 
+
+
         !player.skill2Ready
 
+
+
     ) {
+
+
+
+
 
 
 
@@ -2023,7 +4183,17 @@ function useSkill2(
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -2031,7 +4201,15 @@ function useSkill2(
 
     player.skill2Ready =
 
+
+
         false;
+
+
+
+
+
+
 
 
 
@@ -2039,57 +4217,111 @@ function useSkill2(
 
     const data =
 
+
+
         characters[
+
+
 
             player.character
 
+
+
         ];
-// 닌자*
-// 독 수리검*
+
+// 닌자**
+
+// 독 수리검**
+
+
+
+
 
 
 
     if (
 
+
+
         player.character ===
+
+
 
         "ninja"
 
+
+
     ) {
+
+
+
+
 
 
 
         addProjectile(
 
+
+
             room,
+
+
 
             player,
 
+
+
             "poisonShuriken",
 
+
+
             direction
+
+
 
         );
 
 
 
+
+
+
+
     }
-// 마법사*
-// 방어막*
+
+// 마법사**
+
+// 방어막**
+
+
+
+
 
 
 
     else if (
 
+
+
         player.character ===
 
+
+
         "wizard"
+
+
 
     ) {
 
 
 
+
+
+
+
         player.shield =
+
+
 
             true;
 
@@ -2097,19 +4329,43 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
         setTimeout(
+
+
 
             () => {
 
 
 
+
+
+
+
                 const currentRoom =
+
+
 
                     rooms[
 
+
+
                         room.code
 
+
+
                     ];
+
+
+
+
+
+
 
 
 
@@ -2117,9 +4373,15 @@ function useSkill2(
 
                 const currentPlayer =
 
+
+
                     currentRoom?.players[
 
+
+
                         player.id
+
+
 
                     ];
 
@@ -2127,17 +4389,37 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
                 if (
 
+
+
                     currentPlayer
+
+
 
                 ) {
 
 
 
+
+
+
+
                     currentPlayer.shield =
 
+
+
                         false;
+
+
+
+
 
 
 
@@ -2145,41 +4427,85 @@ function useSkill2(
 
 
 
+
+
+
+
             },
 
+
+
             3000
+
+
 
         );
 
 
 
+
+
+
+
     }
-// 나이트*
-// 검의 충격파*
+
+// 나이트**
+
+// 검의 충격파**
+
+
+
+
 
 
 
     else if (
 
+
+
         player.character ===
 
+
+
         "knight"
+
+
 
     ) {
 
 
 
+
+
+
+
         addProjectile(
+
+
 
             room,
 
+
+
             player,
+
+
 
             "fireball",
 
+
+
             direction
 
+
+
         );
+
+
+
+
+
+
 
 
 
@@ -2187,11 +4513,19 @@ function useSkill2(
 
         const projectile =
 
+
+
             room.projectiles[
+
+
 
                 room.projectiles.length -
 
+
+
                 1
+
+
 
             ];
 
@@ -2199,15 +4533,31 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
         if (
 
+
+
             projectile
+
+
 
         ) {
 
 
 
+
+
+
+
             projectile.type =
+
+
 
                 "swordWave";
 
@@ -2215,7 +4565,15 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             projectile.damage =
+
+
 
                 data.skill2Damage;
 
@@ -2223,13 +4581,27 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             projectile.vx =
+
+
 
                 normalize(
 
+
+
                     direction.x,
 
+
+
                     direction.y
+
+
 
                 ).x * 9;
 
@@ -2237,13 +4609,27 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             projectile.vy =
+
+
 
                 normalize(
 
+
+
                     direction.x,
 
+
+
                     direction.y
+
+
 
                 ).y * 9;
 
@@ -2251,7 +4637,15 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             projectile.radius =
+
+
 
                 16;
 
@@ -2259,9 +4653,23 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             projectile.life =
 
+
+
                 900;
+
+
+
+
+
+
 
 
 
@@ -2269,7 +4677,15 @@ function useSkill2(
 
             projectile.maxLife =
 
+
+
                 900;
+
+
+
+
+
+
 
 
 
@@ -2277,7 +4693,13 @@ function useSkill2(
 
             projectile.maxDistance =
 
+
+
                 260;
+
+
+
+
 
 
 
@@ -2285,47 +4707,97 @@ function useSkill2(
 
 
 
+
+
+
+
     }
-// 로봇*
-// 미사일*
+
+// 로봇**
+
+// 미사일**
+
+
+
+
 
 
 
     else if (
 
+
+
         player.character ===
 
+
+
         "robot"
+
+
 
     ) {
 
 
 
+
+
+
+
         for (
+
+
 
             let i = 0;
 
+
+
             i < 3;
 
+
+
             i++
+
+
 
         ) {
 
 
 
+
+
+
+
             setTimeout(
+
+
 
                 () => {
 
 
 
+
+
+
+
                     const currentRoom =
+
+
 
                         rooms[
 
+
+
                             room.code
 
+
+
                         ];
+
+
+
+
+
+
 
 
 
@@ -2333,9 +4805,15 @@ function useSkill2(
 
                     const currentPlayer =
 
+
+
                         currentRoom?.players[
 
+
+
                             player.id
+
+
 
                         ];
 
@@ -2343,65 +4821,133 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
                     if (
+
+
 
                         currentRoom &&
 
+
+
                         currentPlayer &&
 
+
+
                         currentRoom.started
+
+
 
                     ) {
 
 
 
+
+
+
+
                         addProjectile(
+
+
 
                             currentRoom,
 
+
+
                             currentPlayer,
 
+
+
                             "fireball",
+
+
 
                             {
 
 
 
+
+
+
+
                                 x:
+
+
 
                                     direction.x +
 
+
+
                                     (
+
+
 
                                         Math.random() -
 
+
+
                                         0.5
 
+
+
                                     ) *
+
+
 
                                     0.12,
 
 
 
+
+
+
+
                                 y:
+
+
 
                                     direction.y +
 
+
+
                                     (
+
+
 
                                         Math.random() -
 
+
+
                                         0.5
 
+
+
                                     ) *
+
+
 
                                     0.12
 
 
 
+
+
+
+
                             }
 
+
+
                         );
+
+
+
+
 
 
 
@@ -2409,7 +4955,15 @@ function useSkill2(
 
 
 
+
+
+
+
                 },
+
+
+
+
 
 
 
@@ -2417,11 +4971,23 @@ function useSkill2(
 
 
 
+
+
+
+
             );
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -2431,21 +4997,45 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
     io.to(
+
+
 
         room.code
 
+
+
     ).emit(
 
+
+
         "skillEffect",
+
+
 
         {
 
 
 
+
+
+
+
             playerId:
 
+
+
                 player.id,
+
+
+
+
 
 
 
@@ -2453,25 +5043,49 @@ function useSkill2(
 
 
 
+
+
+
+
             character:
+
+
 
                 player.character,
 
 
 
+
+
+
+
             direction:
+
+
 
                 normalize(
 
+
+
                     direction.x,
 
+
+
                     direction.y
+
+
 
                 )
 
 
 
+
+
+
+
         }
+
+
 
     );
 
@@ -2479,19 +5093,43 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
     setTimeout(
+
+
 
         () => {
 
 
 
+
+
+
+
             const currentRoom =
+
+
 
                 rooms[
 
+
+
                     room.code
 
+
+
                 ];
+
+
+
+
+
+
 
 
 
@@ -2499,9 +5137,15 @@ function useSkill2(
 
             const currentPlayer =
 
+
+
                 currentRoom?.players[
 
+
+
                     player.id
+
+
 
                 ];
 
@@ -2509,11 +5153,27 @@ function useSkill2(
 
 
 
+
+
+
+
+
+
             if (!currentPlayer) {
+
+
 
                 return;
 
+
+
             }
+
+
+
+
+
+
 
 
 
@@ -2521,7 +5181,15 @@ function useSkill2(
 
             currentPlayer.skill2Ready =
 
+
+
                 true;
+
+
+
+
+
+
 
 
 
@@ -2529,19 +5197,37 @@ function useSkill2(
 
             io.to(
 
+
+
                 room.code
+
+
 
             ).emit(
 
+
+
                 "skillReady",
+
+
 
                 {
 
 
 
+
+
+
+
                     playerId:
 
+
+
                         currentPlayer.id,
+
+
+
+
 
 
 
@@ -2549,9 +5235,19 @@ function useSkill2(
 
 
 
+
+
+
+
                 }
 
+
+
             );
+
+
+
+
 
 
 
@@ -2559,11 +5255,23 @@ function useSkill2(
 
 
 
+
+
+
+
         data.skill2Cooldown
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -2573,147 +5281,295 @@ function useSkill2(
 
 
 
-// ==============================
 
-// 재장전
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 재장전*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function reload(
+
     room,
+
     player
+
 ) {
 
+
+
     if (
+
         player.reloading ||
+
         player.ammo >= player.maxAmmo
+
     ) {
+
+
 
         return;
 
+
+
     }
+
+
+
 
 
     player.reloading = true;
 
 
+
+
+
     const reloadTime =
+
         characters[
+
             player.character
+
         ].reloadTime;
 
 
+
+
+
     io.to(
+
         room.code
+
     ).emit(
+
         "reloadStart",
+
         {
 
+
+
             playerId:
+
                 player.id,
 
+
+
             reloadTime:
+
                 reloadTime
 
+
+
         }
+
     );
+
+
+
 
 
     const reloadOneBullet = () => {
 
+
+
         const currentRoom =
+
             rooms[
+
                 room.code
+
             ];
+
+
+
 
 
         const currentPlayer =
+
             currentRoom?.players[
+
                 player.id
+
             ];
 
 
-        // 방이나 플레이어가 사라졌으면 중단
+
+
+
+        // 방이나 플레이어가 사라졌으면 중단*
+
         if (!currentPlayer) {
 
+
+
             return;
+
+
 
         }
 
 
-        // 이미 탄창이 가득 찼으면 종료
+
+
+
+        // 이미 탄창이 가득 찼으면 종료*
+
         if (
+
             currentPlayer.ammo >=
+
             currentPlayer.maxAmmo
+
         ) {
 
+
+
             currentPlayer.reloading =
+
                 false;
 
+
+
             io.to(
+
                 room.code
+
             ).emit(
+
                 "reloadEnd",
+
                 {
 
+
+
                     playerId:
+
                         currentPlayer.id
 
+
+
                 }
+
             );
 
+
+
             return;
+
+
 
         }
 
 
-        // 탄약 1발 충전
+
+
+
+        // 탄약 1발 충전*
+
         currentPlayer.ammo += 1;
 
 
-        // 아직 탄약이 남아 있으면 다음 1발 예약
+
+
+
+        // 아직 탄약이 남아 있으면 다음 1발 예약*
+
         if (
+
             currentPlayer.ammo <
+
             currentPlayer.maxAmmo
+
         ) {
 
+
+
             setTimeout(
+
                 reloadOneBullet,
+
                 reloadTime
+
             );
+
+
 
         }
 
-        // 마지막 탄약까지 충전했으면 종료
+
+
+        // 마지막 탄약까지 충전했으면 종료*
+
         else {
 
+
+
             currentPlayer.reloading =
+
                 false;
 
+
+
             io.to(
+
                 room.code
+
             ).emit(
+
                 "reloadEnd",
+
                 {
 
+
+
                     playerId:
+
                         currentPlayer.id
 
+
+
                 }
+
             );
 
+
+
         }
+
+
 
     };
 
 
-    // 첫 번째 탄약 충전
+
+
+
+    // 첫 번째 탄약 충전*
+
     setTimeout(
+
         reloadOneBullet,
+
         reloadTime
+
     );
+
+
 
 }
 
@@ -2721,29 +5577,63 @@ function reload(
 
 
 
-// ==============================
 
-// 게임 종료
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 게임 종료*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function endGame(
 
+
+
     room,
 
+
+
     winnerId
+
+
 
 ) {
 
 
 
+
+
+
+
     if (!room.started) {
+
+
 
         return;
 
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -2751,7 +5641,15 @@ function endGame(
 
     room.started =
 
+
+
         false;
+
+
+
+
+
+
 
 
 
@@ -2759,13 +5657,25 @@ function endGame(
 
     io.to(
 
+
+
         room.code
+
+
 
     ).emit(
 
+
+
         "gameOver",
 
+
+
         {
+
+
+
+
 
 
 
@@ -2773,7 +5683,13 @@ function endGame(
 
 
 
+
+
+
+
         }
+
+
 
     );
 
@@ -2781,29 +5697,71 @@ function endGame(
 
 
 
+
+
+
+
+
+
     for (
+
+
 
         const player of
 
+
+
         Object.values(
+
+
 
             room.players
 
+
+
         )
 
+
+
     ) {
+
+        if (player.userId) {
+            if (player.id === winnerId) {
+                db.prepare("UPDATE users SET wins = wins + 1 WHERE id = ?").run(player.userId);
+            } else {
+                db.prepare("UPDATE users SET losses = losses + 1 WHERE id = ?").run(player.userId);
+            }
+        }
+
+
+
+
 
 
 
         resetPlayer(
 
+
+
             player
+
+
 
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
 
 
 
@@ -2811,7 +5769,15 @@ function endGame(
 
     room.projectiles =
 
+
+
         [];
+
+
+
+
+
+
 
 
 
@@ -2819,126 +5785,249 @@ function endGame(
 
     broadcastRoom(
 
+
+
         room
+
+
 
     );
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 게임 틱
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 게임 틱*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function movementTick() {
 
+
+
     for (const room of Object.values(rooms)) {
 
+
+
         if (!room.started) {
+
             continue;
+
         }
+
+
 
         for (const player of Object.values(room.players)) {
 
+
+
             if (player.dash) {
+
                 continue;
+
             }
+
+
 
             const input =
+
                 player.input || {
+
                     x: 0,
+
                     y: 0
+
                 };
 
+
+
             if (
+
                 input.x === 0 &&
+
                 input.y === 0
+
             ) {
+
                 continue;
+
             }
 
+
+
             const speed =
+
                 CHARACTER_SPEED[
+
                     player.character
+
                 ] || 100;
 
+
+
             const step =
+
                 speed / 60;
 
+
+
             player.x +=
+
                 input.x * step;
 
+
+
             player.y +=
+
                 input.y * step;
 
+
+
             player.x =
+
                 Math.max(
+
                     0,
+
                     Math.min(
+
                         WIDTH -
+
                             PLAYER_SIZE,
+
                         player.x
+
                     )
+
                 );
 
+
+
             player.y =
+
                 Math.max(
+
                     0,
+
                     Math.min(
+
                         HEIGHT -
+
                             PLAYER_SIZE,
+
                         player.y
+
                     )
+
                 );
+
         }
+
     }
+
 }
+
 function hpRegenTick() {
+
+
 
     for (const room of Object.values(rooms)) {
 
+
+
         if (!room.started) {
+
             continue;
+
         }
+
+
 
         for (
+
             const player of Object.values(room.players)
+
         ) {
 
+
+
             if (player.hp <= 0) {
+
                 continue;
+
             }
+
+
 
             if (player.hp >= player.maxHp) {
+
                 continue;
+
             }
+
+
 
             if (player.shield) {
+
                 continue;
+
             }
 
+
+
             player.hp = Math.min(
+
                 player.maxHp,
+
                 player.hp + HP_REGEN_AMOUNT
+
             );
+
         }
+
     }
+
 }
+
+
 
 function gameTick() {
 
 
 
+
+
+
+
     const now =
+
+
 
         Date.now();
 
@@ -2946,25 +6035,53 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
     for (
+
+
 
         const room of
 
+
+
         Object.values(
+
+
 
             rooms
 
+
+
         )
+
+
 
     ) {
 
 
 
+
+
+
+
         if (
+
+
 
             !room.started
 
+
+
         ) {
+
+
+
+
 
 
 
@@ -2972,129 +6089,257 @@ function gameTick() {
 
 
 
+
+
+
+
         }
-// ==========================*
-// 대시*
-// ==========================*
+
+// ==========================**
+
+// 대시**
+
+// ==========================**
+
+
+
+
 
 
 
         for (
 
+
+
             const player of
+
+
 
             Object.values(
 
+
+
                 room.players
 
+
+
             )
+
+
 
         ) {
 
 
 
-            // ==========================
-            // 대시
-            // ==========================
+
+
+
+
+            // ==========================*
+
+            // 대시*
+
+            // ==========================*
+
+
 
             if (
+
                 room.started &&
+
                 player.dash &&
+
                 player.dash.steps > 0
+
             ) {
 
+
+
                 const dash =
+
                     player.dash;
 
 
+
+
+
                 player.x +=
+
                     dash.direction.x *
+
                     dash.stepDistance;
 
+
+
                 player.y +=
+
                     dash.direction.y *
+
                     dash.stepDistance;
+
+
+
 
 
                 player.x =
+
                     Math.max(
+
                         0,
+
                         Math.min(
+
                             WIDTH -
+
                                 PLAYER_SIZE,
+
                             player.x
+
                         )
+
                     );
+
+
+
 
 
                 player.y =
+
                     Math.max(
+
                         0,
+
                         Math.min(
+
                             HEIGHT -
+
                                 PLAYER_SIZE,
+
                             player.y
+
                         )
+
                     );
 
 
+
+
+
                 melee(
+
                     room,
+
                     player,
+
                     dash.damage,
+
                     75
+
                 );
 
 
-                // 공격으로 게임이 끝났다면
-                // endGame()에서 dash가 null이 되었을 수 있음
+
+
+
+                // 공격으로 게임이 끝났다면*
+
+                // endGame()에서 dash가 null이 되었을 수 있음*
+
                 if (
+
                     !room.started ||
+
                     !player.dash
+
                 ) {
+
+
 
                     continue;
 
+
+
                 }
+
+
+
 
 
                 player.dash.steps--;
 
 
+
+
+
                 if (
+
                     player.dash.steps <= 0
+
                 ) {
+
+
 
                 player.dash = null;
 
+
+
                 }
 
+
+
             }
-// ======================*
-// 독 데미지*
-// ======================*
+
+// ======================**
+
+// 독 데미지**
+
+// ======================**
+
+
+
+
 
 
 
             if (
 
+
+
                 player.poison
+
+
 
             ) {
 
 
 
+
+
+
+
                 if (
+
+
 
                     now >=
 
+
+
                     player.poison.nextTick
+
+
 
                 ) {
 
 
 
+
+
+
+
                     player.poison.nextTick +=
+
+
 
                         player.poison.tickInterval;
 
@@ -3102,17 +6347,35 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
                     player.hp =
+
+
 
                         Math.max(
 
+
+
                             0,
+
+
 
                             player.hp -
 
+
+
                                 player.poison
 
+
+
                                     .damagePerTick
+
+
 
                         );
 
@@ -3120,21 +6383,43 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
                     if (
 
+
+
                         player.hp <= 0
+
+
 
                     ) {
 
 
 
+
+
+
+
                         const attacker =
+
+
 
                             room.players[
 
+
+
                                 player.poison
 
+
+
                                     .sourceId
+
+
 
                             ];
 
@@ -3142,9 +6427,23 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
                         player.poison =
 
+
+
                             null;
+
+
+
+
+
+
 
 
 
@@ -3154,13 +6453,27 @@ function gameTick() {
 
 
 
+
+
+
+
                             endGame(
+
+
 
                                 room,
 
+
+
                                 attacker.id
 
+
+
                             );
+
+
+
+
 
 
 
@@ -3168,11 +6481,25 @@ function gameTick() {
 
 
 
+
+
+
+
                     }
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -3180,19 +6507,37 @@ function gameTick() {
 
                 if (
 
+
+
                     player.poison &&
+
+
 
                     now >=
 
+
+
                         player.poison.endTime
+
+
 
                 ) {
 
 
 
+
+
+
+
                     player.poison =
 
+
+
                         null;
+
+
+
+
 
 
 
@@ -3200,24 +6545,49 @@ function gameTick() {
 
 
 
+
+
+
+
             }
 
 
 
+
+
+
+
         }
-// ==========================*
-// 투사체*
-// ==========================*
+
+// ==========================**
+
+// 투사체**
+
+// ==========================**
+
+
+
+
 
 
 
         for (
 
+
+
             let i =
+
+
 
                 room.projectiles.length -
 
+
+
                 1;
+
+
+
+
 
 
 
@@ -3225,13 +6595,25 @@ function gameTick() {
 
 
 
+
+
+
+
             i--
+
+
 
         ) {
 
 
 
+
+
+
+
             const projectile =
+
+
 
                 room.projectiles[i];
 
@@ -3239,7 +6621,15 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
             projectile.x +=
+
+
 
                 projectile.vx;
 
@@ -3247,7 +6637,15 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
             projectile.y +=
+
+
 
                 projectile.vy;
 
@@ -3255,15 +6653,35 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
             projectile.traveled +=
+
+
 
                 Math.hypot(
 
+
+
                     projectile.vx,
+
+
 
                     projectile.vy
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3271,7 +6689,15 @@ function gameTick() {
 
             projectile.life -=
 
+
+
                 50;
+
+
+
+
+
+
 
 
 
@@ -3279,37 +6705,75 @@ function gameTick() {
 
             const target =
 
+
+
                 Object.values(
+
+
 
                     room.players
 
+
+
                 ).find(
+
+
 
                     player =>
 
 
 
+
+
+
+
                         player.id !==
+
+
 
                             projectile.ownerId &&
 
 
 
+
+
+
+
                         distancePointPlayer(
+
+
 
                             projectile,
 
+
+
                             player
+
+
 
                         ) <=
 
+
+
                             projectile.radius +
+
+
 
                             PLAYER_SIZE / 2
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3319,11 +6783,21 @@ function gameTick() {
 
 
 
+
+
+
+
                 const attacker =
+
+
 
                     room.players[
 
+
+
                         projectile.ownerId
+
+
 
                     ];
 
@@ -3331,41 +6805,85 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     attacker &&
 
+
+
                     !target.shield
+
+
 
                 ) {
 
 
 
+
+
+
+
                     damage(
+
+
 
                         room,
 
+
+
                         attacker,
+
+
 
                         target,
 
+
+
                         projectile.damage
 
+
+
                     );
-                
-                // 독 수리검*
+
+
+
+                // 독 수리검**
+
+
+
+
 
 
 
                     if (
 
+
+
                         projectile.type ===
+
+
 
                             "poisonShuriken" &&
 
+
+
                         target.hp > 0
 
+
+
                     ) {
+
+
+
+
 
 
 
@@ -3373,37 +6891,75 @@ function gameTick() {
 
 
 
+
+
+
+
                             sourceId:
+
+
 
                                 attacker.id,
 
 
 
+
+
+
+
                             damagePerTick:
+
+
 
                                 2,
 
 
 
+
+
+
+
                             tickInterval:
 
+
+
                                 500,
+
+
+
+
 
 
 
                             nextTick:
 
+
+
                                 now +
+
+
 
                                 500,
 
 
 
+
+
+
+
                             endTime:
+
+
 
                                 now +
 
+
+
                                 3000
+
+
+
+
 
 
 
@@ -3411,7 +6967,15 @@ function gameTick() {
 
 
 
+
+
+
+
                     }
+
+
+
+
 
 
 
@@ -3421,13 +6985,31 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
                 room.projectiles.splice(
+
+
 
                     i,
 
+
+
                     1
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3437,7 +7019,17 @@ function gameTick() {
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
 
 
 
@@ -3447,13 +7039,27 @@ function gameTick() {
 
 
 
+
+
+
+
                 projectile.life <= 0 ||
+
+
+
+
 
 
 
                 projectile.traveled >=
 
+
+
                     projectile.maxDistance ||
+
+
+
+
 
 
 
@@ -3461,9 +7067,19 @@ function gameTick() {
 
 
 
+
+
+
+
                 projectile.x >
 
+
+
                     WIDTH + 50 ||
+
+
+
+
 
 
 
@@ -3471,9 +7087,19 @@ function gameTick() {
 
 
 
+
+
+
+
                 projectile.y >
 
+
+
                     HEIGHT + 50
+
+
+
+
 
 
 
@@ -3481,17 +7107,35 @@ function gameTick() {
 
 
 
+
+
+
+
                 room.projectiles.splice(
+
+
 
                     i,
 
+
+
                     1
+
+
 
                 );
 
 
 
+
+
+
+
             }
+
+
+
+
 
 
 
@@ -3501,11 +7145,25 @@ function gameTick() {
 
 
 
+
+
+
+
+
+
         broadcastGame(
+
+
 
             room
 
+
+
         );
+
+
+
+
 
 
 
@@ -3513,27 +7171,55 @@ function gameTick() {
 
 
 
+
+
+
+
 }
 
 
 
 
 
-// ==============================
 
-// 투사체와 플레이어 거리
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 투사체와 플레이어 거리*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 function distancePointPlayer(
 
+
+
     projectile,
+
+
 
     player
 
+
+
 ) {
+
+
+
+
 
 
 
@@ -3541,31 +7227,63 @@ function distancePointPlayer(
 
 
 
+
+
+
+
         projectile.x -
+
+
 
             (
 
+
+
                 player.x +
 
+
+
                 PLAYER_SIZE / 2
+
+
 
             ),
 
 
 
+
+
+
+
         projectile.y -
+
+
 
             (
 
+
+
                 player.y +
 
+
+
                 PLAYER_SIZE / 2
+
+
 
             )
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -3575,17 +7293,35 @@ function distancePointPlayer(
 
 
 
-// ==============================
 
-// Socket.IO
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// Socket.IO*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 io.on(
 
+
+
     "connection",
+
+
 
     socket => {
 
@@ -3593,36 +7329,110 @@ io.on(
 
 
 
+
+
+
+
+
+
         console.log(
+
+
 
             "접속:",
 
+
+
             socket.id
 
-        );
-// ==========================*
-// 방 만들기*
-// ==========================*
 
+
+        );
+
+// ==========================**
+
+// 방 만들기**
+
+// ==========================**
+
+
+
+
+
+
+
+        socket.on("authenticate", token => {
+            const user = getUserFromToken(token);
+
+            if (!user) {
+                socket.emit("authError", {
+                    message: "로그인 세션이 만료되었습니다."
+                });
+                return;
+            }
+
+            socket.data.userId = user.id;
+            socket.data.username = user.username;
+
+            socket.emit("authenticated", {
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    wins: user.wins,
+                    losses: user.losses
+                }
+            });
+        });
+
+        socket.on("logout", () => {
+            socket.data.userId = null;
+            socket.data.username = null;
+            socket.data.roomCode = null;
+        });
 
 
         socket.on(
 
+
+
             "createRoom",
 
+
+
             () => {
+
+                if (!socket.data.userId) {
+                    socket.emit("roomError", "로그인이 필요합니다.");
+                    return;
+                }
+
+
+
+
 
 
 
                 if (
 
+
+
                     socket.data.roomCode
+
+
 
                 ) {
 
 
 
+
+
+
+
                     return;
+
+
+
+
 
 
 
@@ -3632,9 +7442,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const code =
 
+
+
                     generateRoomCode();
+
+
+
+
+
+
 
 
 
@@ -3644,19 +7468,39 @@ io.on(
 
 
 
+
+
+
+
                     code,
+
+
+
+
 
 
 
                     hostId:
 
+
+
                         socket.id,
+
+
+
+
 
 
 
                     started:
 
+
+
                         false,
+
+
+
+
 
 
 
@@ -3664,7 +7508,15 @@ io.on(
 
 
 
+
+
+
+
                     projectiles: []
+
+
+
+
 
 
 
@@ -3674,19 +7526,45 @@ io.on(
 
 
 
+
+
+
+
+
+
                 room.players[
+
+
 
                     socket.id
 
+
+
                 ] =
+
+
 
                     createPlayer(
 
+
+
                         socket.id,
+
+
 
                         "p1"
 
+
+
                     );
+
+                room.players[socket.id].userId = socket.data.userId;
+
+
+
+
+
+
 
 
 
@@ -3694,7 +7572,15 @@ io.on(
 
                 rooms[code] =
 
+
+
                     room;
+
+
+
+
+
+
 
 
 
@@ -3702,9 +7588,19 @@ io.on(
 
                 socket.join(
 
+
+
                     code
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3712,7 +7608,15 @@ io.on(
 
                 socket.data.roomCode =
 
+
+
                     code;
+
+
+
+
+
+
 
 
 
@@ -3720,21 +7624,43 @@ io.on(
 
                 socket.emit(
 
+
+
                     "roomCreated",
+
+
 
                     {
 
 
 
+
+
+
+
                         roomCode:
+
+
 
                             code
 
 
 
+
+
+
+
                     }
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3742,34 +7668,72 @@ io.on(
 
                 broadcastRoom(
 
+
+
                     room
+
+
 
                 );
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 방 참가*
-// ==========================*
+
+// ==========================**
+
+// 방 참가**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "joinRoom",
 
+
+
             rawCode => {
+
+                if (!socket.data.userId) {
+                    socket.emit("roomError", "로그인이 필요합니다.");
+                    return;
+                }
+
+
+
+
 
 
 
                 if (
 
+
+
                     socket.data.roomCode
 
+
+
                 ) {
+
+
+
+
 
 
 
@@ -3777,7 +7741,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -3785,15 +7759,27 @@ io.on(
 
                 const code =
 
+
+
                     String(
+
+
 
                         rawCode ||
 
+
+
                         ""
+
+
 
                     )
 
+
+
                     .trim()
+
+
 
                     .toUpperCase();
 
@@ -3801,7 +7787,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const room =
+
+
 
                     rooms[code];
 
@@ -3809,21 +7803,45 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (!room) {
 
 
 
+
+
+
+
                     socket.emit(
 
+
+
                         "roomError",
+
+
 
                         "존재하지 않는 방입니다."
 
+
+
                     );
 
 
 
+
+
+
+
                     return;
+
+
+
+
 
 
 
@@ -3833,21 +7851,45 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     room.started
 
+
+
                 ) {
+
+
+
+
 
 
 
                     socket.emit(
 
+
+
                         "roomError",
+
+
 
                         "이미 게임이 시작된 방입니다."
 
+
+
                     );
+
+
+
+
 
 
 
@@ -3855,7 +7897,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -3863,23 +7915,45 @@ io.on(
 
                 if (
 
+
+
                     Object.keys(
+
+
 
                         room.players
 
+
+
                     ).length >= 2
+
+
 
                 ) {
 
 
 
+
+
+
+
                     socket.emit(
+
+
 
                         "roomError",
 
+
+
                         "방이 가득 찼습니다."
 
+
+
                     );
+
+
+
+
 
 
 
@@ -3887,7 +7961,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -3895,17 +7979,37 @@ io.on(
 
                 room.players[
 
+
+
                     socket.id
+
+
 
                 ] =
 
+
+
                     createPlayer(
+
+
 
                         socket.id,
 
+
+
                         "p2"
 
+
+
                     );
+
+                room.players[socket.id].userId = socket.data.userId;
+
+
+
+
+
+
 
 
 
@@ -3913,9 +8017,19 @@ io.on(
 
                 socket.join(
 
+
+
                     code
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3923,7 +8037,15 @@ io.on(
 
                 socket.data.roomCode =
 
+
+
                     code;
+
+
+
+
+
+
 
 
 
@@ -3931,21 +8053,43 @@ io.on(
 
                 socket.emit(
 
+
+
                     "roomJoined",
+
+
 
                     {
 
 
 
+
+
+
+
                         roomCode:
+
+
 
                             code
 
 
 
+
+
+
+
                     }
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -3953,34 +8097,65 @@ io.on(
 
                 broadcastRoom(
 
+
+
                     room
+
+
 
                 );
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 캐릭터 선택*
-// ==========================*
+
+// ==========================**
+
+// 캐릭터 선택**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "selectCharacter",
+
+
 
             character => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
+
+
 
                     );
 
@@ -3988,11 +8163,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const player =
+
+
 
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4000,21 +8187,45 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     !room ||
 
+
+
                     room.started ||
+
+
 
                     !player ||
 
+
+
                     !characters[
+
+
 
                         character
 
+
+
                     ]
 
+
+
                 ) {
+
+
+
+
 
 
 
@@ -4022,29 +8233,61 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
 
 
                 player.character =
+
                     character;
 
+
+
                 player.ready =
+
                     false;
 
+
+
                 player.maxHp =
+
                     characters[
+
                         character
+
                     ].maxHp;
 
+
+
                 player.hp =
+
                     player.maxHp;
 
+
+
                 updateAmmo(
+
                     player
+
                 );
+
+
+
+
+
+
 
 
 
@@ -4052,34 +8295,65 @@ io.on(
 
                 broadcastRoom(
 
+
+
                     room
+
+
 
                 );
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 준비*
-// ==========================*
+
+// ==========================**
+
+// 준비**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "ready",
+
+
 
             () => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
+
+
 
                     );
 
@@ -4087,11 +8361,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const player =
+
+
 
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4099,19 +8385,41 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     !room ||
 
+
+
                     room.started ||
 
+
+
                     !player
+
+
 
                 ) {
 
 
 
+
+
+
+
                     return;
+
+
+
+
 
 
 
@@ -4121,7 +8429,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                 player.ready =
+
+
 
                     !player.ready;
 
@@ -4129,11 +8445,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const players =
+
+
 
                     Object.values(
 
+
+
                         room.players
+
+
 
                     );
 
@@ -4141,7 +8469,17 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
+
+
 
 
 
@@ -4149,13 +8487,27 @@ io.on(
 
 
 
+
+
+
+
                     players.every(
+
+
 
                         p =>
 
+
+
                             p.ready
 
+
+
                     )
+
+
+
+
 
 
 
@@ -4163,7 +8515,13 @@ io.on(
 
 
 
+
+
+
+
                     room.started =
+
+
 
                         true;
 
@@ -4171,7 +8529,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                     room.projectiles =
+
+
 
                         [];
 
@@ -4179,59 +8545,123 @@ io.on(
 
 
 
+
+
+
+
+
+
                     for (
+
+
 
                         const p of
 
+
+
                         players
+
+
 
                     ) {
 
 
 
+
+
+
+
                         p.ready =
+
+
 
                             false;
 
 
 
+
+
+
+
                         p.maxHp =
+
                             characters[
+
                                 p.character
+
                             ].maxHp;
 
+
+
                         p.hp =
+
                             p.maxHp;
+
+
+
+
 
 
 
                         p.skill1Ready =
 
+
+
                             true;
+
+
+
+
 
 
 
                         p.skill2Ready =
 
+
+
                             true;
+
+
+
+
 
 
 
                         p.shield =
 
+
+
                             false;
+
+
+
+
 
 
 
                         p.dash =
 
+
+
                             null;
+
+
+
+
 
 
 
                         p.poison =
 
+
+
                             null;
+
+
+
+
+
+
 
 
 
@@ -4239,13 +8669,27 @@ io.on(
 
                         updateAmmo(
 
+
+
                             p
+
+
 
                         );
 
 
 
+
+
+
+
                     }
+
+
+
+
+
+
 
 
 
@@ -4253,17 +8697,35 @@ io.on(
 
                     io.to(
 
+
+
                         room.code
+
+
 
                     ).emit(
 
+
+
                         "gameStart"
+
+
 
                     );
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4271,34 +8733,65 @@ io.on(
 
                 broadcastRoom(
 
+
+
                     room
+
+
 
                 );
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 이동*
-// ==========================*
+
+// ==========================**
+
+// 이동**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "playerMove",
+
+
 
             data => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
+
+
 
                     );
 
@@ -4306,11 +8799,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const player =
+
+
 
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4318,17 +8823,37 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     !room ||
 
+
+
                     !room.started ||
+
+
 
                     !player ||
 
+
+
                     player.dash
 
+
+
                 ) {
+
+
+
+
 
 
 
@@ -4336,122 +8861,243 @@ io.on(
 
 
 
+
+
+
+
                 }
+
                 const dx =
+
                     Number(data?.x) || 0;
 
+
+
                 const dy =
+
                     Number(data?.y) || 0;
 
 
-                // 아무 키도 누르지 않았으면 정지
+
+
+
+                // 아무 키도 누르지 않았으면 정지*
+
                 if (
+
                     dx === 0 &&
+
                     dy === 0
+
                 ) {
 
+
+
                     player.input = {
+
                         x: 0,
+
                         y: 0
+
                     };
 
+
+
                 }
+
                 else {
 
+
+
                     const direction =
+
                         normalize(
+
                             dx,
+
                             dy
+
                         );
 
+
+
                     player.input =
+
                         direction;
 
+
+
                     player.direction =
+
                         direction;
+
+
 
             } 
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 핑*
-// ==========================*
+
+// ==========================**
+
+// 핑**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
+
+
 
     "ping",
 
+
+
     direction => {
 
+
+
         const room =
+
             getRoom(
+
                 socket
+
             );
 
+
+
         const player =
+
             room?.players[
+
                 socket.id
+
             ];
 
+
+
         if (
+
             !room ||
+
             !room.started ||
+
             !player
+
         ) {
+
+
 
             return;
 
+
+
         }
 
+
+
         player.pingDirection =
+
             normalize(
+
                 Number(
+
                     direction?.x
+
                 ) || 0,
 
+
+
                 Number(
+
                     direction?.y
+
                 ) || 0
+
             );
 
+
+
         socket.emit(
+
             "playerPing",
+
             {
+
                 playerId:
+
                     player.id,
 
+
+
                 direction:
+
                     player.pingDirection
+
             }
+
         );
 
+
+
     }
+
 );
-// ==========================*
-// 기본 공격*
-// ==========================*
+
+// ==========================**
+
+// 기본 공격**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "playerAttack",
+
+
 
             data => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
+
+
 
                     );
 
@@ -4459,11 +9105,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const player =
+
+
 
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4471,19 +9129,41 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     !room ||
 
+
+
                     !room.started ||
+
+
 
                     !player ||
 
+
+
                     player.reloading ||
+
+
 
                     player.ammo <= 0
 
+
+
                 ) {
+
+
+
+
 
 
 
@@ -4491,7 +9171,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4499,27 +9189,55 @@ io.on(
 
                 const direction =
 
+
+
                     normalize(
+
+
+
+
 
 
 
                         Number(
 
+
+
                             data?.direction?.x
+
+
 
                         ) || 0,
 
 
 
+
+
+
+
                         Number(
 
+
+
                             data?.direction?.y
+
+
 
                         ) || 0
 
 
 
+
+
+
+
                     );
+
+
+
+
+
+
 
 
 
@@ -4527,129 +9245,259 @@ io.on(
 
                 player.pingDirection =
 
+
+
                     direction;
 
 
 
 
 
+
+
+
+
+
+
                 player.ammo--;
-// 닌자*
+
+// 닌자**
+
+
+
+
 
 
 
                 if (
 
+
+
                     player.character ===
+
+
 
                     "ninja"
 
+
+
                 ) {
+
+
+
+
 
 
 
                     addProjectile(
 
+
+
                         room,
 
+
+
                         player,
+
+
 
                         "shuriken",
 
+
+
                         direction
+
+
 
                     );
 
 
 
+
+
+
+
                 }
-// 마법사*
+
+// 마법사**
+
+
+
+
 
 
 
                 else if (
 
+
+
                     player.character ===
+
+
 
                     "wizard"
 
+
+
                 ) {
+
+
+
+
 
 
 
                     addProjectile(
 
+
+
                         room,
 
+
+
                         player,
+
+
 
                         "fireball",
 
+
+
                         direction
+
+
 
                     );
 
 
 
+
+
+
+
                 }
-// 나이트*
+
+// 나이트**
+
+
+
+
 
 
 
                 else if (
 
+
+
                     player.character ===
+
+
 
                     "knight"
 
+
+
                 ) {
+
+
+
+
 
 
 
                     melee(
 
+
+
                         room,
+
+
 
                         player,
 
+
+
                         15,
 
+
+
                         90
+
+
 
                     );
 
 
 
+
+
+
+
                 }
-// 로봇*
+
+// 로봇**
+
+
+
+
 
 
 
                 else if (
 
+
+
                     player.character ===
 
+
+
                     "robot"
+
+
 
                 ) {
 
 
 
+
+
+
+
                     melee(
+
+
 
                         room,
 
+
+
                         player,
+
+
 
                         12,
 
+
+
                         90
+
+
 
                     );
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4657,25 +9505,49 @@ io.on(
 
                 io.to(
 
+
+
                     room.code
+
+
 
                 ).emit(
 
+
+
                     "normalAttackEffect",
+
+
 
                     {
 
 
 
+
+
+
+
                         playerId:
+
+
 
                             player.id,
 
 
 
+
+
+
+
                         character:
 
+
+
                             player.character,
+
+
+
+
 
 
 
@@ -4683,7 +9555,13 @@ io.on(
 
 
 
+
+
+
+
                     }
+
+
 
                 );
 
@@ -4691,21 +9569,45 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
 
+
+
                     player.ammo <= 0
+
+
 
                 ) {
 
 
 
+
+
+
+
                     reload(
+
+
 
                         room,
 
+
+
                         player
 
+
+
                     );
+
+
+
+
 
 
 
@@ -4713,30 +9615,63 @@ io.on(
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 스킬*
-// ==========================*
+
+// ==========================**
+
+// 스킬**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "playerSkill",
+
+
 
             data => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
 
+
+
                     );
+
+
+
+
+
+
 
 
 
@@ -4744,9 +9679,15 @@ io.on(
 
                 const player =
 
+
+
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4754,15 +9695,33 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     !room ||
 
+
+
                     !room.started ||
+
+
 
                     !player
 
+
+
                 ) {
+
+
+
+
 
 
 
@@ -4770,7 +9729,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4778,27 +9747,55 @@ io.on(
 
                 const direction =
 
+
+
                     normalize(
+
+
+
+
 
 
 
                         Number(
 
+
+
                             data?.direction?.x
+
+
 
                         ) || 0,
 
 
 
+
+
+
+
                         Number(
 
+
+
                             data?.direction?.y
+
+
 
                         ) || 0
 
 
 
+
+
+
+
                     );
+
+
+
+
+
+
 
 
 
@@ -4806,29 +9803,59 @@ io.on(
 
                 if (
 
+
+
                     Number(
+
+
 
                         data?.skill
 
+
+
                     ) === 1
 
+
+
                 ) {
+
+
+
+
 
 
 
                     useSkill1(
 
+
+
                         room,
+
+
 
                         player,
 
+
+
                         direction
+
+
 
                     );
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4836,25 +9863,49 @@ io.on(
 
                 if (
 
+
+
                     Number(
+
+
 
                         data?.skill
 
+
+
                     ) === 2
+
+
 
                 ) {
 
 
 
+
+
+
+
                     useSkill2(
+
+
 
                         room,
 
+
+
                         player,
+
+
 
                         direction
 
+
+
                     );
+
+
+
+
 
 
 
@@ -4862,30 +9913,63 @@ io.on(
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 재장전*
-// ==========================*
+
+// ==========================**
+
+// 재장전**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "reload",
+
+
 
             () => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
 
+
+
                     );
+
+
+
+
+
+
 
 
 
@@ -4893,9 +9977,15 @@ io.on(
 
                 const player =
 
+
+
                     room?.players[
 
+
+
                         socket.id
+
+
 
                     ];
 
@@ -4903,25 +9993,53 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     room &&
 
+
+
                     room.started &&
 
+
+
                     player
+
+
 
                 ) {
 
 
 
+
+
+
+
                     reload(
+
+
 
                         room,
 
+
+
                         player
 
+
+
                     );
+
+
+
+
 
 
 
@@ -4929,30 +10047,63 @@ io.on(
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 방 삭제*
-// ==========================*
+
+// ==========================**
+
+// 방 삭제**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "deleteRoom",
+
+
 
             () => {
 
 
 
+
+
+
+
                 const room =
+
+
 
                     getRoom(
 
+
+
                         socket
 
+
+
                     );
+
+
+
+
+
+
 
 
 
@@ -4960,9 +10111,19 @@ io.on(
 
                 if (!room) {
 
+
+
                     return;
 
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -4970,25 +10131,49 @@ io.on(
 
                 if (
 
+
+
                     room.hostId !==
 
+
+
                     socket.id
+
+
 
                 ) {
 
 
 
+
+
+
+
                     socket.emit(
+
+
 
                         "roomError",
 
+
+
                         "방장만 방을 삭제할 수 있습니다."
+
+
 
                     );
 
 
 
+
+
+
+
                     return;
+
+
+
+
 
 
 
@@ -4998,15 +10183,35 @@ io.on(
 
 
 
+
+
+
+
+
+
                 io.to(
+
+
 
                     room.code
 
+
+
                 ).emit(
+
+
 
                     "roomDeleted"
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -5014,25 +10219,51 @@ io.on(
 
                 for (
 
+
+
                     const player of
+
+
 
                     Object.values(
 
+
+
                         room.players
 
+
+
                     )
+
+
 
                 ) {
 
 
 
+
+
+
+
                     const targetSocket =
+
+
 
                         io.sockets.sockets.get(
 
+
+
                             player.id
 
+
+
                         );
+
+
+
+
+
+
 
 
 
@@ -5040,15 +10271,27 @@ io.on(
 
                     if (
 
+
+
                         targetSocket
+
+
 
                     ) {
 
 
 
+
+
+
+
                         targetSocket.leave(
 
+
+
                             room.code
+
+
 
                         );
 
@@ -5056,9 +10299,21 @@ io.on(
 
 
 
+
+
+
+
+
+
                         targetSocket.data.roomCode =
 
+
+
                             null;
+
+
+
+
 
 
 
@@ -5066,7 +10321,17 @@ io.on(
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -5074,30 +10339,57 @@ io.on(
 
                 delete rooms[
 
+
+
                     room.code
+
+
 
                 ];
 
 
 
+
+
+
+
             }
 
+
+
         );
-// ==========================*
-// 접속 종료*
-// ==========================*
+
+// ==========================**
+
+// 접속 종료**
+
+// ==========================**
+
+
+
+
 
 
 
         socket.on(
 
+
+
             "disconnect",
+
+
 
             () => {
 
 
 
+
+
+
+
                 const roomCode =
+
+
 
                     socket.data.roomCode;
 
@@ -5105,11 +10397,27 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (!roomCode) {
+
+
 
                     return;
 
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -5117,11 +10425,23 @@ io.on(
 
                 const room =
 
+
+
                     rooms[
+
+
 
                         roomCode
 
+
+
                     ];
+
+
+
+
+
+
 
 
 
@@ -5129,9 +10449,19 @@ io.on(
 
                 if (!room) {
 
+
+
                     return;
 
+
+
                 }
+
+
+
+
+
+
 
 
 
@@ -5139,7 +10469,11 @@ io.on(
 
                 delete room.players[
 
+
+
                     socket.id
+
+
 
                 ];
 
@@ -5147,27 +10481,57 @@ io.on(
 
 
 
+
+
+
+
+
+
                 if (
+
+
 
                     Object.keys(
 
+
+
                         room.players
 
+
+
                     ).length === 0
+
+
 
                 ) {
 
 
 
+
+
+
+
                     delete rooms[
 
+
+
                         roomCode
+
+
 
                     ];
 
 
 
+
+
+
+
                     return;
+
+
+
+
 
 
 
@@ -5177,11 +10541,23 @@ io.on(
 
 
 
+
+
+
+
+
+
                 const remaining =
+
+
 
                     Object.values(
 
+
+
                         room.players
+
+
 
                     )[0];
 
@@ -5189,7 +10565,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                 remaining.slot =
+
+
 
                     "p1";
 
@@ -5197,7 +10581,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                 room.hostId =
+
+
 
                     remaining.id;
 
@@ -5205,7 +10597,15 @@ io.on(
 
 
 
+
+
+
+
+
+
                 room.started =
+
+
 
                     false;
 
@@ -5213,11 +10613,27 @@ io.on(
 
 
 
+
+
+
+
+
+
                 resetPlayer(
+
+
 
                     remaining
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -5225,13 +10641,27 @@ io.on(
 
                 io.to(
 
+
+
                     roomCode
+
+
 
                 ).emit(
 
+
+
                     "opponentDisconnected"
 
+
+
                 );
+
+
+
+
+
+
 
 
 
@@ -5239,19 +10669,35 @@ io.on(
 
                 broadcastRoom(
 
+
+
                     room
+
+
 
                 );
 
 
 
+
+
+
+
             }
+
+
 
         );
 
 
 
+
+
+
+
     }
+
+
 
 );
 
@@ -5259,30 +10705,63 @@ io.on(
 
 
 
-// ==============================
 
-// 게임 업데이트
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 게임 업데이트*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
 setInterval(gameTick, 50);
+
 setInterval(movementTick, 1000 / 60);
+
 setInterval(
+
     hpRegenTick,
+
     HP_REGEN_INTERVAL
+
 );
 
 
 
 
 
-// ==============================
 
-// 서버 실행
 
-// ==============================
+
+
+
+
+// ==============================*
+
+
+
+// 서버 실행*
+
+
+
+// ==============================*
+
+
+
+
 
 
 
@@ -5290,24 +10769,48 @@ const PORT = process.env.PORT || 3000;
 
 
 
+
+
+
+
 server.listen(
+
+
 
     PORT,
 
+
+
     "0.0.0.0",
+
+
 
     () => {
 
 
 
+
+
+
+
         console.log(
 
-            `서버 실행: http\://localhost:${PORT}`
+
+
+            `서버 실행: http\\://localhost:${PORT}`
+
+
 
         );
 
 
 
+
+
+
+
     }
+
+
 
 );
