@@ -2842,12 +2842,18 @@ socket.on(
             enemyHpBar =
                 createHpBar(enemy);
         }
+        console.log("BEFORE SCREEN CHANGE");
 
         startScreen.style.display =
             "none";
 
         gameScreen.style.display =
             "flex";
+        console.log(
+            "AFTER SCREEN CHANGE",
+            gameScreen.style.display,
+            gameScreen
+        );
 
         message.textContent =
             "마우스로 핑을 찍고 F/E/Q로 공격하세요.";
