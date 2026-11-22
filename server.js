@@ -437,6 +437,113 @@ const characters = {
 
 
 };
+// ==========================
+// 선택 가능한 스킬 정보
+// ==========================
+
+const skillDefinitions = {
+
+    // ==========================
+    // 나이트
+    // ==========================
+
+    shieldBash: {
+
+        name: "방패 강타",
+
+        cooldown: 3000,
+
+        damage: 20,
+
+        type: "melee",
+
+        range: 120
+
+    },
+
+
+    swordWave: {
+
+        name: "검의 충격파",
+
+        cooldown: 4500,
+
+        damage: 25,
+
+        type: "projectile",
+
+        projectileType:
+            "swordWave",
+
+        speed: 9,
+
+        radius: 16,
+
+        life: 900,
+
+        maxDistance: 260
+
+    },
+
+
+    dashSlash: {
+
+        name: "돌진 베기",
+
+        cooldown: 5000,
+
+        damage: 22,
+
+        type: "dash",
+
+        range: 110
+
+    },
+
+
+    spinSlash: {
+
+        name: "회전 베기",
+
+        cooldown: 4000,
+
+        damage: 18,
+
+        type: "area",
+
+        range: 140
+
+    },
+
+
+    groundSmash: {
+
+        name: "지면 강타",
+
+        cooldown: 5000,
+
+        damage: 24,
+
+        type: "area",
+
+        range: 160
+
+    },
+
+
+    counter: {
+
+        name: "반격",
+
+        cooldown: 6000,
+
+        damage: 25,
+
+        type: "counter"
+
+    }
+
+};
 
 
 
@@ -851,15 +958,11 @@ function createPlayer(
 
 
 
-        skill1Ready: true,
-
-
-
-
-
-
-
-        skill2Ready: true,
+        
+        skillLoadout: {
+            1: null,
+            2: null
+        },
 
 
 
@@ -2872,6 +2975,53 @@ function melee(
 
 
 }
+// ==========================
+// 광역 공격
+// ==========================
+
+function areaDamage(
+    room,
+    player,
+    damageAmount,
+    range
+) {
+
+    const target =
+        opponent(
+            room,
+            player.id
+        );
+
+
+    if (!target) {
+        return;
+    }
+
+
+    if (
+        target.shield
+    ) {
+        return;
+    }
+
+
+    if (
+        distance(
+            player,
+            target
+        ) <= range
+    ) {
+
+        damage(
+            room,
+            player,
+            target,
+            damageAmount
+        );
+
+    }
+
+}
 
 
 
@@ -3524,26 +3674,266 @@ function startDash(
 
 
 }
+// ==========================
+// 선택한 스킬 실행
+// ==========================
+
+function executeSelectedSkill(
+    room,
+    player,
+    skillId,
+    direction
+) {
+
+    const skill =
+        skillDefinitions[
+            skillId
+        ];
+
+
+    if (!skill) {
+        return;
+    }
+
+
+    // ==========================
+    // 방패 강타
+    // ==========================
+
+    if (
+        skillId ===
+        "shieldBash"
+    ) {
+
+        melee(
+            room,
+            player,
+            skill.damage,
+            skill.range
+        );
+
+        return;
+
+    }
+
+
+    // ==========================
+    // 검의 충격파
+    // ==========================
+
+    if (
+        skillId ===
+        "swordWave"
+    ) {
+
+        addProjectile(
+            room,
+            player,
+            "fireball",
+            direction
+        );
+
+
+        const projectile =
+            room.projectiles[
+                room.projectiles.length - 1
+            ];
+
+
+        if (projectile) {
+
+            projectile.type =
+                "swordWave";
+
+
+            projectile.damage =
+                skill.damage;
+
+
+            projectile.vx =
+                direction.x *
+                skill.speed;
+
+
+            projectile.vy =
+                direction.y *
+                skill.speed;
+
+
+            projectile.radius =
+                skill.radius;
+
+
+            projectile.life =
+                skill.life;
+
+
+            projectile.maxLife =
+                skill.life;
+
+
+            projectile.maxDistance =
+                skill.maxDistance;
+
+        }
+
+        return;
+
+    }
+
+
+    // ==========================
+    // 돌진 베기
+    // ==========================
+
+    if (
+        skillId ===
+        "dashSlash"
+    ) {
+
+        startDash(
+            room,
+            player,
+            direction
+        );
+
+
+        // 돌진 직후 근처 적에게 공격
+
+        setTimeout(
+            () => {
+
+                const currentRoom =
+                    rooms[
+                        room.code
+                    ];
+
+
+                const currentPlayer =
+                    currentRoom?.players[
+                        player.id
+                    ];
+
+
+                if (
+                    !currentRoom ||
+                    !currentPlayer ||
+                    !currentRoom.started
+                ) {
+                    return;
+                }
+
+
+                melee(
+                    currentRoom,
+                    currentPlayer,
+                    skill.damage,
+                    skill.range
+                );
+
+            },
+            180
+        );
+
+
+        return;
+
+    }
+
+
+    // ==========================
+    // 회전 베기
+    // ==========================
+
+    if (
+        skillId ===
+        "spinSlash"
+    ) {
+
+        areaDamage(
+            room,
+            player,
+            skill.damage,
+            skill.range
+        );
+
+        return;
+
+    }
+
+
+    // ==========================
+    // 지면 강타
+    // ==========================
+
+    if (
+        skillId ===
+        "groundSmash"
+    ) {
+
+        areaDamage(
+            room,
+            player,
+            skill.damage,
+            skill.range
+        );
+
+        return;
+
+    }
+
+
+    // ==========================
+    // 반격
+    // ==========================
+
+    if (
+        skillId ===
+        "counter"
+    ) {
+
+        player.shield =
+            true;
+
+
+        setTimeout(
+            () => {
+
+                const currentRoom =
+                    rooms[
+                        room.code
+                    ];
+
+
+                const currentPlayer =
+                    currentRoom?.players[
+                        player.id
+                    ];
+
+
+                if (
+                    currentPlayer
+                ) {
+
+                    currentPlayer.shield =
+                        false;
+
+                }
+
+            },
+            1500
+        );
+
+
+        return;
+
+    }
+
+}
 
 
 
 
-
-
-
-
-
-
-
-// ==============================*
-
-
-
-// 스킬 1*
-
-
-
-// ==============================*
 
 
 
@@ -3552,1730 +3942,243 @@ function startDash(
 
 
 function useSkill1(
-
-
-
     room,
-
-
-
     player,
-
-
-
     direction
-
-
-
 ) {
 
-
-
-
-
-
-
     if (
-
-
-
         !room.started ||
-
-
-
         !player.skill1Ready
-
-
-
     ) {
-
-
-
-
-
-
-
         return;
-
-
-
-
-
-
-
     }
 
 
+    const skillId =
+        player.skillLoadout?.[1];
 
 
+    const skill =
+        skillDefinitions[
+            skillId
+        ];
 
 
-
-
-
+    if (!skill) {
+        return;
+    }
 
 
     player.skill1Ready =
-
-
-
         false;
 
 
-
-
-
-
-
-
-
-
-
-    const data =
-
-
-
-        characters[
-
-
-
-            player.character
-
-
-
-        ];
-
-// 닌자**
-
-
-
-
-
-
-
-    if (
-
-
-
-        player.character ===
-
-
-
-        "ninja"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        startDash(
-
-
-
-            room,
-
-
-
-            player,
-
-
-
-            direction
-
-
-
-        );
-
-
-
-
-
-
-
-    }
-
-// 마법사**
-
-
-
-
-
-
-
-    else if (
-
-
-
-        player.character ===
-
-
-
-        "wizard"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        addProjectile(
-
-
-
-            room,
-
-
-
-            player,
-
-
-
-            "bigFireball",
-
-
-
-            direction
-
-
-
-        );
-
-
-
-
-
-
-
-    }
-
-// 나이트**
-
-
-
-
-
-
-
-    else if (
-
-    player.character ===
-
-    "knight"
-
-) {
-
-
-
-    melee(
-
+    executeSelectedSkill(
         room,
-
         player,
-
-        characters.knight.basicDamage,
-
-        characters.knight.basicRange
-
+        skillId,
+        direction
     );
-
-
-
-}
-
-// 로봇**
-
-
-
-
-
-
-
-    else if (
-
-    player.character ===
-
-    "robot"
-
-) {
-
-
-
-    melee(
-
-        room,
-
-        player,
-
-        characters.robot.basicDamage,
-
-        characters.robot.basicRange
-
-    );
-
-
-
-}
-
-
-
-
-
-
-
-
-
 
 
     io.to(
-
-
-
         room.code
-
-
-
     ).emit(
-
-
-
         "skillEffect",
-
-
-
         {
-
-
-
-
-
-
-
             playerId:
-
-
-
                 player.id,
-
-
-
-
-
-
 
             skill: 1,
 
-
-
-
-
-
+            skillId:
+                skillId,
 
             character:
-
-
-
                 player.character,
 
-
-
-
-
-
-
             direction:
-
-
-
                 normalize(
-
-
-
                     direction.x,
-
-
-
                     direction.y
-
-
-
                 )
-
-
-
-
-
-
-
         }
-
-
-
     );
 
 
-
-
-
-
-
-
-
-
-
     setTimeout(
-
-
-
         () => {
 
-
-
-
-
-
-
             const currentRoom =
-
-
-
                 rooms[
-
-
-
                     room.code
-
-
-
                 ];
-
-
-
-
-
-
-
-
-
 
 
             const currentPlayer =
-
-
-
                 currentRoom?.players[
-
-
-
                     player.id
-
-
-
                 ];
 
 
-
-
-
-
-
-
-
-
-
-            if (!currentPlayer) {
-
-
-
+            if (
+                !currentPlayer
+            ) {
                 return;
-
-
-
             }
-
-
-
-
-
-
-
-
-
 
 
             currentPlayer.skill1Ready =
-
-
-
                 true;
 
 
-
-
-
-
-
-
-
-
-
             io.to(
-
-
-
                 room.code
-
-
-
             ).emit(
-
-
-
                 "skillReady",
-
-
-
                 {
-
-
-
-
-
-
-
                     playerId:
-
-
-
                         currentPlayer.id,
 
+                    skill:
+                        1,
 
-
-
-
-
-
-                    skill: 1
-
-
-
-
-
-
-
+                    skillId:
+                        skillId
                 }
-
-
-
             );
 
-
-
-
-
-
-
         },
-
-
-
-
-
-
-
-        data.skill1Cooldown
-
-
-
-
-
-
-
+        skill.cooldown
     );
 
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-// ==============================*
-
-
-
-// 스킬 2*
-
-
-
-// ==============================*
-
-
-
-
-
-
-
 function useSkill2(
-
-
-
     room,
-
-
-
     player,
-
-
-
     direction
-
-
-
 ) {
 
-
-
-
-
-
-
     if (
-
-
-
         !room.started ||
-
-
-
         !player.skill2Ready
-
-
-
     ) {
-
-
-
-
-
-
-
         return;
-
-
-
-
-
-
-
     }
 
 
+    const skillId =
+        player.skillLoadout?.[2];
 
 
+    const skill =
+        skillDefinitions[
+            skillId
+        ];
 
 
-
-
-
+    if (!skill) {
+        return;
+    }
 
 
     player.skill2Ready =
-
-
-
         false;
 
 
-
-
-
-
-
-
-
-
-
-    const data =
-
-
-
-        characters[
-
-
-
-            player.character
-
-
-
-        ];
-
-// 닌자**
-
-// 독 수리검**
-
-
-
-
-
-
-
-    if (
-
-
-
-        player.character ===
-
-
-
-        "ninja"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        addProjectile(
-
-
-
-            room,
-
-
-
-            player,
-
-
-
-            "poisonShuriken",
-
-
-
-            direction
-
-
-
-        );
-
-
-
-
-
-
-
-    }
-
-// 마법사**
-
-// 방어막**
-
-
-
-
-
-
-
-    else if (
-
-
-
-        player.character ===
-
-
-
-        "wizard"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        player.shield =
-
-
-
-            true;
-
-
-
-
-
-
-
-
-
-
-
-        setTimeout(
-
-
-
-            () => {
-
-
-
-
-
-
-
-                const currentRoom =
-
-
-
-                    rooms[
-
-
-
-                        room.code
-
-
-
-                    ];
-
-
-
-
-
-
-
-
-
-
-
-                const currentPlayer =
-
-
-
-                    currentRoom?.players[
-
-
-
-                        player.id
-
-
-
-                    ];
-
-
-
-
-
-
-
-
-
-
-
-                if (
-
-
-
-                    currentPlayer
-
-
-
-                ) {
-
-
-
-
-
-
-
-                    currentPlayer.shield =
-
-
-
-                        false;
-
-
-
-
-
-
-
-                }
-
-
-
-
-
-
-
-            },
-
-
-
-            3000
-
-
-
-        );
-
-
-
-
-
-
-
-    }
-
-// 나이트**
-
-// 검의 충격파**
-
-
-
-
-
-
-
-    else if (
-
-
-
-        player.character ===
-
-
-
-        "knight"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        addProjectile(
-
-
-
-            room,
-
-
-
-            player,
-
-
-
-            "fireball",
-
-
-
-            direction
-
-
-
-        );
-
-
-
-
-
-
-
-
-
-
-
-        const projectile =
-
-
-
-            room.projectiles[
-
-
-
-                room.projectiles.length -
-
-
-
-                1
-
-
-
-            ];
-
-
-
-
-
-
-
-
-
-
-
-        if (
-
-
-
-            projectile
-
-
-
-        ) {
-
-
-
-
-
-
-
-            projectile.type =
-
-
-
-                "swordWave";
-
-
-
-
-
-
-
-
-
-
-
-            projectile.damage =
-
-
-
-                data.skill2Damage;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.vx =
-
-
-
-                normalize(
-
-
-
-                    direction.x,
-
-
-
-                    direction.y
-
-
-
-                ).x * 9;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.vy =
-
-
-
-                normalize(
-
-
-
-                    direction.x,
-
-
-
-                    direction.y
-
-
-
-                ).y * 9;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.radius =
-
-
-
-                16;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.life =
-
-
-
-                900;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.maxLife =
-
-
-
-                900;
-
-
-
-
-
-
-
-
-
-
-
-            projectile.maxDistance =
-
-
-
-                260;
-
-
-
-
-
-
-
-        }
-
-
-
-
-
-
-
-    }
-
-// 로봇**
-
-// 미사일**
-
-
-
-
-
-
-
-    else if (
-
-
-
-        player.character ===
-
-
-
-        "robot"
-
-
-
-    ) {
-
-
-
-
-
-
-
-        for (
-
-
-
-            let i = 0;
-
-
-
-            i < 3;
-
-
-
-            i++
-
-
-
-        ) {
-
-
-
-
-
-
-
-            setTimeout(
-
-
-
-                () => {
-
-
-
-
-
-
-
-                    const currentRoom =
-
-
-
-                        rooms[
-
-
-
-                            room.code
-
-
-
-                        ];
-
-
-
-
-
-
-
-
-
-
-
-                    const currentPlayer =
-
-
-
-                        currentRoom?.players[
-
-
-
-                            player.id
-
-
-
-                        ];
-
-
-
-
-
-
-
-
-
-
-
-                    if (
-
-
-
-                        currentRoom &&
-
-
-
-                        currentPlayer &&
-
-
-
-                        currentRoom.started
-
-
-
-                    ) {
-
-
-
-
-
-
-
-                        addProjectile(
-
-
-
-                            currentRoom,
-
-
-
-                            currentPlayer,
-
-
-
-                            "fireball",
-
-
-
-                            {
-
-
-
-
-
-
-
-                                x:
-
-
-
-                                    direction.x +
-
-
-
-                                    (
-
-
-
-                                        Math.random() -
-
-
-
-                                        0.5
-
-
-
-                                    ) *
-
-
-
-                                    0.12,
-
-
-
-
-
-
-
-                                y:
-
-
-
-                                    direction.y +
-
-
-
-                                    (
-
-
-
-                                        Math.random() -
-
-
-
-                                        0.5
-
-
-
-                                    ) *
-
-
-
-                                    0.12
-
-
-
-
-
-
-
-                            }
-
-
-
-                        );
-
-
-
-
-
-
-
-                    }
-
-
-
-
-
-
-
-                },
-
-
-
-
-
-
-
-                i * 150
-
-
-
-
-
-
-
-            );
-
-
-
-
-
-
-
-        }
-
-
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
+    executeSelectedSkill(
+        room,
+        player,
+        skillId,
+        direction
+    );
 
 
     io.to(
-
-
-
         room.code
-
-
-
     ).emit(
-
-
-
         "skillEffect",
-
-
-
         {
-
-
-
-
-
-
-
             playerId:
-
-
-
                 player.id,
-
-
-
-
-
-
 
             skill: 2,
 
-
-
-
-
-
+            skillId:
+                skillId,
 
             character:
-
-
-
                 player.character,
 
-
-
-
-
-
-
             direction:
-
-
-
                 normalize(
-
-
-
                     direction.x,
-
-
-
                     direction.y
-
-
-
                 )
-
-
-
-
-
-
-
         }
-
-
-
     );
-
-
-
-
-
-
-
-
-
 
 
     setTimeout(
-
-
-
         () => {
 
-
-
-
-
-
-
             const currentRoom =
-
-
-
                 rooms[
-
-
-
                     room.code
-
-
-
                 ];
-
-
-
-
-
-
-
-
-
 
 
             const currentPlayer =
-
-
-
                 currentRoom?.players[
-
-
-
                     player.id
-
-
-
                 ];
 
 
-
-
-
-
-
-
-
-
-
-            if (!currentPlayer) {
-
-
-
+            if (
+                !currentPlayer
+            ) {
                 return;
-
-
-
             }
 
 
-
-
-
-
-
-
-
-
-
             currentPlayer.skill2Ready =
-
-
-
                 true;
 
 
-
-
-
-
-
-
-
-
-
             io.to(
-
-
-
                 room.code
-
-
-
             ).emit(
-
-
-
                 "skillReady",
-
-
-
                 {
-
-
-
-
-
-
-
                     playerId:
-
-
-
                         currentPlayer.id,
 
+                    skill:
+                        2,
 
-
-
-
-
-
-                    skill: 2
-
-
-
-
-
-
-
+                    skillId:
+                        skillId
                 }
-
-
-
             );
 
-
-
-
-
-
-
         },
-
-
-
-
-
-
-
-        data.skill2Cooldown
-
-
-
-
-
-
-
+        skill.cooldown
     );
 
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8117,203 +7020,122 @@ io.on(
 
         );
 
-// ==========================**
+// ==========================
+// 캐릭터 + 스킬 선택
+// ==========================
 
-// 캐릭터 선택**
+socket.on(
+    "selectCharacter",
+    data => {
 
-// ==========================**
+        const room =
+            getRoom(socket);
 
 
+        const player =
+            room?.players[
+                socket.id
+            ];
 
 
+        if (
+            !room ||
+            room.started ||
+            !player
+        ) {
+            return;
+        }
 
 
+        // 기존에는 character 문자열만 받았지만
+        // 이제 캐릭터 + 선택 스킬을 함께 받는다.
 
-        socket.on(
+        const character =
+            data?.character;
 
 
+        const skillLoadout =
+            data?.skillLoadout;
 
-            "selectCharacter",
 
+        if (
+            !characters[character]
+        ) {
+            return;
+        }
 
 
-            character => {
+        // Q / E 둘 다 선택되어 있어야 한다.
 
+        if (
+            !skillLoadout ||
+            !skillLoadout[1] ||
+            !skillLoadout[2]
+        ) {
+            return;
+        }
 
 
+        // 같은 스킬을 Q와 E에 동시에 넣는 것을 방지
 
+        if (
+            skillLoadout[1] ===
+            skillLoadout[2]
+        ) {
+            return;
+        }
 
 
+        player.character =
+            character;
 
-                const room =
 
+        player.skillLoadout = {
 
+            1:
+                skillLoadout[1],
 
-                    getRoom(
+            2:
+                skillLoadout[2]
 
+        };
 
 
-                        socket
+        player.ready =
+            false;
 
 
+        player.maxHp =
+            characters[
+                character
+            ].maxHp;
 
-                    );
 
+        player.hp =
+            player.maxHp;
 
 
-
-
-
-
-
-
-
-
-                const player =
-
-
-
-                    room?.players[
-
-
-
-                        socket.id
-
-
-
-                    ];
-
-
-
-
-
-
-
-
-
-
-
-                if (
-
-
-
-                    !room ||
-
-
-
-                    room.started ||
-
-
-
-                    !player ||
-
-
-
-                    !characters[
-
-
-
-                        character
-
-
-
-                    ]
-
-
-
-                ) {
-
-
-
-
-
-
-
-                    return;
-
-
-
-
-
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-
-                player.character =
-
-                    character;
-
-
-
-                player.ready =
-
-                    false;
-
-
-
-                player.maxHp =
-
-                    characters[
-
-                        character
-
-                    ].maxHp;
-
-
-
-                player.hp =
-
-                    player.maxHp;
-
-
-
-                updateAmmo(
-
-                    player
-
-                );
-
-
-
-
-
-
-
-
-
-
-
-                broadcastRoom(
-
-
-
-                    room
-
-
-
-                );
-
-
-
-
-
-
-
-            }
-
-
-
+        updateAmmo(
+            player
         );
+
+
+        // 선택한 스킬을 방에 알림
+
+        broadcastRoom(
+            room
+        );
+
+    }
+);
+
+
+
+
+
+
+
+
 
 // ==========================**
 

@@ -1239,7 +1239,9 @@ resultButton.addEventListener(
         startScreen.style.display = "flex";
         roomPanel.style.display = "none";
         roomInfo.style.display = "block";
-        characterSelect.style.display = "block";
+        
+        characterDetail.style.display = "block";
+        showCharacterDetail(selectedCharacter);
 
         // 게임 상태 초기화
         gameRunning = false;
@@ -2444,7 +2446,18 @@ selectCharacterButton.addEventListener(
         // 서버에 실제 캐릭터 선택 전달
         socket.emit(
             "selectCharacter",
-            selectedCharacter
+            {
+                character:
+                    selectedCharacter,
+
+                skillLoadout: {
+                    1:
+                        selectedSkillLoadout[1],
+
+                    2:
+                        selectedSkillLoadout[2]
+                }
+            }
         );
 
 
