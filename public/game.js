@@ -520,6 +520,148 @@ const characters = {
     }
 
 };
+// ==============================
+// 캐릭터별 스킬 목록
+// ==============================
+
+const characterSkillPool = {
+
+    knight: [
+        {
+            id: "shieldBash",
+            name: "방패 강타",
+            description: "방패로 적을 강하게 공격합니다."
+        },
+        {
+            id: "swordWave",
+            name: "검의 충격파",
+            description: "검기를 날려 원거리 공격을 합니다."
+        },
+        {
+            id: "dashSlash",
+            name: "돌진 베기",
+            description: "적을 향해 빠르게 돌진하며 공격합니다."
+        },
+        {
+            id: "spinSlash",
+            name: "회전 베기",
+            description: "주변의 적을 회전하며 공격합니다."
+        },
+        {
+            id: "groundSmash",
+            name: "지면 강타",
+            description: "지면을 내려쳐 주변에 피해를 줍니다."
+        },
+        {
+            id: "counter",
+            name: "반격",
+            description: "잠시 동안 적의 공격에 대응합니다."
+        }
+    ],
+
+
+    ninja: [
+        {
+            id: "dashSlash",
+            name: "연속 대시 베기",
+            description: "빠르게 이동하며 여러 번 공격합니다."
+        },
+        {
+            id: "poisonShuriken",
+            name: "독 수리검",
+            description: "적에게 지속 피해를 주는 수리검을 던집니다."
+        },
+        {
+            id: "smoke",
+            name: "연막",
+            description: "연막을 만들어 적의 움직임을 방해합니다."
+        },
+        {
+            id: "shurikenRain",
+            name: "수리검 난사",
+            description: "여러 개의 수리검을 빠르게 발사합니다."
+        },
+        {
+            id: "shadowStep",
+            name: "그림자 이동",
+            description: "짧은 거리를 순간적으로 이동합니다."
+        },
+        {
+            id: "tripleStrike",
+            name: "삼연격",
+            description: "빠르게 세 번 공격합니다."
+        }
+    ],
+
+
+    wizard: [
+        {
+            id: "bigFireball",
+            name: "대형 파이어볼",
+            description: "강력한 대형 화염구를 발사합니다."
+        },
+        {
+            id: "barrier",
+            name: "마법 방어막",
+            description: "일정 시간 동안 피해를 막습니다."
+        },
+        {
+            id: "ice",
+            name: "빙결",
+            description: "적의 움직임을 둔화시킵니다."
+        },
+        {
+            id: "teleport",
+            name: "순간이동",
+            description: "짧은 거리를 순간이동합니다."
+        },
+        {
+            id: "meteor",
+            name: "메테오",
+            description: "지정한 위치에 강력한 공격을 합니다."
+        },
+        {
+            id: "magicArrow",
+            name: "마법 화살",
+            description: "빠른 마법 투사체를 발사합니다."
+        }
+    ],
+
+
+    robot: [
+        {
+            id: "emp",
+            name: "EMP 폭발",
+            description: "주변의 적에게 강력한 전자기 공격을 합니다."
+        },
+        {
+            id: "missile",
+            name: "미사일 발사",
+            description: "적을 추적하는 미사일을 발사합니다."
+        },
+        {
+            id: "rocketPunch",
+            name: "로켓 펀치",
+            description: "강력한 근접 공격을 합니다."
+        },
+        {
+            id: "laser",
+            name: "레이저",
+            description: "전방으로 강력한 레이저를 발사합니다."
+        },
+        {
+            id: "armor",
+            name: "강화 장갑",
+            description: "받는 피해를 감소시킵니다."
+        },
+        {
+            id: "drone",
+            name: "공격 드론",
+            description: "공격 드론을 소환합니다."
+        }
+    ]
+
+};
 
 
 
@@ -741,15 +883,77 @@ const detailRange =
         "detailRange"
     );
 
-const detailSkill1 =
+const detailBasicAttack =
     document.getElementById(
-        "detailSkill1"
+        "detailBasicAttack"
     );
 
-const detailSkill2 =
+
+const skillSlotQ =
     document.getElementById(
-        "detailSkill2"
+        "skillSlotQ"
     );
+
+
+const skillSlotE =
+    document.getElementById(
+        "skillSlotE"
+    );
+
+
+const selectedSkillQ =
+    document.getElementById(
+        "selectedSkillQ"
+    );
+
+
+const selectedSkillE =
+    document.getElementById(
+        "selectedSkillE"
+    );
+
+
+const skillPicker =
+    document.getElementById(
+        "skillPicker"
+    );
+
+
+const skillPickerTitle =
+    document.getElementById(
+        "skillPickerTitle"
+    );
+
+
+const skillCount =
+    document.getElementById(
+        "skillCount"
+    );
+
+
+const skillOptionList =
+    document.getElementById(
+        "skillOptionList"
+    );
+
+
+const skillSelectionStatus =
+    document.getElementById(
+        "skillSelectionStatus"
+    );
+
+
+const loadoutMainIcon =
+    document.getElementById(
+        "loadoutMainIcon"
+    );
+
+
+const loadoutMainName =
+    document.getElementById(
+        "loadoutMainName"
+    );
+
 
 const selectCharacterButton =
     document.getElementById(
@@ -1765,7 +1969,22 @@ socket.on(
 // ==============================
 
 let detailCharacter = "knight";
+// ==============================
+// 현재 선택한 스킬
+// ==============================
 
+let selectedSkillLoadout = {
+    1: null, // E
+    2: null  // Q
+};
+
+
+let activeSkillSlot = null;
+
+
+// ==============================
+// 캐릭터 상세 정보
+// ==============================
 
 function showCharacterDetail(
     character
@@ -1778,8 +1997,12 @@ function showCharacterDetail(
         return;
     }
 
+
     detailCharacter =
         character;
+
+
+    // 캐릭터 정보
 
     detailIcon.textContent =
         data.icon;
@@ -1790,27 +2013,298 @@ function showCharacterDetail(
     detailDescription.textContent =
         data.description;
 
-    detailHp.textContent =
-        data.hp;
 
-    detailDamage.textContent =
-        data.damage;
+    // 기본 공격
 
-    detailSpeed.textContent =
-        data.speed;
+    detailBasicAttack.textContent =
+        data.basicAttack;
 
-    detailRange.textContent =
-        data.range;
 
-    detailSkill1.textContent =
-        data.skill1Name;
+    // 중앙 캐릭터
 
-    detailSkill2.textContent =
-        data.skill2Name;
+    loadoutMainIcon.textContent =
+        data.icon;
+
+    loadoutMainName.textContent =
+        data.name;
+
+
+    // 스킬 초기화
+
+    selectedSkillLoadout = {
+        1: null,
+        2: null
+    };
+
+
+    selectedSkillQ.textContent =
+        "+";
+
+    selectedSkillE.textContent =
+        "+";
+
+
+    skillPicker.style.display =
+        "none";
+
+
+    updateSkillSelectionStatus();
+
 
     characterDetail.style.display =
         "block";
+
 }
+// ==============================
+// 스킬 선택창 열기
+// ==============================
+
+function openSkillPicker(
+    slot
+) {
+
+    activeSkillSlot =
+        slot;
+
+
+    skillPickerTitle.textContent =
+        slot === 2
+            ? "Q 스킬 선택"
+            : "E 스킬 선택";
+
+
+    skillOptionList.innerHTML =
+        "";
+
+
+    const skills =
+        characterSkillPool[
+            detailCharacter
+        ] || [];
+
+
+    skills.forEach(
+        skill => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type = "button";
+
+            button.className =
+                "skill-option";
+
+
+            // 이미 다른 슬롯에서 사용 중인지 확인
+
+            const otherSlot =
+                slot === 1
+                    ? 2
+                    : 1;
+
+
+            const alreadyUsed =
+                selectedSkillLoadout[
+                    otherSlot
+                ] === skill.id;
+
+
+            if (alreadyUsed) {
+
+                button.classList.add(
+                    "disabled"
+                );
+
+                button.disabled = true;
+
+            }
+
+
+            button.innerHTML = `
+
+                <strong>
+                    ${skill.name}
+                </strong>
+
+                <span>
+                    ${skill.description}
+                </span>
+
+            `;
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    selectSkill(
+                        slot,
+                        skill
+                    );
+
+                }
+            );
+
+
+            skillOptionList.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    skillPicker.style.display =
+        "block";
+
+
+    updateSkillCount();
+
+}
+// ==============================
+// 스킬 선택
+// ==============================
+
+function selectSkill(
+    slot,
+    skill
+) {
+
+    selectedSkillLoadout[
+        slot
+    ] = skill.id;
+
+
+    if (slot === 2) {
+
+        selectedSkillQ.textContent =
+            skill.name;
+
+    } else {
+
+        selectedSkillE.textContent =
+            skill.name;
+
+    }
+
+
+    skillPicker.style.display =
+        "none";
+
+
+    activeSkillSlot =
+        null;
+
+
+    updateSkillCount();
+
+    updateSkillSelectionStatus();
+
+}
+// ==============================
+// 선택 개수
+// ==============================
+
+function updateSkillCount() {
+
+    let count = 0;
+
+
+    if (
+        selectedSkillLoadout[1]
+    ) {
+
+        count++;
+
+    }
+
+
+    if (
+        selectedSkillLoadout[2]
+    ) {
+
+        count++;
+
+    }
+
+
+    skillCount.textContent =
+        `${count} / 2`;
+
+}
+// ==============================
+// 스킬 선택 상태
+// ==============================
+
+function updateSkillSelectionStatus() {
+
+    const count =
+        Number(
+            Boolean(
+                selectedSkillLoadout[1]
+            )
+        ) +
+        Number(
+            Boolean(
+                selectedSkillLoadout[2]
+            )
+        );
+
+
+    if (count === 0) {
+
+        skillSelectionStatus.textContent =
+            "스킬을 2개 선택하세요.";
+
+    }
+
+    else if (count === 1) {
+
+        skillSelectionStatus.textContent =
+            "스킬을 1개 더 선택하세요.";
+
+    }
+
+    else {
+
+        skillSelectionStatus.textContent =
+            "✓ 스킬 2개 선택 완료";
+
+    }
+
+}
+// ==============================
+// Q / E 스킬 슬롯 클릭
+// ==============================
+
+skillSlotQ.addEventListener(
+    "click",
+    () => {
+
+        if (gameRunning) {
+            return;
+        }
+
+        openSkillPicker(2);
+
+    }
+);
+
+
+skillSlotE.addEventListener(
+    "click",
+    () => {
+
+        if (gameRunning) {
+            return;
+        }
+
+        openSkillPicker(1);
+
+    }
+);
 
 
 // ==============================
@@ -1854,6 +2348,22 @@ selectCharacterButton.addEventListener(
             return;
         }
 
+
+        // 스킬 2개 선택 확인
+
+        if (
+            !selectedSkillLoadout[1] ||
+            !selectedSkillLoadout[2]
+        ) {
+
+            skillSelectionStatus.textContent =
+                "⚠️ Q와 E 스킬을 모두 선택하세요.";
+
+            return;
+
+        }
+
+
         selectedCharacter =
             detailCharacter;
 
@@ -1887,7 +2397,7 @@ selectCharacterButton.addEventListener(
 
 
         readyStatus.textContent =
-            `${characters[selectedCharacter].name}을(를) 선택했습니다.`;
+        `${characters[selectedCharacter].name} 선택 완료 — 스킬 2개를 선택했습니다.`;
 
     }
 );
@@ -1905,23 +2415,27 @@ selectCharacterButton.addEventListener(
 
 
 readyButton.addEventListener(
-
     "click",
-
     () => {
 
+        if (
+            !selectedSkillLoadout[1] ||
+            !selectedSkillLoadout[2]
+        ) {
+
+            readyStatus.textContent =
+                "⚠️ Q와 E 스킬을 먼저 선택하세요.";
+
+            return;
+
+        }
 
 
         socket.emit(
-
             "ready"
-
         );
 
-
-
     }
-
 );
 
 

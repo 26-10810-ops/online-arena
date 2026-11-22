@@ -270,115 +270,207 @@
         
 
 
-        <!-- ============================== -->
-        <!-- 캐릭터 상세 정보 -->
-        <!-- ============================== -->
+    <!-- ============================== -->
+    <!-- 캐릭터 / 스킬 선택 -->
+    <!-- ============================== -->
 
-        <div
-            id="characterDetail"
-            class="character-detail"
-            style="display:none;"
-        >
+    <div
+        id="characterDetail"
+        class="character-detail"
+        style="display:none;"
+    >
+
+        <!-- 캐릭터 정보 -->
+
+        <div class="loadout-character">
 
             <div
                 id="detailIcon"
-                class="detail-icon"
+                class="loadout-character-icon"
             >
-                ⚔️
+            ⚔️
             </div>
 
-            <h3 id="detailName">
+            <div>
+
+                <h3 id="detailName">
                 나이트
-            </h3>
+                </h3>
 
-            <p id="detailDescription">
+                <p id="detailDescription">
                 근접전에서 강력한 전투형 캐릭터
-            </p>
-
-
-            <div class="detail-stats">
-
-                <div>
-                    <span>HP</span>
-                    <strong id="detailHp">
-                        120
-                    </strong>
-                </div>
-
-                <div>
-                    <span>공격력</span>
-                    <strong id="detailDamage">
-                        15
-                    </strong>
-                </div>
-
-                <div>
-                    <span>이동속도</span>
-                    <strong id="detailSpeed">
-                        90
-                    </strong>
-                </div>
-
-                <div>
-                    <span>사거리</span>
-                    <strong id="detailRange">
-                        100
-                    </strong>
-                </div>
-
-            </div>
-
-
-            <div class="detail-skills">
-
-                <p>
-                    <strong>E</strong>
-                    <span id="detailSkill1">
-                        방패 강타
-                    </span>
-                </p>
-
-                <p>
-                    <strong>Q</strong>
-                    <span id="detailSkill2">
-                        검의 충격파
-                    </span>
                 </p>
 
             </div>
 
+        </div>
+
+
+        <!-- 스킬 배치 -->
+
+        <div class="skill-loadout">
+
+            <!-- Q -->
 
             <button
-                id="selectCharacterButton"
+                id="skillSlotQ"
+                class="skill-slot"
                 type="button"
+                data-slot="2"
             >
-                이 캐릭터 선택
+
+                <span class="skill-key">
+                    Q
+                </span>
+
+                <span
+                    id="selectedSkillQ"
+                    class="skill-slot-name"
+                >
+                +
+                </span>
+
+            </button>
+
+
+            <!-- 캐릭터 -->
+
+            <div class="loadout-center">
+
+                <div
+                    id="loadoutMainIcon"
+                    class="loadout-main-icon"
+                >
+                ⚔️
+                </div>
+
+                <div
+                    id="loadoutMainName"
+                    class="loadout-main-name"
+                >
+                    나이트
+                </div>
+
+            </div>
+
+
+            <!-- E -->
+
+            <button
+                id="skillSlotE"
+                class="skill-slot"
+                type="button"
+                data-slot="1"
+            >
+
+                <span class="skill-key">
+                    E
+                </span>
+
+                <span
+                    id="selectedSkillE"
+                    class="skill-slot-name"
+                >
+                    +
+                </span>
+
             </button>
 
         </div>
 
 
-        <div class="selected-character">
+        <!-- 기본 공격 -->
 
-            선택한 캐릭터:
+        <div class="basic-skill">
 
-            <strong id="selectedCharacter">
-                나이트
-            </strong>
+            <div class="basic-skill-key">
+                F
+            </div>
+
+            <div>
+
+                <strong>
+                    기본 공격
+                </strong>
+
+                <span id="detailBasicAttack">
+                    근접 검격
+                </span>
+
+            </div>
 
         </div>
 
 
-        <button id="readyButton">
-            준비
+        <!-- 선택 가능한 스킬 -->
+
+        <div
+            id="skillPicker"
+            class="skill-picker"
+            style="display:none;"
+        >
+
+            <div class="skill-picker-header">
+
+                <strong id="skillPickerTitle">
+                    Q 스킬 선택
+                </strong>
+
+                <span id="skillCount">
+                    0 / 2
+                </span>
+
+            </div>
+
+
+            <div
+                id="skillOptionList"
+                class="skill-option-list"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- 선택 상태 -->
+
+        <div
+            id="skillSelectionStatus"
+            class="skill-selection-status"
+        >
+        스킬을 2개 선택하세요.
+        </div>
+
+
+        <!-- 캐릭터 선택 -->
+
+        <button
+            id="selectCharacterButton"
+            type="button"
+        >
+            이 캐릭터 선택
         </button>
-
-
-        <p id="readyStatus"></p>
 
     </div>
 
-</div>
+
+    <div class="selected-character">
+
+        선택한 캐릭터:
+
+        <strong id="selectedCharacter">
+            나이트
+        </strong>
+
+    </div>
+
+
+    <button id="readyButton">
+        준비
+    </button>
+
+
+    <p id="readyStatus"></p>
 
 
 
