@@ -2827,6 +2827,7 @@ socket.on(
     () => {
 
         gameRunning = true;
+        console.log("GAME START RECEIVED");
 
         playerRenderState = {};
         projectileRenderState = {};
