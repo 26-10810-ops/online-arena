@@ -7255,6 +7255,16 @@ socket.on(
 
         player.ready =
             !player.ready;
+        console.log(
+            "준비 상태:",
+            Object.values(room.players).map(p => ({
+                id: p.id,
+                slot: p.slot,
+                ready: p.ready,
+                character: p.character,
+                skillLoadout: p.skillLoadout
+            }))
+        );
 
         const players =
             Object.values(
@@ -7314,6 +7324,7 @@ socket.on(
                     p
                 );
             }
+            console.log("게임 시작:", room.code);
 
             io.to(
                 room.code
