@@ -530,38 +530,32 @@ const characterSkillPool = {
         {
             id: "shieldBash",
             name: "방패 강타",
-            description: "방패로 적을 강하게 공격합니다.",
-            cooldown: 3000
+            description: "방패로 적을 강하게 공격합니다."
         },
         {
             id: "swordWave",
             name: "검의 충격파",
-            description: "검기를 날려 원거리 공격을 합니다.",
-            cooldown: 4500
+            description: "검기를 날려 원거리 공격을 합니다."
         },
         {
             id: "dashSlash",
             name: "돌진 베기",
-            description: "적을 향해 빠르게 돌진하며 공격합니다.",
-            cooldown: 5000
+            description: "적을 향해 빠르게 돌진하며 공격합니다."
         },
         {
             id: "spinSlash",
             name: "회전 베기",
-            description: "주변의 적을 회전하며 공격합니다.",
-            cooldown: 4000
+            description: "주변의 적을 회전하며 공격합니다."
         },
         {
             id: "groundSmash",
             name: "지면 강타",
-            description: "지면을 내려쳐 주변에 피해를 줍니다.",
-            cooldown: 5000
+            description: "지면을 내려쳐 주변에 피해를 줍니다."
         },
         {
             id: "counter",
             name: "반격",
-            description: "잠시 동안 적의 공격에 대응합니다.",
-            cooldown: 6000
+            description: "잠시 동안 적의 공격에 대응합니다."
         }
     ],
 
@@ -575,32 +569,27 @@ const characterSkillPool = {
         {
             id: "poisonShuriken",
             name: "독 수리검",
-            description: "적에게 지속 피해를 주는 수리검을 던집니다.",
-            cooldown: 5000
+            description: "적에게 지속 피해를 주는 수리검을 던집니다."
         },
         {
             id: "smoke",
             name: "연막",
-            description: "연막을 만들어 적의 움직임을 방해합니다.",
-            cooldown: 4500
+            description: "연막을 만들어 적의 움직임을 방해합니다."
         },
         {
             id: "shurikenRain",
             name: "수리검 난사",
-            description: "여러 개의 수리검을 빠르게 발사합니다.",
-            cooldown: 4200
+            description: "여러 개의 수리검을 빠르게 발사합니다."
         },
         {
             id: "shadowStep",
             name: "그림자 이동",
-            description: "짧은 거리를 순간적으로 이동합니다.",
-            cooldown: 3500
+            description: "짧은 거리를 순간적으로 이동합니다."
         },
         {
             id: "tripleStrike",
             name: "삼연격",
-            description: "빠르게 세 번 공격합니다.",
-            cooldown: 4000
+            description: "빠르게 세 번 공격합니다."
         }
     ],
 
@@ -609,38 +598,32 @@ const characterSkillPool = {
         {
             id: "bigFireball",
             name: "대형 파이어볼",
-            description: "강력한 대형 화염구를 발사합니다.",
-            cooldown: 4000
+            description: "강력한 대형 화염구를 발사합니다."
         },
         {
             id: "barrier",
             name: "마법 방어막",
-            description: "일정 시간 동안 피해를 막습니다.",
-            cooldown: 6000
+            description: "일정 시간 동안 피해를 막습니다."
         },
         {
             id: "ice",
             name: "빙결",
-            description: "적의 움직임을 둔화시킵니다.",
-            cooldown: 4500
+            description: "적의 움직임을 둔화시킵니다."
         },
         {
             id: "teleport",
             name: "순간이동",
-            description: "짧은 거리를 순간이동합니다.",
-            cooldown: 4500
+            description: "짧은 거리를 순간이동합니다."
         },
         {
             id: "meteor",
             name: "메테오",
-            description: "지정한 위치에 강력한 공격을 합니다.",
-            cooldown: 6500
+            description: "지정한 위치에 강력한 공격을 합니다."
         },
         {
             id: "magicArrow",
             name: "마법 화살",
-            description: "빠른 마법 투사체를 발사합니다.",
-            cooldown: 3000
+            description: "빠른 마법 투사체를 발사합니다."
         }
     ],
 
@@ -649,38 +632,32 @@ const characterSkillPool = {
         {
             id: "emp",
             name: "EMP 폭발",
-            description: "주변의 적에게 강력한 전자기 공격을 합니다.",
-            cooldown: 4500
+            description: "주변의 적에게 강력한 전자기 공격을 합니다."
         },
         {
             id: "missile",
             name: "미사일 발사",
-            description: "적을 추적하는 미사일을 발사합니다.",
-            cooldown: 5000
+            description: "적을 추적하는 미사일을 발사합니다."
         },
         {
             id: "rocketPunch",
             name: "로켓 펀치",
-            description: "강력한 근접 공격을 합니다.",
-            cooldown: 4000
+            description: "강력한 근접 공격을 합니다."
         },
         {
             id: "laser",
             name: "레이저",
-            description: "전방으로 강력한 레이저를 발사합니다.",
-            cooldown: 5000
+            description: "전방으로 강력한 레이저를 발사합니다."
         },
         {
             id: "armor",
             name: "강화 장갑",
-            description: "받는 피해를 감소시킵니다.",
-            cooldown: 5500
+            description: "받는 피해를 감소시킵니다."
         },
         {
             id: "drone",
             name: "공격 드론",
-            description: "공격 드론을 소환합니다.",
-            cooldown: 6000
+            description: "공격 드론을 소환합니다."
         }
     ]
 
@@ -4492,21 +4469,25 @@ function useSkill(
 
 
 
-    const loadoutId =
-        selectedSkillLoadout[number];
+    const key =
 
-    const selectedSkill =
-        characterSkillPool[selectedCharacter]?.find(
-            skill => skill.id === loadoutId
-        );
+        number === 1
+
+            ? "skill1Cooldown"
+
+            : "skill2Cooldown";
+
+
+
+
 
     const duration =
-        selectedSkill?.cooldown ||
-        (
-            number === 1
-                ? characters[selectedCharacter].skill1Cooldown
-                : characters[selectedCharacter].skill2Cooldown
-        );
+
+        characters[
+
+            selectedCharacter
+
+        ][key];
 
 
 
@@ -5322,23 +5303,6 @@ function renderProjectiles(
         }
 
 
-        else if (projectile.type === "magicArrow") {
-            element.textContent="➤";
-            element.style.color="#d9b8ff";
-            element.style.fontSize="26px";
-            element.style.textShadow="0 0 15px #d9b8ff";
-        }
-        else if (projectile.type === "missile") {
-            element.textContent="🚀";
-            element.style.fontSize="24px";
-            element.style.textShadow="0 0 14px #ff9b62";
-        }
-        else if (projectile.type === "rocketPunch") {
-            element.textContent="👊";
-            element.style.fontSize="24px";
-            element.style.textShadow="0 0 14px #ffb56b";
-        }
-
         else if (
             projectile.type ===
             "swordWave"
@@ -5493,18 +5457,6 @@ socket.on(
             return;
         }
 
-        if (
-            data.skillId &&
-            showSelectedSkillEffect(
-                p.x,
-                p.y,
-                data.character,
-                data.skillId
-            )
-        ) {
-            return;
-        }
-
 
         // 닌자 대시
         if (
@@ -5541,7 +5493,8 @@ socket.on(
             p.x,
             p.y,
             data.character,
-            data.skill
+            data.skill,
+            data.skillId
         );
 
     }
@@ -5722,37 +5675,12 @@ function createHpBar(parent) {
 // 스킬 효과
 // ==============================
 
-function showSelectedSkillEffect(x,y,character,skillId){
-    const p={
-        dashSlash:["💨","#bde7ff",90,320],spinSlash:["⚔️","#d8f0ff",150,420],
-        groundSmash:["💥","#ffd36a",170,450],counter:["🛡️","#8ee7ff",110,500],
-        smoke:["☁️","#aeb8c8",130,600],shurikenRain:["✦","#d8fff0",180,500],
-        shadowStep:["🌑","#bca7ff",100,350],tripleStrike:["⚔️","#b7e4ff",120,350],
-        ice:["❄️","#8fe9ff",140,500],teleport:["✨","#c8a8ff",100,450],
-        meteor:["☄️","#ff9b55",190,650],magicArrow:["➤","#d9b8ff",90,300],
-        emp:["⚡","#8cf7ff",180,500],missile:["🚀","#ff9a6a",110,400],
-        rocketPunch:["👊","#ffb56b",100,350],laser:["▰","#ff4f7b",220,450],
-        armor:["🛡️","#8caeff",110,500],drone:["🤖","#a8d8ff",140,550]
-    }[skillId];
-    if(!p)return false;
-    const [icon,glow,size,duration]=p;
-    const v=createVFX("selected-"+skillId,x+27.5,y+27.5,size,size);
-    v.style.borderRadius="50%";v.style.display="flex";v.style.alignItems="center";
-    v.style.justifyContent="center";v.style.fontSize=Math.max(24,size*.34)+"px";
-    v.style.border="3px solid "+glow;v.style.boxShadow="0 0 18px "+glow+",0 0 45px "+glow;
-    v.textContent=icon;
-    v.animate([{transform:"translate(-50%,-50%) scale(.2)",opacity:1},
-               {transform:"translate(-50%,-50%) scale(1)",opacity:.9},
-               {transform:"translate(-50%,-50%) scale(1.35)",opacity:0}],
-              {duration,easing:"ease-out"});
-    return true;
-}
-
 function showSkillEffect(
     x,
     y,
     character,
-    skill
+    skill,
+    skillId
 ) {
 
     const centerX =
@@ -5760,6 +5688,160 @@ function showSkillEffect(
 
     const centerY =
         y + 27.5;
+
+
+    // ==========================
+    // 커스텀 스킬 VFX
+    // 기본 슬롯 스킬과 다른 스킬을
+    // 선택했을 때도 슬롯 번호에
+    // 의존하지 않고 올바른 효과를 표시한다.
+    // ==========================
+
+    const defaultSkillBySlot = {
+        knight: {
+            1: "shieldBash",
+            2: "swordWave"
+        },
+        ninja: {
+            1: "dashSlash",
+            2: "poisonShuriken"
+        },
+        wizard: {
+            1: "bigFireball",
+            2: "barrier"
+        },
+        robot: {
+            1: "emp",
+            2: "missile"
+        }
+    };
+
+    const expectedDefault =
+        defaultSkillBySlot[character]?.[skill];
+
+    if (
+        skillId &&
+        expectedDefault &&
+        skillId !== expectedDefault
+    ) {
+        const vfx =
+            createVFX(
+                `custom-${skillId}`,
+                centerX,
+                centerY,
+                90,
+                90
+            );
+
+        const effectStyle = {
+            smoke: {
+                border: "3px solid #8a8a8a",
+                background: "radial-gradient(circle, rgba(120,120,120,.45), transparent 70%)",
+                boxShadow: "0 0 25px rgba(150,150,150,.8)"
+            },
+            shurikenRain: {
+                border: "3px solid #8ee7ff",
+                background: "radial-gradient(circle, rgba(80,180,255,.3), transparent 70%)",
+                boxShadow: "0 0 25px #62caff"
+            },
+            shadowStep: {
+                border: "3px solid #b58cff",
+                background: "radial-gradient(circle, rgba(160,100,255,.35), transparent 70%)",
+                boxShadow: "0 0 30px #9b6cff"
+            },
+            tripleStrike: {
+                border: "3px solid #ffffff",
+                background: "radial-gradient(circle, rgba(255,255,255,.3), transparent 70%)",
+                boxShadow: "0 0 25px #ffffff"
+            },
+            ice: {
+                border: "3px solid #8ee7ff",
+                background: "radial-gradient(circle, rgba(100,220,255,.35), transparent 70%)",
+                boxShadow: "0 0 30px #62caff"
+            },
+            teleport: {
+                border: "3px solid #b88cff",
+                background: "radial-gradient(circle, rgba(180,100,255,.35), transparent 70%)",
+                boxShadow: "0 0 30px #b56cff"
+            },
+            meteor: {
+                border: "4px solid #ff7b3d",
+                background: "radial-gradient(circle, rgba(255,100,30,.5), transparent 70%)",
+                boxShadow: "0 0 35px #ff5a1f"
+            },
+            magicArrow: {
+                border: "3px solid #a9e7ff",
+                background: "radial-gradient(circle, rgba(120,220,255,.3), transparent 70%)",
+                boxShadow: "0 0 25px #8ee7ff"
+            },
+            emp: {
+                border: "4px solid #75d9ff",
+                background: "radial-gradient(circle, rgba(50,180,255,.35), transparent 70%)",
+                boxShadow: "0 0 35px #35bfff"
+            },
+            missile: {
+                border: "3px solid #ff8b55",
+                background: "radial-gradient(circle, rgba(255,100,40,.35), transparent 70%)",
+                boxShadow: "0 0 30px #ff642e"
+            },
+            rocketPunch: {
+                border: "4px solid #ffd84d",
+                background: "radial-gradient(circle, rgba(255,210,70,.4), transparent 70%)",
+                boxShadow: "0 0 30px #ffb52e"
+            },
+            laser: {
+                border: "4px solid #ff4dff",
+                background: "radial-gradient(circle, rgba(255,70,255,.3), transparent 70%)",
+                boxShadow: "0 0 35px #ff4dff"
+            },
+            armor: {
+                border: "4px solid #9aa8c7",
+                background: "radial-gradient(circle, rgba(150,170,210,.35), transparent 70%)",
+                boxShadow: "0 0 30px #9aa8c7"
+            },
+            drone: {
+                border: "3px solid #7dff8a",
+                background: "radial-gradient(circle, rgba(80,255,100,.3), transparent 70%)",
+                boxShadow: "0 0 30px #55ff66"
+            }
+        };
+
+        const style =
+            effectStyle[skillId] ||
+            {
+                border: "3px solid #ffffff",
+                background: "radial-gradient(circle, rgba(255,255,255,.25), transparent 70%)",
+                boxShadow: "0 0 25px rgba(255,255,255,.7)"
+            };
+
+        vfx.style.border = style.border;
+        vfx.style.borderRadius = "50%";
+        vfx.style.background = style.background;
+        vfx.style.boxShadow = style.boxShadow;
+
+        vfx.animate(
+            [
+                {
+                    transform: "scale(.2)",
+                    opacity: 1
+                },
+                {
+                    transform: "scale(1.2)",
+                    opacity: .85
+                },
+                {
+                    transform: "scale(1.7)",
+                    opacity: 0
+                }
+            ],
+            {
+                duration: 450,
+                easing: "ease-out"
+            }
+        );
+
+        return;
+    }
 
 
     // ==========================
