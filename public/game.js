@@ -843,6 +843,22 @@ const characterCards =
         ".character-card"
 
     );
+const characterPickerModal =
+    document.getElementById(
+        "characterPickerModal"
+    );
+
+
+const characterPickerClose =
+    document.getElementById(
+        "characterPickerClose"
+    );
+
+
+const characterPreviewButton =
+    document.getElementById(
+        "characterPreviewButton"
+    );
 const characterDetail =
     document.getElementById(
         "characterDetail"
@@ -2328,9 +2344,45 @@ characterCards.forEach(
                 showCharacterDetail(
                     character
                 );
+                characterPickerModal.style.display =
+                "none";
 
             }
         );
+
+    }
+);
+// ==============================
+// 캐릭터 선택 팝업 열기
+// ==============================
+
+characterPreviewButton.addEventListener(
+    "click",
+    () => {
+
+        if (gameRunning) {
+            return;
+        }
+
+        characterPickerModal.style.display =
+            "flex";
+
+        playUISound("open");
+
+    }
+);
+// ==============================
+// 캐릭터 선택 팝업 닫기
+// ==============================
+
+characterPickerClose.addEventListener(
+    "click",
+    () => {
+
+        characterPickerModal.style.display =
+            "none";
+
+        playUISound("cancel");
 
     }
 );

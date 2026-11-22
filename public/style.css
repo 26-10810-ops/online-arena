@@ -2670,3 +2670,256 @@ button:active {
     }
 
 }
+/* =========================================================
+   캐릭터 선택 팝업
+========================================================= */
+
+.character-picker-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(3, 7, 20, 0.72);
+
+    backdrop-filter:
+        blur(10px);
+
+    animation:
+        characterPickerFadeIn
+        0.2s ease;
+}
+
+
+@keyframes characterPickerFadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+/* 팝업 */
+
+.character-picker-box {
+    width:
+        min(900px, 95vw);
+
+    padding: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22, 32, 65, 0.98),
+            rgba(8, 13, 28, 0.99)
+        );
+
+    border:
+        1px solid
+        rgba(100, 175, 255, 0.38);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 30px 100px
+        rgba(0, 0, 0, 0.65),
+
+        0 0 50px
+        rgba(70, 140, 255, 0.12);
+
+    animation:
+        characterPickerOpen
+        0.25s ease;
+}
+
+
+@keyframes characterPickerOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* 헤더 */
+
+.character-picker-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+
+.character-picker-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color:
+        #7dbdff;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+}
+
+
+.character-picker-header h2 {
+    margin: 0;
+
+    color:
+        #edf5ff;
+
+    font-size: 24px;
+}
+
+
+/* 닫기 버튼 */
+
+#characterPickerClose {
+    width: 40px;
+
+    height: 40px;
+
+    border: 1px solid
+        rgba(150, 180, 230, 0.2);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color:
+        #b9c5dc;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    transition:
+        0.2s;
+}
+
+
+#characterPickerClose:hover {
+    color: white;
+
+    border-color:
+        rgba(120, 190, 255, 0.6);
+
+    background:
+        rgba(70, 140, 255, 0.15);
+
+    transform:
+        rotate(90deg);
+}
+
+
+/* 팝업 안 캐릭터 목록 */
+
+.character-picker-box .character-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 16px;
+
+    width: 100%;
+
+    margin: 0;
+}
+
+
+/* 팝업 안 캐릭터 카드 */
+
+.character-picker-box .character-card {
+    width: 100%;
+
+    height: 205px;
+
+    cursor: pointer;
+}
+
+
+/* 중앙 캐릭터 클릭 */
+
+#characterPreviewButton {
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+#characterPreviewButton:hover {
+    transform:
+        scale(1.06);
+}
+
+
+#characterPreviewButton:hover
+.loadout-main-icon {
+    box-shadow:
+        0 0 45px
+        rgba(80, 160, 255, 0.45);
+}
+
+
+#characterPreviewButton:hover
+.loadout-main-name {
+    color:
+        #8bcaff;
+}
+
+
+/* 모바일 */
+
+@media (max-width: 700px) {
+
+    .character-picker-box {
+        padding: 18px;
+    }
+
+    .character-picker-box
+    .character-list {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
