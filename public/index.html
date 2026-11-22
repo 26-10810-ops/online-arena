@@ -1,804 +1,1607 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 
+
+
 <head>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta charset="UTF-8">
 
-    <title>Online Arena</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+
+    <meta
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1.0"
+
+    >
+
+
+
+    <title>Online Arena</title>
+
+
+
+    <link
+
+        rel="stylesheet"
+
+        href="style.css"
+
+    >
+
 </head>
+
+
+
 
 
 <body>
 
 
-<!-- ==============================
-     시작 화면
-============================== -->
+
+
+
+<!-- ==============================*
+
+*&#xA0;    시작 화면*
+
+*============================== -->
+
+
 
 <div id="startScreen">
 
-    <h1>⚔️ ONLINE ARENA</h1>
 
 
-    <!-- ==============================
-         로그인 / 회원가입
-    ============================== -->
-
-    <div id="authPanel">
-
-        <div id="loginPanel">
-
-            <h2>로그인</h2>
-
-            <input
-                id="usernameInput"
-                type="text"
-                maxlength="16"
-                placeholder="아이디"
-                autocomplete="username"
-            >
-
-            <input
-                id="passwordInput"
-                type="password"
-                maxlength="64"
-                placeholder="비밀번호"
-                autocomplete="current-password"
-            >
-
-            <div class="auth-buttons">
-                <button id="loginButton">로그인</button>
-                <button id="registerButton">회원가입</button>
-            </div>
-
-            <p id="authMessage"></p>
-
-        </div>
-
-        <div id="accountPanel" style="display:none;">
-            <div class="account-main">
-                <div class="account-avatar">👤</div>
-                <div class="account-user">
-                    <span class="account-label">PLAYER</span>
-                    <strong id="accountText">사용자</strong>
-                </div>
-            </div>
-
-            <div class="account-actions">
-                <button id="profileButton" type="button">프로필</button>
-                <button id="logoutButton" type="button">로그아웃</button>
-            </div>
-        </div>
-
-        <div id="profilePanel" style="display:none;">
-            <div class="profile-header">
-                <div>
-                    <span class="profile-eyebrow">PLAYER PROFILE</span>
-                    <h2 id="profileUsername">사용자</h2>
-                </div>
-                <button id="profileCloseButton" type="button">×</button>
-            </div>
-
-            <div class="profile-stats">
-                <div class="profile-stat">
-                    <span>🏆 승리</span>
-                    <strong id="profileWins">0</strong>
-                </div>
-                <div class="profile-stat">
-                    <span>💀 패배</span>
-                    <strong id="profileLosses">0</strong>
-                </div>
-                <div class="profile-stat">
-                    <span>🎮 경기</span>
-                    <strong id="profileGames">0</strong>
-                </div>
-                <div class="profile-stat">
-                    <span>📊 승률</span>
-                    <strong id="profileWinRate">0%</strong>
-                </div>
-            </div>
-
-            <div class="profile-summary" id="profileSummary">
-                아직 전적이 없습니다. 첫 경기를 시작해보세요!
-            </div>
-        </div>
-
-    </div>
+    <h1>⚔️ ONLINE ARENA</h1>
 
 
-    <!-- 방 만들기 / 참가하기 -->
-
-    <div id="roomPanel">
-
-        <input
-            id="roomCodeInput"
-            type="text"
-            maxlength="6"
-            placeholder="방 코드"
-        >
-
-        <button id="createRoomButton">
-            방 만들기
-        </button>
-
-        <button id="joinRoomButton">
-            참가하기
-        </button>
-
-    </div>
 
 
-    <!-- 방 정보 -->
 
-    <div
-        id="roomInfo"
-        style="display:none;"
-    >
+    <!-- ==============================*
 
-        <p id="roomCodeText"></p>
+*&#xA0;        로그인 / 회원가입*
 
-        <p id="roomStatus">
-            상대방을 기다리는 중...
-        </p>
+*&#xA0;   ============================== -->
 
-        <button
-            id="deleteRoomButton"
-            style="display:none;"
-        >
-            방 삭제
-        </button>
 
-    </div>
+
+    <div id="authPanel">
+
+
+
+        <div id="loginPanel">
+
+
+
+            <h2>로그인</h2>
+
+
+
+            <input
+
+                id="usernameInput"
+
+                type="text"
+
+                maxlength="16"
+
+                placeholder="아이디"
+
+                autocomplete="username"
+
+            >
+
+
+
+            <input
+
+                id="passwordInput"
+
+                type="password"
+
+                maxlength="64"
+
+                placeholder="비밀번호"
+
+                autocomplete="current-password"
+
+            >
+
+
+
+            <div class="auth-buttons">
+
+                <button id="loginButton">로그인</button>
+
+                <button id="registerButton">회원가입</button>
+
+            </div>
+
+
+
+            <p id="authMessage"></p>
+
+
+
+        </div>
+
+
+
+        <div id="accountPanel" style="display:none;">
+
+            <div class="account-main">
+
+                <div class="account-avatar">👤</div>
+
+                <div class="account-user">
+
+                    <span class="account-label">PLAYER</span>
+
+                    <strong id="accountText">사용자</strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="account-actions">
+
+                <button id="profileButton" type="button">프로필</button>
+
+                <button id="logoutButton" type="button">로그아웃</button>
+
+            </div>
+
+        </div>
+
+
+
+        <div id="profilePanel" style="display:none;">
+
+            <div class="profile-header">
+
+                <div>
+
+                    <span class="profile-eyebrow">PLAYER PROFILE</span>
+
+                    <h2 id="profileUsername">사용자</h2>
+
+                </div>
+
+                <button id="profileCloseButton" type="button">×</button>
+
+            </div>
+
+
+
+            <div class="profile-stats">
+
+                <div class="profile-stat">
+
+                    <span>🏆 승리</span>
+
+                    <strong id="profileWins">0</strong>
+
+                </div>
+
+                <div class="profile-stat">
+
+                    <span>💀 패배</span>
+
+                    <strong id="profileLosses">0</strong>
+
+                </div>
+
+                <div class="profile-stat">
+
+                    <span>🎮 경기</span>
+
+                    <strong id="profileGames">0</strong>
+
+                </div>
+
+                <div class="profile-stat">
+
+                    <span>📊 승률</span>
+
+                    <strong id="profileWinRate">0%</strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="profile-summary" id="profileSummary">
+
+                아직 전적이 없습니다. 첫 경기를 시작해보세요!
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- 방 만들기 / 참가하기 -->
+
+
+
+    <div id="roomPanel">
+
+
+
+        <input
+
+            id="roomCodeInput"
+
+            type="text"
+
+            maxlength="6"
+
+            placeholder="방 코드"
+
+        >
+
+
+
+        <button id="createRoomButton">
+
+            방 만들기
+
+        </button>
+
+
+
+        <button id="joinRoomButton">
+
+            참가하기
+
+        </button>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- 방 정보 -->
+
+
+
+    <div
+
+        id="roomInfo"
+
+        style="display:none;"
+
+    >
+
+
+
+        <p id="roomCodeText"></p>
+
+
+
+        <p id="roomStatus">
+
+            상대방을 기다리는 중...
+
+        </p>
+
+
+
+        <button
+
+            id="deleteRoomButton"
+
+            style="display:none;"
+
+        >
+
+            방 삭제
+
+        </button>
+
+
+
+    </div>
+
+
+
 
 
 <!-- 캐릭터 선택 -->
 
-<div
-    id="characterSelect"
-    style="display:none;"
->
 
-    
-
-
-    <!-- ============================== -->
-    <!-- 캐릭터 / 스킬 선택 -->
-    <!-- ============================== -->
-
-    <div
-        id="characterDetail"
-        class="character-detail"
-        style="display:block;"
-    >
-
-        <!-- 캐릭터 정보 -->
-
-        <div class="loadout-character">
-
-            <div
-                id="detailIcon"
-                class="loadout-character-icon"
-            >
-                ⚔️
-            </div>
-
-            <div>
-
-                <h3 id="detailName">
-                    나이트
-                </h3>
-
-                <p id="detailDescription">
-                    근접전에서 강력한 전투형 캐릭터
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- 스킬 배치 -->
-
-        <div class="skill-loadout">
-
-            <!-- Q -->
-
-            <button
-                id="skillSlotQ"
-                class="skill-slot"
-                type="button"
-                data-slot="2"
-            >
-
-                <span class="skill-key">
-                    Q
-                </span>
-
-                <span
-                    id="selectedSkillQ"
-                    class="skill-slot-name"
-                >
-                    +
-                </span>
-
-            </button>
-
-
-            <!-- 캐릭터 -->
-
-            <div
-                id="characterPreviewButton"
-                class="loadout-center"
-            >
-
-                <div
-                    id="loadoutMainIcon"
-                    class="loadout-main-icon"
-                >
-                    ⚔️
-                </div>
-
-                <div
-                    id="loadoutMainName"
-                    class="loadout-main-name"
-                >
-                    나이트
-                </div>
-
-            </div>
-
-
-            <!-- E -->
-
-            <button
-                id="skillSlotE"
-                class="skill-slot"
-                type="button"
-                data-slot="1"
-            >
-
-                <span class="skill-key">
-                    E
-                </span>
-
-                <span
-                    id="selectedSkillE"
-                    class="skill-slot-name"
-                >
-                    +
-                </span>
-
-            </button>
-
-        </div>
-
-
-        <!-- 기본 공격 -->
-
-        <div class="basic-skill">
-
-            <div class="basic-skill-key">
-                F
-            </div>
-
-            <div>
-
-                <strong>
-                    기본 공격
-                </strong>
-
-                <span id="detailBasicAttack">
-                    근접 검격
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- 선택 가능한 스킬 -->
-
-        <div
-            id="skillPicker"
-            class="skill-picker"
-            style="display:none;"
-        >
-
-            <div class="skill-picker-header">
-
-                <strong id="skillPickerTitle">
-                    Q 스킬 선택
-                </strong>
-
-                <span id="skillCount">
-                    0 / 2
-                </span>
-
-            </div>
-
-
-            <div
-                id="skillOptionList"
-                class="skill-option-list"
-            >
-            </div>
-
-        </div>
-
-
-        <!-- 선택 상태 -->
-
-        <div
-            id="skillSelectionStatus"
-            class="skill-selection-status"
-        >
-            스킬을 2개 선택하세요.
-        </div>
-
-
-        <!-- 캐릭터 선택 버튼 -->
-
-        <button
-            id="selectCharacterButton"
-            type="button"
-        >
-            이 캐릭터 선택
-        </button>
-
-    </div>
-
-
-    <!-- ============================== -->
-    <!-- 캐릭터 선택 팝업 -->
-    <!-- ============================== -->
-
-    <div
-        id="characterPickerModal"
-        class="character-picker-modal"
-        style="display:none;"
-    >
-
-        <div class="character-picker-box">
-
-            <div class="character-picker-header">
-
-                <div>
-
-                    <span class="character-picker-label">
-                        CHARACTER SELECT
-                    </span>
-
-                    <h2>
-                        캐릭터 선택
-                    </h2>
-
-                </div>
-
-
-                <button
-                    id="characterPickerClose"
-                    type="button"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <!-- 캐릭터 목록 -->
-
-            <div class="character-list">
-
-                <!-- 나이트 -->
-
-                <div
-                    class="character-card selected"
-                    data-character="knight"
-                >
-
-                    <div class="character-icon">
-                        ⚔️
-                    </div>
-
-                    <h3>
-                        나이트
-                    </h3>
-
-                    <p>
-                        근접 공격 / 방패
-                    </p>
-
-                </div>
-
-
-                <!-- 닌자 -->
-
-                <div
-                    class="character-card"
-                    data-character="ninja"
-                >
-
-                    <div class="character-icon">
-                        🥷
-                    </div>
-
-                    <h3>
-                        닌자
-                    </h3>
-
-                    <p>
-                        수리검 / 대시
-                    </p>
-
-                </div>
-
-
-                <!-- 마법사 -->
-
-                <div
-                    class="character-card"
-                    data-character="wizard"
-                >
-
-                    <div class="character-icon">
-                        🧙
-                    </div>
-
-                    <h3>
-                        마법사
-                    </h3>
-
-                    <p>
-                        파이어볼 / 방어막
-                    </p>
-
-                </div>
-
-
-                <!-- 로봇 -->
-
-                <div
-                    class="character-card"
-                    data-character="robot"
-                >
-
-                    <div class="character-icon">
-                        🤖
-                    </div>
-
-                    <h3>
-                        로봇
-                    </h3>
-
-                    <p>
-                        EMP / 미사일
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- 선택한 캐릭터 -->
-
-    <div class="selected-character">
-
-        선택한 캐릭터:
-
-        <strong id="selectedCharacter">
-            나이트
-        </strong>
-
-    </div>
-
-
-    <!-- 준비 버튼 -->
-
-    <button id="readyButton">
-        준비
-    </button>
-
-
-    <p id="readyStatus"></p>
-
-</div>
-</div>
-
-
-<!-- ==============================
-     게임 화면
-============================== -->
 
 <div
-    id="gameScreen"
-    style="display:none;"
+
+    id="characterSelect"
+
+    style="display:none;"
+
 >
 
 
-    <!-- 상단 -->
 
-    <div class="top-bar">
 
 
-        <!-- 플레이어 정보 -->
 
-        <div class="player-info">
 
-            <div id="playerName">
-                🔵 나이트
-            </div>
 
 
-            <div class="hp-container">
+    <!-- ============================== -->
 
-                <div id="hpBar"></div>
+    <!-- 캐릭터 / 스킬 선택 -->
 
-            </div>
+    <!-- ============================== -->
 
 
-            <div id="hpText">
-                HP: 100 / 100
-            </div>
 
-        </div>
+    <div
 
+        id="characterDetail"
 
-        <!-- 조작법 -->
+        class="character-detail"
 
-        <div class="controls">
+        style="display:block;"
 
-            <span>
-                WASD 이동
-            </span>
+    >
 
-            <span>
-                마우스 핑
-            </span>
 
-            <span>
-                F 기본 공격
-            </span>
 
-            <span>
-                E 스킬 1
-            </span>
+        <!-- 캐릭터 정보 -->
 
-            <span>
-                Q 스킬 2
-            </span>
 
-        </div>
 
-    </div>
+        <div class="loadout-character">
 
 
 
-    <!-- ==============================
-         게임 영역
-    ============================== -->
+            <div
 
-    <div id="gameArea">
+                id="detailIcon"
 
+                class="loadout-character-icon"
 
-        <!-- 공격 범위 -->
+            >
 
-        <div id="rangeIndicator"></div>
+                ⚔️
 
+            </div>
 
-        <!-- 조준선 -->
 
-        <div id="aimLine"></div>
 
+            <div>
 
-        <!-- 핑 -->
 
-        <div id="ping"></div>
 
+                <h3 id="detailName">
 
-        <!-- 내 플레이어 -->
+                    나이트
 
-        <div id="player">
-            ⚔️
-        </div>
+                </h3>
 
 
-        <!-- 상대 플레이어 -->
 
-        <div
-            id="enemy"
-            class="enemy-player"
-            style="display:none;"
-        >
-            ⚔️
-        </div>
+                <p id="detailDescription">
 
+                    근접전에서 강력한 전투형 캐릭터
 
-        <!-- 공격 효과 -->
+                </p>
 
-        <div id="attackEffect"></div>
 
 
-        <!-- 스킬 효과 -->
+            </div>
 
-        <div id="skillEffect"></div>
 
 
-    </div>
+        </div>
 
 
 
-    <!-- ==============================
-         탄창
-    ============================== -->
 
-    <div id="ammoPanel">
 
-        <span>
-            탄창
-        </span>
+        <!-- 스킬 배치 -->
 
 
-        <div id="ammoBarContainer">
 
-            <div id="ammoBar"></div>
+        <div class="skill-loadout">
 
-        </div>
 
 
-        <span id="ammoText">
-            8 / 8
-        </span>
+            <!-- Q -->
 
-    </div>
 
 
+            <button
 
-    <!-- ==============================
-         스킬 패널
-    ============================== -->
+                id="skillSlotQ"
 
-    <div class="bottom-panel">
+                class="skill-slot"
 
+                type="button"
 
-        <!-- 기본 공격 -->
+                data-slot="2"
 
-        <div class="skill">
+            >
 
-            <span>
-                F
-            </span>
 
-            <div>
 
-                <strong id="normalAttackText">
-                    근접 검격
-                </strong>
+                <span class="skill-key">
 
-                <small>
-                    기본 공격
-                </small>
+                    Q
 
-            </div>
+                </span>
 
-        </div>
 
 
-        <!-- 스킬 1 -->
+                <span
 
-        <div class="skill">
+                    id="selectedSkillQ"
 
-            <span>
-                E
-            </span>
+                    class="skill-slot-name"
 
-            <div>
+                >
 
-                <strong id="skill1Name">
-                    방패 강타
-                </strong>
+                    +
 
-                <small id="skill1Cooldown">
-                    준비
-                </small>
+                </span>
 
-            </div>
 
-        </div>
 
+            </button>
 
-        <!-- 스킬 2 -->
 
-        <div class="skill">
 
-            <span>
-                Q
-            </span>
 
-            <div>
 
-                <strong id="skill2Name">
-                    검의 충격파
-                </strong>
+            <!-- 캐릭터 -->
 
-                <small id="skill2Cooldown">
-                    준비
-                </small>
 
-            </div>
 
-        </div>
+            <div
 
+                id="characterPreviewButton"
 
-    </div>
+                class="loadout-center"
 
+            >
 
 
-    <!-- 메시지 -->
 
-    <div id="message"></div>
+                <div
 
+                    id="loadoutMainIcon"
 
-    <!-- 방으로 돌아가기 -->
+                    class="loadout-main-icon"
 
-    <button id="menuButton">
-        방으로 돌아가기
-    </button>
-    <!-- ==============================
-        게임 결과 화면
-    ============================== -->
+                >
 
-    <div id="resultOverlay" style="display:none;">
+                    ⚔️
 
-        <div id="resultBox">
+                </div>
 
-            <div id="resultIcon">
-            🏆
-            </div>
 
-            <h2 id="resultTitle">
-                VICTORY
-            </h2>
 
-            <p id="resultSubtitle">
-                승리했습니다!
-            </p>
+                <div
 
-            <div id="resultCharacter">
-                ⚔️ 나이트
-            </div>
+                    id="loadoutMainName"
 
-            <button id="resultButton">
-                방으로 돌아가기
-            </button>
+                    class="loadout-main-name"
 
-        </div>
+                >
 
-    </div>
+                    나이트
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <!-- E -->
+
+
+
+            <button
+
+                id="skillSlotE"
+
+                class="skill-slot"
+
+                type="button"
+
+                data-slot="1"
+
+            >
+
+
+
+                <span class="skill-key">
+
+                    E
+
+                </span>
+
+
+
+                <span
+
+                    id="selectedSkillE"
+
+                    class="skill-slot-name"
+
+                >
+
+                    +
+
+                </span>
+
+
+
+            </button>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 기본 공격 -->
+
+
+
+        <div class="basic-skill">
+
+
+
+            <div class="basic-skill-key">
+
+                F
+
+            </div>
+
+
+
+            <div>
+
+
+
+                <strong>
+
+                    기본 공격
+
+                </strong>
+
+
+
+                <span id="detailBasicAttack">
+
+                    근접 검격
+
+                </span>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 선택 가능한 스킬 -->
+
+
+
+        <div
+
+            id="skillPicker"
+
+            class="skill-picker"
+
+            style="display:none;"
+
+        >
+
+
+
+            <div class="skill-picker-header">
+
+
+
+                <strong id="skillPickerTitle">
+
+                    Q 스킬 선택
+
+                </strong>
+
+
+
+                <span id="skillCount">
+
+                    0 / 2
+
+                </span>
+
+
+
+            </div>
+
+
+
+
+
+            <div
+
+                id="skillOptionList"
+
+                class="skill-option-list"
+
+            >
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 선택 상태 -->
+
+
+
+        <div
+
+            id="skillSelectionStatus"
+
+            class="skill-selection-status"
+
+        >
+
+            스킬을 2개 선택하세요.
+
+        </div>
+
+
+
+
+
+        <!-- 캐릭터 선택 버튼 -->
+
+
+
+        <button
+
+            id="selectCharacterButton"
+
+            type="button"
+
+        >
+
+            이 캐릭터 선택
+
+        </button>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- ============================== -->
+
+    <!-- 캐릭터 선택 팝업 -->
+
+    <!-- ============================== -->
+
+
+
+    <div
+
+        id="characterPickerModal"
+
+        class="character-picker-modal"
+
+        style="display:none;"
+
+    >
+
+
+
+        <div class="character-picker-box">
+
+
+
+            <div class="character-picker-header">
+
+
+
+                <div>
+
+
+
+                    <span class="character-picker-label">
+
+                        CHARACTER SELECT
+
+                    </span>
+
+
+
+                    <h2>
+
+                        캐릭터 선택
+
+                    </h2>
+
+
+
+                </div>
+
+
+
+
+
+                <button
+
+                    id="characterPickerClose"
+
+                    type="button"
+
+                >
+
+                    ×
+
+                </button>
+
+
+
+            </div>
+
+
+
+
+
+            <!-- 캐릭터 목록 -->
+
+
+
+            <div class="character-list">
+
+
+
+                <!-- 나이트 -->
+
+
+
+                <div
+
+                    class="character-card selected"
+
+                    data-character="knight"
+
+                >
+
+
+
+                    <div class="character-icon">
+
+                        ⚔️
+
+                    </div>
+
+
+
+                    <h3>
+
+                        나이트
+
+                    </h3>
+
+
+
+                    <p>
+
+                        근접 공격 / 방패
+
+                    </p>
+
+
+
+                </div>
+
+
+
+
+
+                <!-- 닌자 -->
+
+
+
+                <div
+
+                    class="character-card"
+
+                    data-character="ninja"
+
+                >
+
+
+
+                    <div class="character-icon">
+
+                        🥷
+
+                    </div>
+
+
+
+                    <h3>
+
+                        닌자
+
+                    </h3>
+
+
+
+                    <p>
+
+                        수리검 / 대시
+
+                    </p>
+
+
+
+                </div>
+
+
+
+
+
+                <!-- 마법사 -->
+
+
+
+                <div
+
+                    class="character-card"
+
+                    data-character="wizard"
+
+                >
+
+
+
+                    <div class="character-icon">
+
+                        🧙
+
+                    </div>
+
+
+
+                    <h3>
+
+                        마법사
+
+                    </h3>
+
+
+
+                    <p>
+
+                        파이어볼 / 방어막
+
+                    </p>
+
+
+
+                </div>
+
+
+
+
+
+                <!-- 로봇 -->
+
+
+
+                <div
+
+                    class="character-card"
+
+                    data-character="robot"
+
+                >
+
+
+
+                    <div class="character-icon">
+
+                        🤖
+
+                    </div>
+
+
+
+                    <h3>
+
+                        로봇
+
+                    </h3>
+
+
+
+                    <p>
+
+                        EMP / 미사일
+
+                    </p>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- 선택한 캐릭터 -->
+
+
+
+    <div class="selected-character">
+
+
+
+        선택한 캐릭터:
+
+
+
+        <strong id="selectedCharacter">
+
+            나이트
+
+        </strong>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- 준비 버튼 -->
+
+
+
+    <button id="readyButton">
+
+        준비
+
+    </button>
+
+
+
+
+
+    <p id="readyStatus"></p>
+
 
 
 </div>
+
+</div>
+
+
+
+
+
+<!-- ==============================*
+
+*&#xA0;    게임 화면*
+
+*============================== -->
+
+
+
+<div
+
+    id="gameScreen"
+
+    style="display:none;"
+
+>
+
+
+
+
+
+    <!-- 상단 -->
+
+
+
+    <div class="top-bar">
+
+
+
+
+
+        <!-- 플레이어 정보 -->
+
+
+
+        <div class="player-info">
+
+
+
+            <div id="playerName">
+
+                🔵 나이트
+
+            </div>
+
+
+
+
+
+            <div class="hp-container">
+
+
+
+                <div id="hpBar"></div>
+
+
+
+            </div>
+
+
+
+
+
+            <div id="hpText">
+
+                HP: 100 / 100
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 조작법 -->
+
+
+
+        <div class="controls">
+
+
+
+            <span>
+
+                WASD 이동
+
+            </span>
+
+
+
+            <span>
+
+                마우스 핑
+
+            </span>
+
+
+
+            <span>
+
+                F 기본 공격
+
+            </span>
+
+
+
+            <span>
+
+                E 스킬 1
+
+            </span>
+
+
+
+            <span>
+
+                Q 스킬 2
+
+            </span>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- ==============================*
+
+*&#xA0;        게임 영역*
+
+*&#xA0;   ============================== -->
+
+
+
+    <div id="gameArea">
+
+
+
+
+
+        <!-- 공격 범위 -->
+
+
+
+        <div id="rangeIndicator"></div>
+
+
+
+
+
+        <!-- 조준선 -->
+
+
+
+        <div id="aimLine"></div>
+
+
+
+
+
+        <!-- 핑 -->
+
+
+
+        <div id="ping"></div>
+
+
+
+
+
+        <!-- 내 플레이어 -->
+
+
+
+        <div id="player">
+
+            ⚔️
+
+        </div>
+
+
+
+
+
+        <!-- 상대 플레이어 -->
+
+
+
+        <div
+
+            id="enemy"
+
+            class="enemy-player"
+
+            style="display:none;"
+
+        >
+
+            ⚔️
+
+        </div>
+
+
+
+
+
+        <!-- 공격 효과 -->
+
+
+
+        <div id="attackEffect"></div>
+
+
+
+
+
+        <!-- 스킬 효과 -->
+
+
+
+        <div id="skillEffect"></div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- ==============================*
+
+*&#xA0;        탄창*
+
+*&#xA0;   ============================== -->
+
+
+
+    <div id="ammoPanel">
+
+
+
+        <span>
+
+            탄창
+
+        </span>
+
+
+
+
+
+        <div id="ammoBarContainer">
+
+
+
+            <div id="ammoBar"></div>
+
+
+
+        </div>
+
+
+
+
+
+        <span id="ammoText">
+
+            8 / 8
+
+        </span>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- ==============================*
+
+*&#xA0;        스킬 패널*
+
+*&#xA0;   ============================== -->
+
+
+
+    <div class="bottom-panel">
+
+
+
+
+
+        <!-- 기본 공격 -->
+
+
+
+        <div class="skill">
+
+
+
+            <span>
+
+                F
+
+            </span>
+
+
+
+            <div>
+
+
+
+                <strong id="normalAttackText">
+
+                    근접 검격
+
+                </strong>
+
+
+
+                <small>
+
+                    기본 공격
+
+                </small>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 스킬 1 -->
+
+
+
+        <div class="skill">
+
+
+
+            <span>
+
+                E
+
+            </span>
+
+
+
+            <div>
+
+
+
+                <strong id="skill1Name">
+
+                    방패 강타
+
+                </strong>
+
+
+
+                <small id="skill1Cooldown">
+
+                    준비
+
+                </small>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- 스킬 2 -->
+
+
+
+        <div class="skill">
+
+
+
+            <span>
+
+                Q
+
+            </span>
+
+
+
+            <div>
+
+
+
+                <strong id="skill2Name">
+
+                    검의 충격파
+
+                </strong>
+
+
+
+                <small id="skill2Cooldown">
+
+                    준비
+
+                </small>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- 메시지 -->
+
+
+
+    <div id="message"></div>
+
+
+
+
+
+    <!-- 방으로 돌아가기 -->
+
+
+
+    <button id="menuButton">
+
+        방으로 돌아가기
+
+    </button>
+
+    <!-- ==============================*
+
+*&#xA0;       게임 결과 화면*
+
+*&#xA0;   ============================== -->
+
+
+
+    <div id="resultOverlay" style="display:none;">
+
+
+
+        <div id="resultBox">
+
+
+
+            <div id="resultIcon">
+
+            🏆
+
+            </div>
+
+
+
+            <h2 id="resultTitle">
+
+                VICTORY
+
+            </h2>
+
+
+
+            <p id="resultSubtitle">
+
+                승리했습니다!
+
+            </p>
+
+
+
+            <div id="resultCharacter">
+
+                ⚔️ 나이트
+
+            </div>
+
+
+
+            <button id="resultButton">
+
+                방으로 돌아가기
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+</div>
+
+
+
+
 
 
 
 <script src="/socket.io/socket.io.js"></script>
 
+
+
 <script src="game.js"></script>
 
 
+
+
+
 </body>
+
+
 
 </html>

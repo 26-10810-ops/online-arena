@@ -530,32 +530,38 @@ const characterSkillPool = {
         {
             id: "shieldBash",
             name: "방패 강타",
-            description: "방패로 적을 강하게 공격합니다."
+            description: "방패로 적을 강하게 공격합니다.",
+            cooldown: 3000
         },
         {
             id: "swordWave",
             name: "검의 충격파",
-            description: "검기를 날려 원거리 공격을 합니다."
+            description: "검기를 날려 원거리 공격을 합니다.",
+            cooldown: 4500
         },
         {
             id: "dashSlash",
             name: "돌진 베기",
-            description: "적을 향해 빠르게 돌진하며 공격합니다."
+            description: "적을 향해 빠르게 돌진하며 공격합니다.",
+            cooldown: 5000
         },
         {
             id: "spinSlash",
             name: "회전 베기",
-            description: "주변의 적을 회전하며 공격합니다."
+            description: "주변의 적을 회전하며 공격합니다.",
+            cooldown: 4000
         },
         {
             id: "groundSmash",
             name: "지면 강타",
-            description: "지면을 내려쳐 주변에 피해를 줍니다."
+            description: "지면을 내려쳐 주변에 피해를 줍니다.",
+            cooldown: 5000
         },
         {
             id: "counter",
             name: "반격",
-            description: "잠시 동안 적의 공격에 대응합니다."
+            description: "잠시 동안 적의 공격에 대응합니다.",
+            cooldown: 6000
         }
     ],
 
@@ -569,27 +575,32 @@ const characterSkillPool = {
         {
             id: "poisonShuriken",
             name: "독 수리검",
-            description: "적에게 지속 피해를 주는 수리검을 던집니다."
+            description: "적에게 지속 피해를 주는 수리검을 던집니다.",
+            cooldown: 5000
         },
         {
             id: "smoke",
             name: "연막",
-            description: "연막을 만들어 적의 움직임을 방해합니다."
+            description: "연막을 만들어 적의 움직임을 방해합니다.",
+            cooldown: 4500
         },
         {
             id: "shurikenRain",
             name: "수리검 난사",
-            description: "여러 개의 수리검을 빠르게 발사합니다."
+            description: "여러 개의 수리검을 빠르게 발사합니다.",
+            cooldown: 4200
         },
         {
             id: "shadowStep",
             name: "그림자 이동",
-            description: "짧은 거리를 순간적으로 이동합니다."
+            description: "짧은 거리를 순간적으로 이동합니다.",
+            cooldown: 3500
         },
         {
             id: "tripleStrike",
             name: "삼연격",
-            description: "빠르게 세 번 공격합니다."
+            description: "빠르게 세 번 공격합니다.",
+            cooldown: 4000
         }
     ],
 
@@ -598,32 +609,38 @@ const characterSkillPool = {
         {
             id: "bigFireball",
             name: "대형 파이어볼",
-            description: "강력한 대형 화염구를 발사합니다."
+            description: "강력한 대형 화염구를 발사합니다.",
+            cooldown: 4000
         },
         {
             id: "barrier",
             name: "마법 방어막",
-            description: "일정 시간 동안 피해를 막습니다."
+            description: "일정 시간 동안 피해를 막습니다.",
+            cooldown: 6000
         },
         {
             id: "ice",
             name: "빙결",
-            description: "적의 움직임을 둔화시킵니다."
+            description: "적의 움직임을 둔화시킵니다.",
+            cooldown: 4500
         },
         {
             id: "teleport",
             name: "순간이동",
-            description: "짧은 거리를 순간이동합니다."
+            description: "짧은 거리를 순간이동합니다.",
+            cooldown: 4500
         },
         {
             id: "meteor",
             name: "메테오",
-            description: "지정한 위치에 강력한 공격을 합니다."
+            description: "지정한 위치에 강력한 공격을 합니다.",
+            cooldown: 6500
         },
         {
             id: "magicArrow",
             name: "마법 화살",
-            description: "빠른 마법 투사체를 발사합니다."
+            description: "빠른 마법 투사체를 발사합니다.",
+            cooldown: 3000
         }
     ],
 
@@ -632,32 +649,38 @@ const characterSkillPool = {
         {
             id: "emp",
             name: "EMP 폭발",
-            description: "주변의 적에게 강력한 전자기 공격을 합니다."
+            description: "주변의 적에게 강력한 전자기 공격을 합니다.",
+            cooldown: 4500
         },
         {
             id: "missile",
             name: "미사일 발사",
-            description: "적을 추적하는 미사일을 발사합니다."
+            description: "적을 추적하는 미사일을 발사합니다.",
+            cooldown: 5000
         },
         {
             id: "rocketPunch",
             name: "로켓 펀치",
-            description: "강력한 근접 공격을 합니다."
+            description: "강력한 근접 공격을 합니다.",
+            cooldown: 4000
         },
         {
             id: "laser",
             name: "레이저",
-            description: "전방으로 강력한 레이저를 발사합니다."
+            description: "전방으로 강력한 레이저를 발사합니다.",
+            cooldown: 5000
         },
         {
             id: "armor",
             name: "강화 장갑",
-            description: "받는 피해를 감소시킵니다."
+            description: "받는 피해를 감소시킵니다.",
+            cooldown: 5500
         },
         {
             id: "drone",
             name: "공격 드론",
-            description: "공격 드론을 소환합니다."
+            description: "공격 드론을 소환합니다.",
+            cooldown: 6000
         }
     ]
 
@@ -2827,7 +2850,6 @@ socket.on(
     () => {
 
         gameRunning = true;
-        console.log("GAME START RECEIVED");
 
         playerRenderState = {};
         projectileRenderState = {};
@@ -2842,18 +2864,12 @@ socket.on(
             enemyHpBar =
                 createHpBar(enemy);
         }
-        console.log("BEFORE SCREEN CHANGE");
 
         startScreen.style.display =
             "none";
 
         gameScreen.style.display =
             "flex";
-        console.log(
-            "AFTER SCREEN CHANGE",
-            gameScreen.style.display,
-            gameScreen
-        );
 
         message.textContent =
             "마우스로 핑을 찍고 F/E/Q로 공격하세요.";
@@ -4476,25 +4492,21 @@ function useSkill(
 
 
 
-    const key =
+    const loadoutId =
+        selectedSkillLoadout[number];
 
-        number === 1
-
-            ? "skill1Cooldown"
-
-            : "skill2Cooldown";
-
-
-
-
+    const selectedSkill =
+        characterSkillPool[selectedCharacter]?.find(
+            skill => skill.id === loadoutId
+        );
 
     const duration =
-
-        characters[
-
-            selectedCharacter
-
-        ][key];
+        selectedSkill?.cooldown ||
+        (
+            number === 1
+                ? characters[selectedCharacter].skill1Cooldown
+                : characters[selectedCharacter].skill2Cooldown
+        );
 
 
 
@@ -5310,6 +5322,23 @@ function renderProjectiles(
         }
 
 
+        else if (projectile.type === "magicArrow") {
+            element.textContent="➤";
+            element.style.color="#d9b8ff";
+            element.style.fontSize="26px";
+            element.style.textShadow="0 0 15px #d9b8ff";
+        }
+        else if (projectile.type === "missile") {
+            element.textContent="🚀";
+            element.style.fontSize="24px";
+            element.style.textShadow="0 0 14px #ff9b62";
+        }
+        else if (projectile.type === "rocketPunch") {
+            element.textContent="👊";
+            element.style.fontSize="24px";
+            element.style.textShadow="0 0 14px #ffb56b";
+        }
+
         else if (
             projectile.type ===
             "swordWave"
@@ -5461,6 +5490,18 @@ socket.on(
             ];
 
         if (!p) {
+            return;
+        }
+
+        if (
+            data.skillId &&
+            showSelectedSkillEffect(
+                p.x,
+                p.y,
+                data.character,
+                data.skillId
+            )
+        ) {
             return;
         }
 
@@ -5680,6 +5721,32 @@ function createHpBar(parent) {
 // 나이트 / 닌자 / 마법사 / 로봇
 // 스킬 효과
 // ==============================
+
+function showSelectedSkillEffect(x,y,character,skillId){
+    const p={
+        dashSlash:["💨","#bde7ff",90,320],spinSlash:["⚔️","#d8f0ff",150,420],
+        groundSmash:["💥","#ffd36a",170,450],counter:["🛡️","#8ee7ff",110,500],
+        smoke:["☁️","#aeb8c8",130,600],shurikenRain:["✦","#d8fff0",180,500],
+        shadowStep:["🌑","#bca7ff",100,350],tripleStrike:["⚔️","#b7e4ff",120,350],
+        ice:["❄️","#8fe9ff",140,500],teleport:["✨","#c8a8ff",100,450],
+        meteor:["☄️","#ff9b55",190,650],magicArrow:["➤","#d9b8ff",90,300],
+        emp:["⚡","#8cf7ff",180,500],missile:["🚀","#ff9a6a",110,400],
+        rocketPunch:["👊","#ffb56b",100,350],laser:["▰","#ff4f7b",220,450],
+        armor:["🛡️","#8caeff",110,500],drone:["🤖","#a8d8ff",140,550]
+    }[skillId];
+    if(!p)return false;
+    const [icon,glow,size,duration]=p;
+    const v=createVFX("selected-"+skillId,x+27.5,y+27.5,size,size);
+    v.style.borderRadius="50%";v.style.display="flex";v.style.alignItems="center";
+    v.style.justifyContent="center";v.style.fontSize=Math.max(24,size*.34)+"px";
+    v.style.border="3px solid "+glow;v.style.boxShadow="0 0 18px "+glow+",0 0 45px "+glow;
+    v.textContent=icon;
+    v.animate([{transform:"translate(-50%,-50%) scale(.2)",opacity:1},
+               {transform:"translate(-50%,-50%) scale(1)",opacity:.9},
+               {transform:"translate(-50%,-50%) scale(1.35)",opacity:0}],
+              {duration,easing:"ease-out"});
+    return true;
+}
 
 function showSkillEffect(
     x,

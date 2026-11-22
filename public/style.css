@@ -2923,3 +2923,6 @@ button:active {
     }
 
 }
+.projectile-magicArrow{filter:drop-shadow(0 0 10px #d7b6ff)}
+.projectile-missile{filter:drop-shadow(0 0 12px #ff9b62)}
+.projectile-rocketPunch{filter:drop-shadow(0 0 12px #ffb56b)}
