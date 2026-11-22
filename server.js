@@ -1636,11 +1636,17 @@ function resetPlayer(
 
 
 
+    player.maxHp =
+
+        characters[
+            player.character
+        ].maxHp;
+
+
+
     player.hp =
 
-
-
-        100;
+        player.maxHp;
 
 
 
@@ -1947,6 +1953,22 @@ function publicPlayer(
 
 
             player.character,
+
+
+
+
+
+
+
+        skillLoadout: {
+
+            1:
+                player.skillLoadout?.[1] || null,
+
+            2:
+                player.skillLoadout?.[2] || null
+
+        },
 
 
 
@@ -7139,455 +7161,178 @@ socket.on(
 
 // ==========================**
 
-// 준비**
-
-// ==========================**
-
-
-
-
-
-
-
-        socket.on(
-
-
-
-            "ready",
-
-
-
-            () => {
-
-
-
-
-
-
-
-                const room =
-
-
-
-                    getRoom(
-
-
-
-                        socket
-
-
-
-                    );
-
-
-
-
-
-
-
-
-
-
-
-                const player =
-
-
-
-                    room?.players[
-
-
-
-                        socket.id
-
-
-
-                    ];
-
-
-
-
-
-
-
-
-
-
-
-                if (
-
-
-
-                    !room ||
-
-
-
-                    room.started ||
-
-
-
-                    !player
-
-
-
-                ) {
-
-
-
-
-
-
-
-                    return;
-
-
-
-
-
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-
-                player.ready =
-
-
-
-                    !player.ready;
-
-
-
-
-
-
-
-
-
-
-
-                const players =
-
-
-
-                    Object.values(
-
-
-
-                        room.players
-
-
-
-                    );
-
-
-
-
-
-
-
-
-
-
-
-                if (
-
-
-
-
-
-
-
-                    players.length === 2 &&
-
-
-
-
-
-
-
-                    players.every(
-
-
-
-                        p =>
-
-
-
-                            p.ready
-
-
-
-                    )
-
-
-
-
-
-
-
-                ) {
-
-
-
-
-
-
-
-                    room.started =
-
-
-
-                        true;
-
-
-
-
-
-
-
-
-
-
-
-                    room.projectiles =
-
-
-
-                        [];
-
-
-
-
-
-
-
-
-
-
-
-                    for (
-
-
-
-                        const p of
-
-
-
-                        players
-
-
-
-                    ) {
-
-
-
-
-
-
-
-                        p.ready =
-
-
-
-                            false;
-
-
-
-
-
-
-
-                        p.maxHp =
-
-                            characters[
-
-                                p.character
-
-                            ].maxHp;
-
-
-
-                        p.hp =
-
-                            p.maxHp;
-
-
-
-
-
-
-
-                        p.skill1Ready =
-
-
-
-                            true;
-
-
-
-
-
-
-
-                        p.skill2Ready =
-
-
-
-                            true;
-
-
-
-
-
-
-
-                        p.shield =
-
-
-
-                            false;
-
-
-
-
-
-
-
-                        p.dash =
-
-
-
-                            null;
-
-
-
-
-
-
-
-                        p.poison =
-
-
-
-                            null;
-
-
-
-
-
-
-
-
-
-
-
-                        updateAmmo(
-
-
-
-                            p
-
-
-
-                        );
-
-
-
-
-
-
-
-                    }
-
-
-
-
-
-
-
-
-
-
-
-                    io.to(
-
-
-
-                        room.code
-
-
-
-                    ).emit(
-
-
-
-                        "gameStart"
-
-
-
-                    );
-
-
-
-
-
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-
-                broadcastRoom(
-
-
-
-                    room
-
-
-
+// ==========================
+// 준비
+// ==========================
+
+socket.on(
+    "ready",
+    data => {
+
+        const room =
+            getRoom(socket);
+
+        const player =
+            room?.players[
+                socket.id
+            ];
+
+        if (
+            !room ||
+            room.started ||
+            !player
+        ) {
+            return;
+        }
+
+        // 준비 버튼을 누를 때 현재 선택 정보를 함께 받는다.
+        // 이렇게 하면 캐릭터/스킬 선택 이벤트와 준비 이벤트가
+        // 서로 엇갈려 서버에 선택 정보가 없는 문제를 방지한다.
+
+        const character =
+            data?.character;
+
+        const skillLoadout =
+            data?.skillLoadout;
+
+        if (
+            character &&
+            skillLoadout
+        ) {
+
+            if (
+                !characters[character] ||
+                !skillLoadout[1] ||
+                !skillLoadout[2] ||
+                skillLoadout[1] === skillLoadout[2]
+            ) {
+
+                socket.emit(
+                    "readyError",
+                    "캐릭터와 서로 다른 스킬 2개를 먼저 선택하세요."
                 );
 
-
-
-
-
-
-
+                return;
             }
 
+            player.character =
+                character;
 
+            player.skillLoadout = {
+                1:
+                    skillLoadout[1],
+                2:
+                    skillLoadout[2]
+            };
 
+            player.maxHp =
+                characters[
+                    character
+                ].maxHp;
+
+            player.hp =
+                player.maxHp;
+
+            updateAmmo(
+                player
+            );
+        }
+
+        // 서버에 저장된 선택 정보가 없으면 준비할 수 없다.
+        if (
+            !player.character ||
+            !player.skillLoadout?.[1] ||
+            !player.skillLoadout?.[2]
+        ) {
+
+            socket.emit(
+                "readyError",
+                "캐릭터와 Q/E 스킬을 먼저 선택하세요."
+            );
+
+            return;
+        }
+
+        player.ready =
+            !player.ready;
+
+        const players =
+            Object.values(
+                room.players
+            );
+
+        if (
+            players.length === 2 &&
+            players.every(
+                p =>
+                    p.ready
+            )
+        ) {
+
+            room.started =
+                true;
+
+            room.projectiles =
+                [];
+
+            for (
+                const p of players
+            ) {
+
+                p.ready =
+                    false;
+
+                p.maxHp =
+                    characters[
+                        p.character
+                    ].maxHp;
+
+                p.hp =
+                    p.maxHp;
+
+                p.skill1Ready =
+                    true;
+
+                p.skill2Ready =
+                    true;
+
+                p.shield =
+                    false;
+
+                p.dash =
+                    null;
+
+                p.poison =
+                    null;
+
+                p.input = {
+                    x: 0,
+                    y: 0
+                };
+
+                updateAmmo(
+                    p
+                );
+            }
+
+            io.to(
+                room.code
+            ).emit(
+                "gameStart"
+            );
+        }
+
+        broadcastRoom(
+            room
         );
+    }
+);
 
-// ==========================**
+// ==========================
+// 이동
+// ==========================
 
-// 이동**
-
-// ==========================**
-
-
-
-
-
-
-
-        socket.on(
+socket.on(
 
 
 

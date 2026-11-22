@@ -2495,10 +2495,38 @@ readyButton.addEventListener(
 
         }
 
+        // 준비할 때 캐릭터와 스킬 선택을 함께 서버로 전달한다.
+        // 서버가 선택 정보를 확실하게 저장한 뒤 준비 상태를 처리한다.
 
         socket.emit(
-            "ready"
+            "ready",
+            {
+                character:
+                    detailCharacter,
+
+                skillLoadout: {
+                    1:
+                        selectedSkillLoadout[1],
+
+                    2:
+                        selectedSkillLoadout[2]
+                }
+            }
         );
+
+    }
+);
+
+
+
+
+
+socket.on(
+    "readyError",
+    messageText => {
+
+        readyStatus.textContent =
+            `⚠️ ${messageText}`;
 
     }
 );
@@ -2510,6 +2538,10 @@ readyButton.addEventListener(
 // ==============================
 
 // 방 상태
+
+// ==============================
+
+
 
 // ==============================
 
@@ -2657,6 +2689,48 @@ socket.on(
 
 
         if (me) {
+
+            // 서버에 저장된 스킬 선택 상태를 클라이언트에도 동기화
+            if (
+                me.skillLoadout
+            ) {
+
+                selectedSkillLoadout = {
+                    1:
+                        me.skillLoadout[1] || null,
+
+                    2:
+                        me.skillLoadout[2] || null
+                };
+
+                const skillPool =
+                    characterSkillPool[
+                        me.character
+                    ] || [];
+
+                const skillQ =
+                    skillPool.find(
+                        skill =>
+                            skill.id ===
+                            selectedSkillLoadout[2]
+                    );
+
+                const skillE =
+                    skillPool.find(
+                        skill =>
+                            skill.id ===
+                            selectedSkillLoadout[1]
+                    );
+
+                selectedSkillQ.textContent =
+                    skillQ?.name || "+";
+
+                selectedSkillE.textContent =
+                    skillE?.name || "+";
+
+                updateSkillCount();
+                updateSkillSelectionStatus();
+            }
 
 
 
