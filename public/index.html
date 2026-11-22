@@ -161,318 +161,194 @@
     </div>
 
 
-    <!-- 캐릭터 선택 -->
+<!-- 캐릭터 선택 -->
+
+<div
+    id="characterSelect"
+    style="display:none;"
+>
+
+    <h2>
+        캐릭터 선택
+    </h2>
+
+
+    <!-- ============================== -->
+    <!-- 캐릭터 / 스킬 선택 -->
+    <!-- ============================== -->
 
     <div
-        id="characterSelect"
+        id="characterDetail"
+        class="character-detail"
         style="display:none;"
     >
 
-        <h2>
-            캐릭터 선택
-        </h2>
+        <!-- 캐릭터 정보 -->
 
-        <!-- ============================== -->
-        <!-- 캐릭터 / 스킬 선택 -->
-        <!-- ============================== -->
+        <div class="loadout-character">
 
-        <div
-            id="characterDetail"
-            class="character-detail"
-            style="display:none;"
-        >
-
-            <!-- 캐릭터 정보 -->
-
-            <div class="loadout-character">
-
-                <div
-                    id="detailIcon"
-                    class="loadout-character-icon"
-                >
+            <div
+                id="detailIcon"
+                class="loadout-character-icon"
+            >
                 ⚔️
-                </div>
+            </div>
 
-                <div>
+            <div>
 
-                    <h3 id="detailName">
+                <h3 id="detailName">
                     나이트
-                    </h3>
+                </h3>
 
-                    <p id="detailDescription">
+                <p id="detailDescription">
                     근접전에서 강력한 전투형 캐릭터
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- 스킬 배치 -->
-
-            <div class="skill-loadout">
-
-                <!-- Q -->
-
-                <button
-                    id="skillSlotQ"
-                    class="skill-slot"
-                    type="button"
-                    data-slot="2"
-                >
-
-                    <span class="skill-key">
-                        Q
-                    </span>
-
-                    <span
-                        id="selectedSkillQ"
-                        class="skill-slot-name"
-                    >
-                    +
-                    </span>
-
-                </button>
-
-
-                <!-- 캐릭터 -->
-
-                <div
-                    id = "characterPreviewButton"
-                    class="loadout-center">
-
-                    <div
-                        id="loadoutMainIcon"
-                        class="loadout-main-icon"
-                    >
-                    ⚔️
-                    </div>
-
-                    <div
-                        id="loadoutMainName"
-                        class="loadout-main-name"
-                    >
-                        나이트
-                    </div>
-
-                </div>
-
-
-                <!-- E -->
-
-                <button
-                    id="skillSlotE"
-                    class="skill-slot"
-                    type="button"
-                    data-slot="1"
-                >
-
-                    <span class="skill-key">
-                        E
-                    </span>
-
-                    <span
-                        id="selectedSkillE"
-                        class="skill-slot-name"
-                    >
-                        +
-                    </span>
-
-                </button>
-
-            </div>
-
-
-            <!-- 기본 공격 -->
-
-            <div class="basic-skill">
-
-                <div class="basic-skill-key">
-                    F
-                </div>
-
-                <div>
-
-                    <strong>
-                        기본 공격
-                    </strong>
-
-                    <span id="detailBasicAttack">
-                        근접 검격
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- 선택 가능한 스킬 -->
-
-            <div
-                id="skillPicker"
-                class="skill-picker"
-                style="display:none;"
-            >
-
-                <div class="skill-picker-header">
-
-                    <strong id="skillPickerTitle">
-                        Q 스킬 선택
-                    </strong>
-
-                    <span id="skillCount">
-                        0 / 2
-                    </span>
-
-                </div>
-
-
-                <div
-                    id="skillOptionList"
-                    class="skill-option-list"
-                >
-                </div>
-
-            </div>
-
-
-            <!-- 선택 상태 -->
-
-            <div
-                id="skillSelectionStatus"
-                class="skill-selection-status"
-            >
-            스킬을 2개 선택하세요.
-            </div>
-
-
-        <!-- 캐릭터 선택 팝업 -->
-
-        <div
-            id="characterPickerModal"
-            class="character-picker-modal"
-            style="display:none;"
-        >
-
-            <div class="character-picker-box">
-
-                <div class="character-picker-header">
-
-                    <div>
-                        <span class="character-picker-label">
-                            CHARACTER SELECT
-                        </span>
-
-                        <h2>
-                            캐릭터 선택
-                        </h2>
-                    </div>
-
-                    <button
-                        id="characterPickerClose"
-                        type="button"
-                    >
-                    ×
-                    </button>
-
-                </div>
-
-
-                <div class="character-list">
-
-                    <!-- 나이트 -->
-
-                    <div
-                        class="character-card selected"
-                        data-character="knight"
-                    >
-
-                        <div class="character-icon">
-                        ⚔️
-                        </div>
-
-                        <h3>
-                        나이트
-                        </h3>
-
-                        <p>
-                            근접 공격 / 방패
-                        </p>
-
-                    </div>
-
-
-                    <!-- 닌자 -->
-
-                    <div
-                        class="character-card"
-                        data-character="ninja"
-                    >
-
-                        <div class="character-icon">
-                            🥷
-                        </div>
-
-                        <h3>
-                            닌자
-                        </h3>
-
-                        <p>
-                            수리검 / 대시
-                        </p>
-
-                    </div>
-
-
-                    <!-- 마법사 -->
-
-                    <div
-                        class="character-card"
-                        data-character="wizard"
-                    >
-
-                        <div class="character-icon">
-                            🧙
-                        </div>
-
-                        <h3>
-                            마법사
-                        </h3>
-
-                        <p>
-                            파이어볼 / 방어막
-                        </p>
-
-                    </div>
-
-
-                    <!-- 로봇 -->
-
-                    <div
-                        class="character-card"
-                        data-character="robot"
-                    >
-
-                        <div class="character-icon">
-                            🤖
-                        </div>
-
-                        <h3>
-                            로봇
-                        </h3>
-
-                        <p>
-                            EMP / 미사일
-                        </p>
-
-                    </div>
-
-                </div>
+                </p>
 
             </div>
 
         </div>
-        <!-- 캐릭터 선택 -->
+
+
+        <!-- 스킬 배치 -->
+
+        <div class="skill-loadout">
+
+            <!-- Q -->
+
+            <button
+                id="skillSlotQ"
+                class="skill-slot"
+                type="button"
+                data-slot="2"
+            >
+
+                <span class="skill-key">
+                    Q
+                </span>
+
+                <span
+                    id="selectedSkillQ"
+                    class="skill-slot-name"
+                >
+                    +
+                </span>
+
+            </button>
+
+
+            <!-- 캐릭터 -->
+
+            <div
+                id="characterPreviewButton"
+                class="loadout-center"
+            >
+
+                <div
+                    id="loadoutMainIcon"
+                    class="loadout-main-icon"
+                >
+                    ⚔️
+                </div>
+
+                <div
+                    id="loadoutMainName"
+                    class="loadout-main-name"
+                >
+                    나이트
+                </div>
+
+            </div>
+
+
+            <!-- E -->
+
+            <button
+                id="skillSlotE"
+                class="skill-slot"
+                type="button"
+                data-slot="1"
+            >
+
+                <span class="skill-key">
+                    E
+                </span>
+
+                <span
+                    id="selectedSkillE"
+                    class="skill-slot-name"
+                >
+                    +
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- 기본 공격 -->
+
+        <div class="basic-skill">
+
+            <div class="basic-skill-key">
+                F
+            </div>
+
+            <div>
+
+                <strong>
+                    기본 공격
+                </strong>
+
+                <span id="detailBasicAttack">
+                    근접 검격
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- 선택 가능한 스킬 -->
+
+        <div
+            id="skillPicker"
+            class="skill-picker"
+            style="display:none;"
+        >
+
+            <div class="skill-picker-header">
+
+                <strong id="skillPickerTitle">
+                    Q 스킬 선택
+                </strong>
+
+                <span id="skillCount">
+                    0 / 2
+                </span>
+
+            </div>
+
+
+            <div
+                id="skillOptionList"
+                class="skill-option-list"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- 선택 상태 -->
+
+        <div
+            id="skillSelectionStatus"
+            class="skill-selection-status"
+        >
+            스킬을 2개 선택하세요.
+        </div>
+
+
+        <!-- 캐릭터 선택 버튼 -->
 
         <button
             id="selectCharacterButton"
@@ -483,6 +359,143 @@
 
     </div>
 
+
+    <!-- ============================== -->
+    <!-- 캐릭터 선택 팝업 -->
+    <!-- ============================== -->
+
+    <div
+        id="characterPickerModal"
+        class="character-picker-modal"
+        style="display:none;"
+    >
+
+        <div class="character-picker-box">
+
+            <div class="character-picker-header">
+
+                <div>
+
+                    <span class="character-picker-label">
+                        CHARACTER SELECT
+                    </span>
+
+                    <h2>
+                        캐릭터 선택
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="characterPickerClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- 캐릭터 목록 -->
+
+            <div class="character-list">
+
+                <!-- 나이트 -->
+
+                <div
+                    class="character-card selected"
+                    data-character="knight"
+                >
+
+                    <div class="character-icon">
+                        ⚔️
+                    </div>
+
+                    <h3>
+                        나이트
+                    </h3>
+
+                    <p>
+                        근접 공격 / 방패
+                    </p>
+
+                </div>
+
+
+                <!-- 닌자 -->
+
+                <div
+                    class="character-card"
+                    data-character="ninja"
+                >
+
+                    <div class="character-icon">
+                        🥷
+                    </div>
+
+                    <h3>
+                        닌자
+                    </h3>
+
+                    <p>
+                        수리검 / 대시
+                    </p>
+
+                </div>
+
+
+                <!-- 마법사 -->
+
+                <div
+                    class="character-card"
+                    data-character="wizard"
+                >
+
+                    <div class="character-icon">
+                        🧙
+                    </div>
+
+                    <h3>
+                        마법사
+                    </h3>
+
+                    <p>
+                        파이어볼 / 방어막
+                    </p>
+
+                </div>
+
+
+                <!-- 로봇 -->
+
+                <div
+                    class="character-card"
+                    data-character="robot"
+                >
+
+                    <div class="character-icon">
+                        🤖
+                    </div>
+
+                    <h3>
+                        로봇
+                    </h3>
+
+                    <p>
+                        EMP / 미사일
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 선택한 캐릭터 -->
 
     <div class="selected-character">
 
@@ -495,6 +508,8 @@
     </div>
 
 
+    <!-- 준비 버튼 -->
+
     <button id="readyButton">
         준비
     </button>
@@ -502,6 +517,7 @@
 
     <p id="readyStatus"></p>
 
+</div>
 
 
 <!-- ==============================
