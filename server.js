@@ -7169,6 +7169,7 @@ socket.on(
     "ready",
     data => {
 
+        console.log("READY EVENT RECEIVED", socket.id, data);
         const room =
             getRoom(socket);
 
