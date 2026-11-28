@@ -14,7 +14,7 @@
 
     >
 
-    <title>Online Arena</title>
+    <title>ONLINE ARENA — 2P BATTLE</title>
 
     <link
 
@@ -36,7 +36,15 @@
 
 <div id="startScreen">
 
-    <h1>⚔️ ONLINE ARENA AAAA</h1>
+    <div class="hero-eyebrow">ONLINE COMBAT SYSTEM // 2 PLAYERS</div>
+    <h1><span class="title-mark">⚔</span> ONLINE <span>ARENA</span></h1>
+    <p class="hero-subtitle">CHOOSE YOUR FIGHTER · BUILD YOUR LOADOUT · ENTER THE ARENA</p>
+    <div class="hero-status">
+        <span class="status-dot"></span>
+        <span>SERVER ONLINE</span>
+        <span class="status-divider">/</span>
+        <span>RANKED-STYLE BATTLE</span>
+    </div>
 
     <!-- ==============================
 
@@ -180,7 +188,8 @@
 
     <!-- 방 만들기 / 참가하기 -->
 
-    <div id="roomPanel">
+    <div class="section-label">MATCHMAKING</div>
+    <div id="roomPanel">
 
         <input
 
@@ -586,7 +595,7 @@
 
                     <p>
 
-                        근접 공격 / 방패
+                        근접 전투 / 6 SKILLS
 
                     </p>
 
@@ -616,7 +625,7 @@
 
                     <p>
 
-                        수리검 / 대시
+                        기동 전투 / 6 SKILLS
 
                     </p>
 
@@ -646,7 +655,7 @@
 
                     <p>
 
-                        파이어볼 / 방어막
+                        원거리 마법 / 6 SKILLS
 
                     </p>
 
@@ -676,7 +685,7 @@
 
                     <p>
 
-                        EMP / 미사일
+                        중화기 전투 / 6 SKILLS
 
                     </p>
 
@@ -732,7 +741,21 @@
 
     <!-- 상단 -->
 
-    <div class="top-bar">
+    <div class="battle-header">
+        <div class="battle-brand">
+            <span class="battle-brand-mark">⚔</span>
+            <div>
+                <span class="battle-eyebrow">LIVE MATCH</span>
+                <strong>ONLINE ARENA</strong>
+            </div>
+        </div>
+        <div class="battle-status">
+            <span class="status-dot"></span>
+            <span>COMBAT ACTIVE</span>
+        </div>
+    </div>
+
+    <div class="top-bar">
 
         <!-- 플레이어 정보 -->
 
@@ -974,7 +997,12 @@
 
     <!-- 메시지 -->
 
-    <div id="message"></div>
+    <div class="combat-tip">
+        <span>●</span>
+        F 기본 공격 · E/Q 선택 스킬 · WASD 이동 · 마우스 핑
+    </div>
+
+    <div id="message"></div>
 
     <!-- 방으로 돌아가기 -->
 
