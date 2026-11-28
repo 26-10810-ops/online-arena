@@ -1,50 +1,33 @@
 <!DOCTYPE html>
 
 <html lang="ko">
-
 <head>
 
-    <meta charset="UTF-8">
+    <meta charset="utf-8"/>
 
-    <meta
-
-        name="viewport"
-
-        content="width=device-width, initial-scale=1.0"
-
-    >
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 
     <title>ONLINE ARENA — 2P BATTLE</title>
 
-    <link
-
-        rel="stylesheet"
-
-        href="style.css"
-
-    >
-
+    <link href="style.css" rel="stylesheet"/>
 </head>
-
 <body>
-
 <!-- ==============================
 
      시작 화면
 
 ============================== -->
-
 <div id="startScreen">
 
     <div class="hero-eyebrow">ONLINE COMBAT SYSTEM // 2 PLAYERS</div>
-    <h1><span class="title-mark">⚔</span> ONLINE <span>ARENA</span></h1>
-    <p class="hero-subtitle">CHOOSE YOUR FIGHTER · BUILD YOUR LOADOUT · ENTER THE ARENA</p>
-    <div class="hero-status">
-        <span class="status-dot"></span>
-        <span>SERVER ONLINE</span>
-        <span class="status-divider">/</span>
-        <span>RANKED-STYLE BATTLE</span>
-    </div>
+<h1><span class="title-mark">⚔</span> ONLINE <span>ARENA</span></h1>
+<p class="hero-subtitle">CHOOSE YOUR FIGHTER · BUILD YOUR LOADOUT · ENTER THE ARENA</p>
+<div class="hero-status">
+<span class="status-dot"></span>
+<span>SERVER ONLINE</span>
+<span class="status-divider">/</span>
+<span>RANKED-STYLE BATTLE</span>
+</div>
 
     <!-- ==============================
 
@@ -52,39 +35,27 @@
 
     ============================== -->
 
-    <div id="authPanel">
+    
+
+    <!-- 방 만들기 / 참가하기 -->
+
+    
+
+
+    <!-- 방 정보 -->
+
+    
+<!-- 캐릭터 선택 -->
+
+<div class="start-layout"><div id="authPanel">
 
         <div id="loginPanel">
 
             <h2>로그인</h2>
 
-            <input
+            <input autocomplete="username" id="usernameInput" maxlength="16" placeholder="아이디" type="text"/>
 
-                id="usernameInput"
-
-                type="text"
-
-                maxlength="16"
-
-                placeholder="아이디"
-
-                autocomplete="username"
-
-            >
-
-            <input
-
-                id="passwordInput"
-
-                type="password"
-
-                maxlength="64"
-
-                placeholder="비밀번호"
-
-                autocomplete="current-password"
-
-            >
+            <input autocomplete="current-password" id="passwordInput" maxlength="64" placeholder="비밀번호" type="password"/>
 
             <div class="auth-buttons">
 
@@ -184,24 +155,9 @@
 
         </div>
 
-    </div>
+    </div><div class="section-label">MATCHMAKING</div><div id="roomPanel">
 
-    <!-- 방 만들기 / 참가하기 -->
-
-    <div class="section-label">MATCHMAKING</div>
-    <div id="roomPanel">
-
-        <input
-
-            id="roomCodeInput"
-
-            type="text"
-
-            maxlength="6"
-
-            placeholder="방 코드"
-
-        >
+        <input id="roomCodeInput" maxlength="6" placeholder="방 코드" type="text"/>
 
         <button id="createRoomButton">
 
@@ -215,17 +171,7 @@
 
         </button>
 
-    </div>
-
-    <!-- 방 정보 -->
-
-    <div
-
-        id="roomInfo"
-
-        style="display:none;"
-
-    >
+    </div><div id="roomInfo" style="display:none;">
 
         <p id="roomCodeText"></p>
 
@@ -235,29 +181,13 @@
 
         </p>
 
-        <button
-
-            id="deleteRoomButton"
-
-            style="display:none;"
-
-        >
+        <button id="deleteRoomButton" style="display:none;">
 
             방 삭제
 
         </button>
 
-    </div>
-
-<!-- 캐릭터 선택 -->
-
-<div
-
-    id="characterSelect"
-
-    style="display:none;"
-
->
+    </div><div id="characterSelect" style="display:none;">
 
     <!-- ============================== -->
 
@@ -265,27 +195,13 @@
 
     <!-- ============================== -->
 
-    <div
-
-        id="characterDetail"
-
-        class="character-detail"
-
-        style="display:block;"
-
-    >
+    <div class="character-detail" id="characterDetail" style="display:block;">
 
         <!-- 캐릭터 정보 -->
 
         <div class="loadout-character">
 
-            <div
-
-                id="detailIcon"
-
-                class="loadout-character-icon"
-
-            >
+            <div class="loadout-character-icon" id="detailIcon">
 
                 ⚔️
 
@@ -315,17 +231,7 @@
 
             <!-- Q -->
 
-            <button
-
-                id="skillSlotQ"
-
-                class="skill-slot"
-
-                type="button"
-
-                data-slot="2"
-
-            >
+            <button class="skill-slot" data-slot="2" id="skillSlotQ" type="button">
 
                 <span class="skill-key">
 
@@ -333,13 +239,7 @@
 
                 </span>
 
-                <span
-
-                    id="selectedSkillQ"
-
-                    class="skill-slot-name"
-
-                >
+                <span class="skill-slot-name" id="selectedSkillQ">
 
                     +
 
@@ -349,33 +249,15 @@
 
             <!-- 캐릭터 -->
 
-            <div
+            <div class="loadout-center" id="characterPreviewButton">
 
-                id="characterPreviewButton"
-
-                class="loadout-center"
-
-            >
-
-                <div
-
-                    id="loadoutMainIcon"
-
-                    class="loadout-main-icon"
-
-                >
+                <div class="loadout-main-icon" id="loadoutMainIcon">
 
                     ⚔️
 
                 </div>
 
-                <div
-
-                    id="loadoutMainName"
-
-                    class="loadout-main-name"
-
-                >
+                <div class="loadout-main-name" id="loadoutMainName">
 
                     나이트
 
@@ -385,17 +267,7 @@
 
             <!-- E -->
 
-            <button
-
-                id="skillSlotE"
-
-                class="skill-slot"
-
-                type="button"
-
-                data-slot="1"
-
-            >
+            <button class="skill-slot" data-slot="1" id="skillSlotE" type="button">
 
                 <span class="skill-key">
 
@@ -403,13 +275,7 @@
 
                 </span>
 
-                <span
-
-                    id="selectedSkillE"
-
-                    class="skill-slot-name"
-
-                >
+                <span class="skill-slot-name" id="selectedSkillE">
 
                     +
 
@@ -449,15 +315,7 @@
 
         <!-- 선택 가능한 스킬 -->
 
-        <div
-
-            id="skillPicker"
-
-            class="skill-picker"
-
-            style="display:none;"
-
-        >
+        <div class="skill-picker" id="skillPicker" style="display:none;">
 
             <div class="skill-picker-header">
 
@@ -475,13 +333,7 @@
 
             </div>
 
-            <div
-
-                id="skillOptionList"
-
-                class="skill-option-list"
-
-            >
+            <div class="skill-option-list" id="skillOptionList">
 
             </div>
 
@@ -489,13 +341,7 @@
 
         <!-- 선택 상태 -->
 
-        <div
-
-            id="skillSelectionStatus"
-
-            class="skill-selection-status"
-
-        >
+        <div class="skill-selection-status" id="skillSelectionStatus">
 
             스킬을 2개 선택하세요.
 
@@ -503,13 +349,7 @@
 
         <!-- 캐릭터 선택 버튼 -->
 
-        <button
-
-            id="selectCharacterButton"
-
-            type="button"
-
-        >
+        <button id="selectCharacterButton" type="button">
 
             이 캐릭터 선택
 
@@ -523,15 +363,7 @@
 
     <!-- ============================== -->
 
-    <div
-
-        id="characterPickerModal"
-
-        class="character-picker-modal"
-
-        style="display:none;"
-
-    >
+    <div class="character-picker-modal" id="characterPickerModal" style="display:none;">
 
         <div class="character-picker-box">
 
@@ -553,13 +385,7 @@
 
                 </div>
 
-                <button
-
-                    id="characterPickerClose"
-
-                    type="button"
-
-                >
+                <button id="characterPickerClose" type="button">
 
                     ×
 
@@ -573,13 +399,7 @@
 
                 <!-- 나이트 -->
 
-                <div
-
-                    class="character-card selected"
-
-                    data-character="knight"
-
-                >
+                <div class="character-card selected" data-character="knight">
 
                     <div class="character-icon">
 
@@ -593,23 +413,13 @@
 
                     </h3>
 
-                    <p>
-
-                        근접 전투 / 6 SKILLS
-
-                    </p>
+                    <p>근접 전투</p>
 
                 </div>
 
                 <!-- 닌자 -->
 
-                <div
-
-                    class="character-card"
-
-                    data-character="ninja"
-
-                >
+                <div class="character-card" data-character="ninja">
 
                     <div class="character-icon">
 
@@ -623,23 +433,13 @@
 
                     </h3>
 
-                    <p>
-
-                        기동 전투 / 6 SKILLS
-
-                    </p>
+                    <p>기동 / 암살</p>
 
                 </div>
 
                 <!-- 마법사 -->
 
-                <div
-
-                    class="character-card"
-
-                    data-character="wizard"
-
-                >
+                <div class="character-card" data-character="wizard">
 
                     <div class="character-icon">
 
@@ -653,23 +453,13 @@
 
                     </h3>
 
-                    <p>
-
-                        원거리 마법 / 6 SKILLS
-
-                    </p>
+                    <p>원거리 마법</p>
 
                 </div>
 
                 <!-- 로봇 -->
 
-                <div
-
-                    class="character-card"
-
-                    data-character="robot"
-
-                >
+                <div class="character-card" data-character="robot">
 
                     <div class="character-icon">
 
@@ -683,11 +473,7 @@
 
                     </h3>
 
-                    <p>
-
-                        중화기 전투 / 6 SKILLS
-
-                    </p>
+                    <p>중장 화력</p>
 
                 </div>
 
@@ -720,42 +506,30 @@
     </button>
 
     <p id="readyStatus"></p>
-
-</div>
-
-</div>
-
+</div></div></div>
 <!-- ==============================
 
      게임 화면
 
 ============================== -->
-
-<div
-
-    id="gameScreen"
-
-    style="display:none;"
-
->
+<div id="gameScreen" style="display:none;">
 
     <!-- 상단 -->
 
     <div class="battle-header">
-        <div class="battle-brand">
-            <span class="battle-brand-mark">⚔</span>
-            <div>
-                <span class="battle-eyebrow">LIVE MATCH</span>
-                <strong>ONLINE ARENA</strong>
-            </div>
-        </div>
-        <div class="battle-status">
-            <span class="status-dot"></span>
-            <span>COMBAT ACTIVE</span>
-        </div>
-    </div>
-
-    <div class="top-bar">
+<div class="battle-brand">
+<span class="battle-brand-mark">⚔</span>
+<div>
+<span class="battle-eyebrow">LIVE MATCH</span>
+<strong>ONLINE ARENA</strong>
+</div>
+</div>
+<div class="battle-status">
+<span class="status-dot"></span>
+<span>COMBAT ACTIVE</span>
+</div>
+</div>
+<div class="top-bar">
 
         <!-- 플레이어 정보 -->
 
@@ -849,15 +623,7 @@
 
         <!-- 상대 플레이어 -->
 
-        <div
-
-            id="enemy"
-
-            class="enemy-player"
-
-            style="display:none;"
-
-        >
+        <div class="enemy-player" id="enemy" style="display:none;">
 
             ⚔️
 
@@ -998,11 +764,10 @@
     <!-- 메시지 -->
 
     <div class="combat-tip">
-        <span>●</span>
+<span>●</span>
         F 기본 공격 · E/Q 선택 스킬 · WASD 이동 · 마우스 핑
     </div>
-
-    <div id="message"></div>
+<div id="message"></div>
 
     <!-- 방으로 돌아가기 -->
 
@@ -1055,13 +820,8 @@
         </div>
 
     </div>
-
 </div>
-
 <script src="/socket.io/socket.io.js"></script>
-
 <script src="game.js"></script>
-
 </body>
-
 </html>
