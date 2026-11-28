@@ -3291,17 +3291,16 @@ function updateCharacterUI(
 
 
 
-    skill1Name.textContent =
+    const selectedE =
+        (characterSkillPool[character] || [])
+            .find(skill => skill.id === selectedSkillLoadout[1]);
 
-        data.skill1Name;
+    const selectedQ =
+        (characterSkillPool[character] || [])
+            .find(skill => skill.id === selectedSkillLoadout[2]);
 
-
-
-
-
-    skill2Name.textContent =
-
-        data.skill2Name;
+    skill1Name.textContent = selectedE?.name || data.skill1Name;
+    skill2Name.textContent = selectedQ?.name || data.skill2Name;
 
 
 
@@ -4400,6 +4399,32 @@ function normalAttack() {
 
 
 
+const selectedSkillCooldowns = {
+    shieldBash: 3000,
+    swordWave: 4500,
+    dashSlash: 5000,
+    spinSlash: 4000,
+    groundSmash: 5000,
+    counter: 6000,
+    poisonShuriken: 5000,
+    smoke: 5500,
+    shurikenRain: 4500,
+    shadowStep: 5000,
+    tripleStrike: 4500,
+    bigFireball: 4000,
+    barrier: 6000,
+    ice: 4500,
+    teleport: 5000,
+    meteor: 6500,
+    magicArrow: 3000,
+    emp: 4500,
+    missile: 5000,
+    rocketPunch: 4500,
+    laser: 5000,
+    armor: 6000,
+    drone: 5500
+};
+
 function useSkill(
 
     number
@@ -4470,24 +4495,21 @@ function useSkill(
 
 
     const key =
-
         number === 1
-
             ? "skill1Cooldown"
-
             : "skill2Cooldown";
 
+    const selectedSkillId =
+        selectedSkillLoadout[number];
 
-
-
+    const selectedSkill =
+        (characterSkillPool[selectedCharacter] || [])
+            .find(skill => skill.id === selectedSkillId);
 
     const duration =
-
-        characters[
-
-            selectedCharacter
-
-        ][key];
+        selectedSkillCooldowns[selectedSkillId] ||
+        selectedSkill?.cooldown ||
+        characters[selectedCharacter][key];
 
 
 
@@ -5303,6 +5325,38 @@ function renderProjectiles(
         }
 
 
+        else if (projectile.type === "magicArrow") {
+            element.textContent = "➤";
+            element.style.color = "#b58cff";
+            element.style.fontSize = "26px";
+            element.style.textShadow = "0 0 12px #b58cff";
+        }
+
+        else if (projectile.type === "missile") {
+            element.textContent = "🚀";
+            element.style.fontSize = "28px";
+            element.style.filter = "drop-shadow(0 0 8px #ff8a00)";
+        }
+
+        else if (projectile.type === "rocketPunch") {
+            element.textContent = "👊";
+            element.style.fontSize = "28px";
+            element.style.filter = "drop-shadow(0 0 10px #ff5555)";
+        }
+
+        else if (projectile.type === "laser") {
+            element.textContent = "⚡";
+            element.style.color = "#66eaff";
+            element.style.fontSize = "28px";
+            element.style.textShadow = "0 0 15px #66eaff";
+        }
+
+        else if (projectile.type === "drone") {
+            element.textContent = "🤖";
+            element.style.fontSize = "25px";
+            element.style.filter = "drop-shadow(0 0 8px #9aa7b8)";
+        }
+
         else if (
             projectile.type ===
             "swordWave"
@@ -5444,6 +5498,47 @@ socket.on(
 // 스킬 효과
 // ==============================
 
+function showNewSkillEffect(p, data) {
+    const skillId = data.skillId;
+    const cx = p.x + 27.5;
+    const cy = p.y + 27.5;
+
+    const ring = (size, text, glow) => {
+        const v = createVFX("skill-custom", cx, cy, size, size);
+        v.textContent = text;
+        v.style.display = "flex";
+        v.style.alignItems = "center";
+        v.style.justifyContent = "center";
+        v.style.fontSize = `${Math.max(22, size * 0.45)}px`;
+        v.style.borderRadius = "50%";
+        v.style.background = "rgba(255,255,255,.08)";
+        v.style.boxShadow = `0 0 18px ${glow}, 0 0 40px ${glow}`;
+        v.animate([{transform:"scale(.2)",opacity:1},{transform:"scale(1.25)",opacity:.9},{transform:"scale(1.7)",opacity:0}],{duration:500,easing:"ease-out"});
+    };
+
+    if (skillId === "shieldBash") ring(80,"🛡️","#ffd45a");
+    else if (skillId === "swordWave") ring(90,"⚔️","#7ddcff");
+    else if (skillId === "poisonShuriken") ring(80,"☠️","#39ff14");
+    else if (skillId === "bigFireball") ring(100,"🔥","#ff6a00");
+    else if (skillId === "emp") ring(120,"⚡","#65e7ff");
+    else if (skillId === "missile") ring(100,"🚀","#ff8a00");
+    else if (skillId === "spinSlash") ring(110,"⚔️","#ffd45a");
+    else if (skillId === "groundSmash") ring(140,"💥","#ff9d3c");
+    else if (skillId === "smoke") ring(150,"☁️","#a9a9a9");
+    else if (skillId === "shurikenRain") ring(120,"✦","#7ddcff");
+    else if (skillId === "shadowStep") ring(80,"🌑","#9d7cff");
+    else if (skillId === "tripleStrike") ring(100,"⚔️","#7ddcff");
+    else if (skillId === "ice") ring(110,"❄️","#7de8ff");
+    else if (skillId === "teleport") ring(90,"✨","#c58cff");
+    else if (skillId === "meteor") ring(150,"☄️","#ff6a22");
+    else if (skillId === "armor") ring(110,"🛡️","#8fa8c8");
+    else if (skillId === "rocketPunch") ring(100,"👊","#ff5d5d");
+    else if (skillId === "laser") ring(100,"⚡","#66eaff");
+    else if (skillId === "drone") ring(100,"🤖","#aab5c5");
+    else return false;
+    return true;
+}
+
 socket.on(
     "skillEffect",
     data => {
@@ -5461,7 +5556,7 @@ socket.on(
         // 닌자 대시
         if (
             data.character === "ninja" &&
-            data.skill === 1
+            (data.skillId === "dashSlash" || data.skill === 1)
         ) {
 
             showDashEffect(
@@ -5477,7 +5572,7 @@ socket.on(
         // 마법 방어막
         if (
             data.character === "wizard" &&
-            data.skill === 2
+            (data.skillId === "barrier" || data.skill === 2)
         ) {
 
             showShieldEffect(
@@ -5489,12 +5584,15 @@ socket.on(
         }
 
 
+        if (data.skillId && showNewSkillEffect(p, data)) {
+            return;
+        }
+
         showSkillEffect(
             p.x,
             p.y,
             data.character,
-            data.skill,
-            data.skillId
+            data.skill
         );
 
     }
@@ -5679,8 +5777,7 @@ function showSkillEffect(
     x,
     y,
     character,
-    skill,
-    skillId
+    skill
 ) {
 
     const centerX =
@@ -5688,160 +5785,6 @@ function showSkillEffect(
 
     const centerY =
         y + 27.5;
-
-
-    // ==========================
-    // 커스텀 스킬 VFX
-    // 기본 슬롯 스킬과 다른 스킬을
-    // 선택했을 때도 슬롯 번호에
-    // 의존하지 않고 올바른 효과를 표시한다.
-    // ==========================
-
-    const defaultSkillBySlot = {
-        knight: {
-            1: "shieldBash",
-            2: "swordWave"
-        },
-        ninja: {
-            1: "dashSlash",
-            2: "poisonShuriken"
-        },
-        wizard: {
-            1: "bigFireball",
-            2: "barrier"
-        },
-        robot: {
-            1: "emp",
-            2: "missile"
-        }
-    };
-
-    const expectedDefault =
-        defaultSkillBySlot[character]?.[skill];
-
-    if (
-        skillId &&
-        expectedDefault &&
-        skillId !== expectedDefault
-    ) {
-        const vfx =
-            createVFX(
-                `custom-${skillId}`,
-                centerX,
-                centerY,
-                90,
-                90
-            );
-
-        const effectStyle = {
-            smoke: {
-                border: "3px solid #8a8a8a",
-                background: "radial-gradient(circle, rgba(120,120,120,.45), transparent 70%)",
-                boxShadow: "0 0 25px rgba(150,150,150,.8)"
-            },
-            shurikenRain: {
-                border: "3px solid #8ee7ff",
-                background: "radial-gradient(circle, rgba(80,180,255,.3), transparent 70%)",
-                boxShadow: "0 0 25px #62caff"
-            },
-            shadowStep: {
-                border: "3px solid #b58cff",
-                background: "radial-gradient(circle, rgba(160,100,255,.35), transparent 70%)",
-                boxShadow: "0 0 30px #9b6cff"
-            },
-            tripleStrike: {
-                border: "3px solid #ffffff",
-                background: "radial-gradient(circle, rgba(255,255,255,.3), transparent 70%)",
-                boxShadow: "0 0 25px #ffffff"
-            },
-            ice: {
-                border: "3px solid #8ee7ff",
-                background: "radial-gradient(circle, rgba(100,220,255,.35), transparent 70%)",
-                boxShadow: "0 0 30px #62caff"
-            },
-            teleport: {
-                border: "3px solid #b88cff",
-                background: "radial-gradient(circle, rgba(180,100,255,.35), transparent 70%)",
-                boxShadow: "0 0 30px #b56cff"
-            },
-            meteor: {
-                border: "4px solid #ff7b3d",
-                background: "radial-gradient(circle, rgba(255,100,30,.5), transparent 70%)",
-                boxShadow: "0 0 35px #ff5a1f"
-            },
-            magicArrow: {
-                border: "3px solid #a9e7ff",
-                background: "radial-gradient(circle, rgba(120,220,255,.3), transparent 70%)",
-                boxShadow: "0 0 25px #8ee7ff"
-            },
-            emp: {
-                border: "4px solid #75d9ff",
-                background: "radial-gradient(circle, rgba(50,180,255,.35), transparent 70%)",
-                boxShadow: "0 0 35px #35bfff"
-            },
-            missile: {
-                border: "3px solid #ff8b55",
-                background: "radial-gradient(circle, rgba(255,100,40,.35), transparent 70%)",
-                boxShadow: "0 0 30px #ff642e"
-            },
-            rocketPunch: {
-                border: "4px solid #ffd84d",
-                background: "radial-gradient(circle, rgba(255,210,70,.4), transparent 70%)",
-                boxShadow: "0 0 30px #ffb52e"
-            },
-            laser: {
-                border: "4px solid #ff4dff",
-                background: "radial-gradient(circle, rgba(255,70,255,.3), transparent 70%)",
-                boxShadow: "0 0 35px #ff4dff"
-            },
-            armor: {
-                border: "4px solid #9aa8c7",
-                background: "radial-gradient(circle, rgba(150,170,210,.35), transparent 70%)",
-                boxShadow: "0 0 30px #9aa8c7"
-            },
-            drone: {
-                border: "3px solid #7dff8a",
-                background: "radial-gradient(circle, rgba(80,255,100,.3), transparent 70%)",
-                boxShadow: "0 0 30px #55ff66"
-            }
-        };
-
-        const style =
-            effectStyle[skillId] ||
-            {
-                border: "3px solid #ffffff",
-                background: "radial-gradient(circle, rgba(255,255,255,.25), transparent 70%)",
-                boxShadow: "0 0 25px rgba(255,255,255,.7)"
-            };
-
-        vfx.style.border = style.border;
-        vfx.style.borderRadius = "50%";
-        vfx.style.background = style.background;
-        vfx.style.boxShadow = style.boxShadow;
-
-        vfx.animate(
-            [
-                {
-                    transform: "scale(.2)",
-                    opacity: 1
-                },
-                {
-                    transform: "scale(1.2)",
-                    opacity: .85
-                },
-                {
-                    transform: "scale(1.7)",
-                    opacity: 0
-                }
-            ],
-            {
-                duration: 450,
-                easing: "ease-out"
-            }
-        );
-
-        return;
-    }
 
 
     // ==========================

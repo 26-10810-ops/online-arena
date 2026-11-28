@@ -442,198 +442,29 @@ const characters = {
 // ==========================
 
 const skillDefinitions = {
-
-    // ==========================
-    // 나이트
-    // ==========================
-
-    shieldBash: {
-        name: "방패 강타",
-        cooldown: 3000,
-        damage: 20,
-        type: "melee",
-        range: 120
-    },
-
-    swordWave: {
-        name: "검의 충격파",
-        cooldown: 4500,
-        damage: 25,
-        type: "projectile",
-        projectileType: "swordWave",
-        speed: 9,
-        radius: 16,
-        life: 900,
-        maxDistance: 260
-    },
-
-    dashSlash: {
-        name: "돌진 베기",
-        cooldown: 5000,
-        damage: 22,
-        type: "dash",
-        range: 110
-    },
-
-    spinSlash: {
-        name: "회전 베기",
-        cooldown: 4000,
-        damage: 18,
-        type: "area",
-        range: 140
-    },
-
-    groundSmash: {
-        name: "지면 강타",
-        cooldown: 5000,
-        damage: 24,
-        type: "area",
-        range: 160
-    },
-
-    counter: {
-        name: "반격",
-        cooldown: 6000,
-        damage: 25,
-        type: "counter"
-    },
-
-    // ==========================
-    // 닌자
-    // ==========================
-
-    poisonShuriken: {
-        name: "독 수리검",
-        cooldown: 5000,
-        damage: 8,
-        type: "poisonProjectile"
-    },
-
-    smoke: {
-        name: "연막",
-        cooldown: 5000,
-        damage: 0,
-        type: "smoke"
-    },
-
-    shurikenRain: {
-        name: "수리검 난사",
-        cooldown: 5500,
-        damage: 7,
-        type: "multiProjectile"
-    },
-
-    shadowStep: {
-        name: "그림자 이동",
-        cooldown: 4500,
-        damage: 0,
-        type: "teleport"
-    },
-
-    tripleStrike: {
-        name: "삼연격",
-        cooldown: 5000,
-        damage: 9,
-        type: "multiMelee",
-        range: 110
-    },
-
-    // ==========================
-    // 마법사
-    // ==========================
-
-    bigFireball: {
-        name: "대형 파이어볼",
-        cooldown: 4000,
-        damage: 30,
-        type: "bigProjectile"
-    },
-
-    barrier: {
-        name: "마법 방어막",
-        cooldown: 6000,
-        damage: 0,
-        type: "shield"
-    },
-
-    ice: {
-        name: "빙결",
-        cooldown: 5000,
-        damage: 15,
-        type: "area",
-        range: 180
-    },
-
-    teleport: {
-        name: "순간이동",
-        cooldown: 5000,
-        damage: 0,
-        type: "teleport"
-    },
-
-    meteor: {
-        name: "메테오",
-        cooldown: 6500,
-        damage: 30,
-        type: "area",
-        range: 220
-    },
-
-    magicArrow: {
-        name: "마법 화살",
-        cooldown: 3500,
-        damage: 18,
-        type: "projectile"
-    },
-
-    // ==========================
-    // 로봇
-    // ==========================
-
-    emp: {
-        name: "EMP 폭발",
-        cooldown: 4500,
-        damage: 25,
-        type: "area",
-        range: 160
-    },
-
-    missile: {
-        name: "미사일 발사",
-        cooldown: 5000,
-        damage: 30,
-        type: "projectile"
-    },
-
-    rocketPunch: {
-        name: "로켓 펀치",
-        cooldown: 4000,
-        damage: 30,
-        type: "melee",
-        range: 130
-    },
-
-    laser: {
-        name: "레이저",
-        cooldown: 5500,
-        damage: 25,
-        type: "projectile"
-    },
-
-    armor: {
-        name: "강화 장갑",
-        cooldown: 6000,
-        damage: 0,
-        type: "shield"
-    },
-
-    drone: {
-        name: "공격 드론",
-        cooldown: 6500,
-        damage: 12,
-        type: "multiProjectile"
-    }
-
+    shieldBash: { name: "방패 강타", cooldown: 3000, damage: 20, type: "melee", range: 120 },
+    swordWave: { name: "검의 충격파", cooldown: 4500, damage: 25, type: "projectile", projectileType: "swordWave", speed: 9, radius: 16, life: 900, maxDistance: 260 },
+    dashSlash: { name: "돌진 베기", cooldown: 5000, damage: 22, type: "dash", range: 110 },
+    spinSlash: { name: "회전 베기", cooldown: 4000, damage: 18, type: "area", range: 140 },
+    groundSmash: { name: "지면 강타", cooldown: 5000, damage: 24, type: "area", range: 160 },
+    counter: { name: "반격", cooldown: 6000, damage: 25, type: "counter" },
+    poisonShuriken: { name: "독 수리검", cooldown: 5000, damage: 8, type: "projectile", projectileType: "poisonShuriken", speed: 10, radius: 13, life: 1200, maxDistance: 500 },
+    smoke: { name: "연막", cooldown: 5500, type: "smoke", duration: 1800 },
+    shurikenRain: { name: "수리검 난사", cooldown: 4500, damage: 6, type: "burst", count: 5, spread: 0.55 },
+    shadowStep: { name: "그림자 이동", cooldown: 5000, type: "teleport", distance: 220 },
+    tripleStrike: { name: "삼연격", cooldown: 4500, damage: 8, type: "multiMelee", range: 110, count: 3, interval: 140 },
+    bigFireball: { name: "대형 파이어볼", cooldown: 4000, damage: 30, type: "projectile", projectileType: "bigFireball", speed: 7, radius: 30, life: 1700, maxDistance: 500 },
+    barrier: { name: "마법 방어막", cooldown: 6000, type: "shield", duration: 1800 },
+    ice: { name: "빙결", cooldown: 4500, damage: 10, type: "slow", range: 350, duration: 2200, multiplier: 0.45 },
+    teleport: { name: "순간이동", cooldown: 5000, type: "teleport", distance: 240 },
+    meteor: { name: "메테오", cooldown: 6500, damage: 28, type: "targetArea", range: 260, radius: 90 },
+    magicArrow: { name: "마법 화살", cooldown: 3000, damage: 16, type: "projectile", projectileType: "magicArrow", speed: 12, radius: 9, life: 1200, maxDistance: 450 },
+    emp: { name: "EMP 폭발", cooldown: 4500, damage: 25, type: "area", range: 160 },
+    missile: { name: "미사일 발사", cooldown: 5000, damage: 30, type: "projectile", projectileType: "missile", speed: 6, radius: 16, life: 1800, maxDistance: 500 },
+    rocketPunch: { name: "로켓 펀치", cooldown: 4500, damage: 24, type: "projectile", projectileType: "rocketPunch", speed: 12, radius: 18, life: 1100, maxDistance: 350 },
+    laser: { name: "레이저", cooldown: 5000, damage: 26, type: "projectile", projectileType: "laser", speed: 18, radius: 10, life: 700, maxDistance: 500 },
+    armor: { name: "강화 장갑", cooldown: 6000, type: "armor", duration: 2500, reduction: 0.5 },
+    drone: { name: "공격 드론", cooldown: 5500, damage: 22, type: "projectile", projectileType: "drone", speed: 5, radius: 17, life: 2200, maxDistance: 500 }
 };
 
 
@@ -1174,6 +1005,9 @@ function createPlayer(
 
 
         poison: null,
+        slowUntil: 0,
+        slowMultiplier: 1,
+        damageReduction: 0,
 
         input: { x: 0, y: 0 }
 
@@ -2715,27 +2549,11 @@ function damage(
 
 
 
-    target.hp =
+    const reduction = target.damageReduction || 0;
 
+    const finalDamage = amount * (1 - reduction);
 
-
-        Math.max(
-
-
-
-            0,
-
-
-
-            target.hp -
-
-
-
-            amount
-
-
-
-        );
+    target.hp = Math.max(0, target.hp - finalDamage);
 
 
 
@@ -3198,6 +3016,8 @@ function addProjectile(
 
 
 
+        swordWave: { speed: 9, damage: 25, radius: 16, life: 900, maxDistance: 260 },
+
         shuriken: {
 
             speed: 11,
@@ -3291,42 +3111,13 @@ function addProjectile(
 
 
         bigFireball: {
-
-
-
-
-
-
-
-            speed: 7,
-
-
-
-            damage: 40,
-
-
-
-            radius: 30,
-
-
-
-            life: 1700,
-
-
-
-            maxDistance: 500
-
-
-
-
-
-
-
-        }
-
-
-
-
+            speed: 7, damage: 30, radius: 30, life: 1700, maxDistance: 500
+        },
+        magicArrow: { speed: 12, damage: 16, radius: 9, life: 1200, maxDistance: 450 },
+        missile: { speed: 6, damage: 30, radius: 16, life: 1800, maxDistance: 500 },
+        rocketPunch: { speed: 12, damage: 24, radius: 18, life: 1100, maxDistance: 350 },
+        laser: { speed: 18, damage: 26, radius: 10, life: 700, maxDistance: 500 },
+        drone: { speed: 5, damage: 22, radius: 17, life: 2200, maxDistance: 500 }
 
 
 
@@ -3791,424 +3582,100 @@ function startDash(
 // 선택한 스킬 실행
 // ==========================
 
-function executeSelectedSkill(
-    room,
-    player,
-    skillId,
-    direction
-) {
-
-    const skill =
-        skillDefinitions[skillId];
-
-    if (!skill) {
-        return;
+function areaDamageAtPoint(room, player, x, y, damageAmount, range) {
+    for (const target of Object.values(room.players)) {
+        if (target.id === player.id || target.hp <= 0 || target.shield) continue;
+        const tx = target.x + PLAYER_SIZE / 2;
+        const ty = target.y + PLAYER_SIZE / 2;
+        if (Math.hypot(tx - x, ty - y) <= range) damage(room, player, target, damageAmount);
     }
+}
 
-    const d =
-        normalize(
-            direction?.x ?? player.direction.x,
-            direction?.y ?? player.direction.y
-        );
+function executeSelectedSkill(room, player, skillId, direction) {
+    const skill = skillDefinitions[skillId];
+    if (!skill) return;
+    const d = normalize(direction.x, direction.y);
 
-    // ==========================
-    // 나이트
-    // ==========================
-
-    if (skillId === "shieldBash") {
-        melee(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
-        return;
-    }
-
-    if (skillId === "swordWave") {
-        addProjectile(
-            room,
-            player,
-            "swordWave",
-            d
-        );
-        return;
-    }
-
+    if (skillId === "shieldBash") { melee(room, player, skill.damage, skill.range); return; }
+    if (skillId === "swordWave") { addProjectile(room, player, "swordWave", d); return; }
     if (skillId === "dashSlash") {
-        startDash(
-            room,
-            player,
-            d
-        );
-
-        // 돌진 베기는 서버의 대시 피해를 사용한다.
+        if (player.character === "ninja") startDash(room, player, d);
+        else player.dash = { direction: d, steps: 3, stepDistance: 85, damage: skill.damage };
         return;
     }
-
-    if (skillId === "spinSlash") {
-        areaDamage(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
-        return;
-    }
-
-    if (skillId === "groundSmash") {
-        areaDamage(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
-        return;
-    }
-
+    if (["spinSlash", "groundSmash", "emp"].includes(skillId)) { areaDamage(room, player, skill.damage, skill.range); return; }
     if (skillId === "counter") {
         player.shield = true;
-
-        setTimeout(() => {
-            const currentRoom =
-                rooms[room.code];
-
-            const currentPlayer =
-                currentRoom?.players[player.id];
-
-            if (currentPlayer) {
-                currentPlayer.shield = false;
-            }
-        }, 1500);
-
+        setTimeout(() => { const p = rooms[room.code]?.players[player.id]; if (p) p.shield = false; }, 1500);
         return;
     }
 
-    // ==========================
-    // 닌자
-    // ==========================
-
-    if (skillId === "poisonShuriken") {
-        addProjectile(
-            room,
-            player,
-            "poisonShuriken",
-            d
-        );
-        return;
-    }
-
+    if (skillId === "poisonShuriken") { addProjectile(room, player, "poisonShuriken", d); return; }
     if (skillId === "smoke") {
-        // 연막은 짧은 시간 동안 방어 효과를 준다.
-        player.shield = true;
-
-        setTimeout(() => {
-            const currentRoom =
-                rooms[room.code];
-
-            const currentPlayer =
-                currentRoom?.players[player.id];
-
-            if (currentPlayer) {
-                currentPlayer.shield = false;
-            }
-        }, 1000);
-
+        io.to(room.code).emit("smokeEffect", { playerId: player.id, x: player.x + PLAYER_SIZE / 2, y: player.y + PLAYER_SIZE / 2, duration: skill.duration });
         return;
     }
-
     if (skillId === "shurikenRain") {
-        for (let i = -2; i <= 2; i++) {
-            const angle =
-                Math.atan2(d.y, d.x) +
-                i * 0.12;
-
-            addProjectile(
-                room,
-                player,
-                "shuriken",
-                {
-                    x: Math.cos(angle),
-                    y: Math.sin(angle)
-                }
-            );
-
-            const projectile =
-                room.projectiles[
-                    room.projectiles.length - 1
-                ];
-
-            if (projectile) {
-                projectile.damage = 7;
-            }
+        const base = Math.atan2(d.y, d.x);
+        for (let i = 0; i < skill.count; i++) {
+            const angle = base + (i - (skill.count - 1) / 2) * skill.spread;
+            addProjectile(room, player, "shuriken", { x: Math.cos(angle), y: Math.sin(angle) });
+            const p = room.projectiles[room.projectiles.length - 1];
+            if (p) p.damage = skill.damage;
         }
-
         return;
     }
-
     if (skillId === "shadowStep") {
-        player.x = Math.max(
-            20,
-            Math.min(
-                WIDTH - PLAYER_SIZE - 20,
-                player.x + d.x * 120
-            )
-        );
-
-        player.y = Math.max(
-            20,
-            Math.min(
-                HEIGHT - PLAYER_SIZE - 20,
-                player.y + d.y * 120
-            )
-        );
-
-        io.to(room.code).emit(
-            "dashEffect",
-            {
-                playerId: player.id,
-                direction: d
-            }
-        );
-
+        player.x = Math.max(0, Math.min(WIDTH - PLAYER_SIZE, player.x + d.x * skill.distance));
+        player.y = Math.max(0, Math.min(HEIGHT - PLAYER_SIZE, player.y + d.y * skill.distance));
         return;
     }
-
     if (skillId === "tripleStrike") {
         let count = 0;
-
         const strike = () => {
-            const currentRoom =
-                rooms[room.code];
-
-            const currentPlayer =
-                currentRoom?.players[player.id];
-
-            if (
-                !currentRoom ||
-                !currentPlayer ||
-                !currentRoom.started
-            ) {
-                return;
-            }
-
-            melee(
-                currentRoom,
-                currentPlayer,
-                skill.damage,
-                skill.range
-            );
-
-            count++;
-
-            if (count < 3) {
-                setTimeout(
-                    strike,
-                    110
-                );
-            }
+            const r = rooms[room.code]; const p = r?.players[player.id];
+            if (!r || !p || !r.started) return;
+            melee(r, p, skill.damage, skill.range); count++;
+            if (count < skill.count) setTimeout(strike, skill.interval);
         };
-
-        strike();
-        return;
+        strike(); return;
     }
 
-    // ==========================
-    // 마법사
-    // ==========================
-
-    if (skillId === "bigFireball") {
-        addProjectile(
-            room,
-            player,
-            "bigFireball",
-            d
-        );
-        return;
-    }
-
+    if (skillId === "bigFireball") { addProjectile(room, player, "bigFireball", d); return; }
     if (skillId === "barrier") {
         player.shield = true;
-
-        setTimeout(() => {
-            const currentRoom =
-                rooms[room.code];
-
-            const currentPlayer =
-                currentRoom?.players[player.id];
-
-            if (currentPlayer) {
-                currentPlayer.shield = false;
-            }
-        }, 1800);
-
+        setTimeout(() => { const p = rooms[room.code]?.players[player.id]; if (p) p.shield = false; }, skill.duration);
         return;
     }
-
     if (skillId === "ice") {
-        areaDamage(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
+        const target = opponent(room, player.id);
+        if (target && distance(player, target) <= skill.range && !target.shield) {
+            damage(room, player, target, skill.damage);
+            target.slowUntil = Date.now() + skill.duration;
+            target.slowMultiplier = skill.multiplier;
+        }
         return;
     }
-
     if (skillId === "teleport") {
-        player.x = Math.max(
-            20,
-            Math.min(
-                WIDTH - PLAYER_SIZE - 20,
-                player.x + d.x * 150
-            )
-        );
-
-        player.y = Math.max(
-            20,
-            Math.min(
-                HEIGHT - PLAYER_SIZE - 20,
-                player.y + d.y * 150
-            )
-        );
-
-        io.to(room.code).emit(
-            "dashEffect",
-            {
-                playerId: player.id,
-                direction: d
-            }
-        );
-
+        player.x = Math.max(0, Math.min(WIDTH - PLAYER_SIZE, player.x + d.x * skill.distance));
+        player.y = Math.max(0, Math.min(HEIGHT - PLAYER_SIZE, player.y + d.y * skill.distance));
         return;
     }
-
     if (skillId === "meteor") {
-        areaDamage(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
+        const x = player.x + PLAYER_SIZE / 2 + d.x * skill.range;
+        const y = player.y + PLAYER_SIZE / 2 + d.y * skill.range;
+        areaDamageAtPoint(room, player, x, y, skill.damage, skill.radius);
+        io.to(room.code).emit("meteorEffect", { x, y, radius: skill.radius });
         return;
     }
+    if (skillId === "magicArrow") { addProjectile(room, player, "magicArrow", d); return; }
 
-    if (skillId === "magicArrow") {
-        addProjectile(
-            room,
-            player,
-            "magicArrow",
-            d
-        );
-        return;
+    if (["missile", "rocketPunch", "laser", "drone"].includes(skillId)) {
+        addProjectile(room, player, skill.projectileType, d); return;
     }
-
-    // ==========================
-    // 로봇
-    // ==========================
-
-    if (skillId === "emp") {
-        areaDamage(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
-        return;
-    }
-
-    if (skillId === "missile") {
-        addProjectile(
-            room,
-            player,
-            "missile",
-            d
-        );
-        return;
-    }
-
-    if (skillId === "rocketPunch") {
-        melee(
-            room,
-            player,
-            skill.damage,
-            skill.range
-        );
-        return;
-    }
-
-    if (skillId === "laser") {
-        addProjectile(
-            room,
-            player,
-            "swordWave",
-            d
-        );
-
-        const projectile =
-            room.projectiles[
-                room.projectiles.length - 1
-            ];
-
-        if (projectile) {
-            projectile.damage =
-                skill.damage;
-
-            projectile.speed = 12;
-            projectile.radius = 10;
-            projectile.life = 700;
-            projectile.maxLife = 700;
-            projectile.maxDistance = 500;
-        }
-
-        return;
-    }
-
     if (skillId === "armor") {
-        player.shield = true;
-
-        setTimeout(() => {
-            const currentRoom =
-                rooms[room.code];
-
-            const currentPlayer =
-                currentRoom?.players[player.id];
-
-            if (currentPlayer) {
-                currentPlayer.shield = false;
-            }
-        }, 1600);
-
-        return;
-    }
-
-    if (skillId === "drone") {
-        for (let i = -1; i <= 1; i++) {
-            const angle =
-                Math.atan2(d.y, d.x) +
-                i * 0.18;
-
-            addProjectile(
-                room,
-                player,
-                "shuriken",
-                {
-                    x: Math.cos(angle),
-                    y: Math.sin(angle)
-                }
-            );
-
-            const projectile =
-                room.projectiles[
-                    room.projectiles.length - 1
-                ];
-
-            if (projectile) {
-                projectile.damage = 12;
-            }
-        }
-
-        return;
+        player.damageReduction = skill.reduction;
+        setTimeout(() => { const p = rooms[room.code]?.players[player.id]; if (p) p.damageReduction = 0; }, skill.duration);
     }
 }
 
@@ -5055,13 +4522,14 @@ function movementTick() {
 
 
 
-            const speed =
+            const baseSpeed = CHARACTER_SPEED[player.character] || 100;
 
-                CHARACTER_SPEED[
+            if (player.slowUntil && Date.now() >= player.slowUntil) {
+                player.slowUntil = 0;
+                player.slowMultiplier = 1;
+            }
 
-                    player.character
-
-                ] || 100;
+            const speed = baseSpeed * (player.slowMultiplier || 1);
 
 
 
